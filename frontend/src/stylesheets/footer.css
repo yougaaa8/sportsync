@@ -1,0 +1,27 @@
+.footer {
+    display: flex;
+    flex-direction: column;
+}
+
+.links {
+    display: flex;
+}
+
+.first-column {
+    color: white;
+    list-style: none;
+    margin-right: 20px;
+}
+
+.first-column a {
+    color: white;
+}
+
+.second-column {
+    color: white;
+    list-style: none;
+}
+
+.second-column a {
+    color: white;
+}

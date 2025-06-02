@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar.jsx"
+import Footer from "../components/Footer.jsx"
 import { useState } from "react"
-import "./login.css"
+import "../stylesheets/login.css"
 
 export default function Register() {
     // Create state for username and password
@@ -44,6 +45,7 @@ export default function Register() {
                 </div>
                 <button className="login-button" type="submit">Register</button>
             </form>
+            <Footer />
         </>
     )
 }

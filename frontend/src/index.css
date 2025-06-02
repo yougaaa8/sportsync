@@ -10,12 +10,12 @@ body,
 }
 
 /* 2) Make <nav> fill exactly its parent width, not 100vw */
-nav {
+.navbar-left {
   width: 100%;            /* ← was 100vw before */
   display: flex;
   align-items: center;
   background-color: orange;
-  padding: 10px 20px;
+  padding: 0px 10px;
 }
 
 
@@ -103,14 +103,6 @@ button:focus-visible {
 
 header {
   width: 100%;
-}
-
-nav {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  background-color: orange;
-  padding: 10px 20px;
 }
 
 .sportsync-logo {
