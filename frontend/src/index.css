@@ -1,5 +1,26 @@
+/* index.css */
+
+/* 1) Reset browser defaults so nothing “pushes” inward */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2) Make <nav> fill exactly its parent width, not 100vw */
+nav {
+  width: 100%;            /* ← was 100vw before */
+  display: flex;
+  align-items: center;
+  background-color: orange;
+  padding: 10px 20px;
+}
+
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -11,6 +32,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
 }
 
 a {
@@ -22,12 +51,17 @@ a:hover {
   color: #535bf2;
 }
 
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -65,4 +99,27 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+header {
+  width: 100%;
+}
+
+nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: orange;
+  padding: 10px 20px;
+}
+
+.sportsync-logo {
+  width: 50px;
+}
+
+.logo-text {
+  font-family: "Inter";
+  font-size: 40px;
+  font-weight: 700;
+  color: white;
 }
