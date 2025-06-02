@@ -13,7 +13,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username', 'email', 'password', 'password_confirm',
-            'first_name', 'last_name'
         ]
 
     def validate_email(self, value):
@@ -61,6 +60,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'first_name', 'last_name', 'date_joined'
+            'id', 'username', 'email', 'date_joined'
         ]
         read_only_fields = ['id', 'email', 'date_joined']
