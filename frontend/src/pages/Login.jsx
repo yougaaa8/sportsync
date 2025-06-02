@@ -10,7 +10,6 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
 
-
     // Create a function that will run when form is submitted
     async function handleSubmit(e) {
         e.preventDefault();
@@ -41,7 +40,7 @@ export default function Login() {
                 }
                 
                 // Redirect to dashboard or home page
-                window.location.href = '/profile'; // or use React Router navigation
+                window.location.href = '/'; // or use React Router navigation
                 
             } else {
                 // Login failed
