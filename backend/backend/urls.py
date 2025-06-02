@@ -15,8 +15,33 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.http import JsonResponse
+
+
+def about_view(request):
+    """Simple about page endpoint"""
+    return JsonResponse({
+        'name': 'SportsSync',
+        'description': 'A centralized digital platform designed for the sports landscape at NUS',
+        'version': '1.0.0',
+        'team': 'SportsSync Team: Alex (Y1 CS) and Yoga (Y1 EE)',
+        'features': [
+            'User Authentication & Profile Management',
+            'Open Matchmaking',
+            'CCA Dashboard',
+            'Tournament Information',
+            'Event Management',
+            'Venue Booking System',
+            'Merchandise Shop'
+        ]
+    })
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', include('users.urls')),
+    path('api/about/', about_view, name='about'),
 ]
