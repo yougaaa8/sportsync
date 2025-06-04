@@ -25,8 +25,6 @@ assignees: ''
 - [ ] Code implemented and tested
 - [ ] Code reviewed and approved
 - [ ] Documentation updated (if applicable)
-- [ ] Deployed to staging/production
-- [ ] Acceptance criteria met
 
 ## Additional Notes
 <!-- Any other relevant information, links, or context -->

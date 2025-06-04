@@ -29,7 +29,7 @@ assignees: ''
 
 ## Impact
 - [ ] Blocks core functionality
-- [ ] Minor visual issue
+- [ ] Visual issue
 - [ ] Performance issue
 - [ ] Other: ___________
 
