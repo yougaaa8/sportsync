@@ -1,49 +1,103 @@
 import Navbar from "../components/Navbar.jsx"
+import Footer from "../components/Footer.jsx"
 import { useState } from "react"
-import "./login.css"
+import "../stylesheets/login.css"
+import { useNavigate } from "react-router-dom"
 
 export default function Login() {
     // Create state for username and password
-    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState("")
+    const navigate = useNavigate();
 
     // Create a function that will run when form is submitted
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-        console.log("Logging in with: ", { username, password });
+        setIsLoading(true);
+        setError("");
+
+        try {
+            const response = await fetch('http://localhost:8000/api/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Login successful
+                console.log("Login successful:", data);
+                
+                // Store token if provided     
+                if (data.tokens && data.tokens.access) {
+                    localStorage.setItem("authToken", data.tokens.access); // ← CHANGED
+                }
+
+                const loggedInUsername = data.user.username;
+
+                // Redirect to dashboard or home page
+                navigate("/", {
+                    state: {username: loggedInUsername}
+                });
+                
+            } else {
+                // Login failed
+                setError(data.message || 'Login failed. Please check your credentials.');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('Network error. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     }
     
     // Rendered webpage
     return (
         <>
-            <Navbar />
-            <h1 className="login-message">
-                Please login to continue
-            </h1>
-            <form className="login-form" onSubmit={handleSubmit}>
-                <div className="username-field">
-                    <label htmlFor="username">Username</label>
-                    <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
-                        required
-                    />
+            <div className="login-page">
+                <Navbar />
+                <h1 className="login-message">
+                    Please login to continue
+                </h1>
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <div className="username-field">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
+                            required
+                        />
+                    </div>
+                    <div className="password-field">
+                        <label htmlFor="password">Password</label>
+                        <input id="password"
+                            type="text"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+                    <button className="login-button" type="submit">Login</button>
+                </form>
+                <div>
+                    <p>Don't have an account?</p>
+                    <a className="register-link" href="/register">Register now</a>
                 </div>
-                <div className="password-field">
-                    <label htmlFor="password">Password</label>
-                    <input id="password"
-                        type="text"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
-                <button className="login-button" type="submit">Login</button>
-            </form>
+                <Footer />
+            </div>
         </>
     )
 }
