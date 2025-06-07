@@ -12,7 +12,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'username', 'email', 'password', 'password_confirm',
+            'email', 'password', 'password_confirm',
         ]
 
     def validate_email(self, value):
@@ -31,6 +31,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create new user"""
         validated_data.pop('password_confirm')
+        # Pass email as username since our User model uses email as USERNAME_FIELD
+        validated_data['username'] = validated_data['email']
         user = User.objects.create_user(**validated_data)
         return user
 
@@ -60,6 +62,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'date_joined'
+            'id', 'first_name', 'last_name', 'email', 'date_joined', 'profile_picture', 'status'
         ]
         read_only_fields = ['id', 'email', 'date_joined']
