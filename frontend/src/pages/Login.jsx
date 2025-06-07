@@ -2,13 +2,15 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import { useState } from "react"
 import "../stylesheets/login.css"
+import { useNavigate } from "react-router-dom"
 
 export default function Login() {
     // Create state for username and password
-    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
+    const navigate = useNavigate();
 
     // Create a function that will run when form is submitted
     async function handleSubmit(e) {
@@ -17,13 +19,13 @@ export default function Login() {
         setError("");
 
         try {
-            const response = await fetch('/api/auth/login/', {
+            const response = await fetch('http://localhost:8000/api/auth/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: username,
+                    email: email,
                     password: password
                 })
             });
@@ -34,13 +36,17 @@ export default function Login() {
                 // Login successful
                 console.log("Login successful:", data);
                 
-                // Store token if provided
-                if (data.token) {
-                    localStorage.setItem('authToken', data.token);
+                // Store token if provided     
+                if (data.tokens && data.tokens.access) {
+                    localStorage.setItem("authToken", data.tokens.access); // ← CHANGED
                 }
-                
+
+                const loggedInUsername = data.user.username;
+
                 // Redirect to dashboard or home page
-                window.location.href = '/'; // or use React Router navigation
+                navigate("/", {
+                    state: {username: loggedInUsername}
+                });
                 
             } else {
                 // Login failed
@@ -64,13 +70,13 @@ export default function Login() {
                 </h1>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className="username-field">
-                        <label htmlFor="username">Username</label>
+                        <label htmlFor="email">Email</label>
                         <input
-                            id="username"
+                            id="email"
                             type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your username"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
                             required
                         />
                     </div>

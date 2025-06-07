@@ -2,15 +2,20 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import { useState } from "react"
 import "../stylesheets/login.css"
+import { useNavigate } from "react-router-dom"
 
 export default function Register() {
     // Create state for username and password
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
+
+    // Grab the navigate function
+    const navigate = useNavigate();
 
     // Create a function that will run when form is submitted
     async function handleSubmit(e) {
@@ -27,14 +32,16 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch('/api/auth/register/', {
+            const response = await fetch('http://localhost:8000/api/auth/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     username: username,
-                    password: password
+                    email: email,
+                    password: password,
+                    password_confirm: confirmPassword
                 })
             });
 
@@ -46,9 +53,9 @@ export default function Register() {
                 setSuccess("Account created successfully! You can now log in.");
                 
                 // Redirect to home page after successful registration
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 2000);
+                navigate("/", {
+                    state: { username: username }
+                });
                 
                 // Clear form
                 setUsername("");
@@ -96,6 +103,17 @@ export default function Register() {
                         required
                     />
                 </div>
+                <div className="email-field">
+                    <label htmlFor="username">Email</label>
+                    <input
+                        id="email"
+                        type="text"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
                 <div className="password-field">
                     <label htmlFor="password">Password</label>
                     <input id="password"
@@ -109,7 +127,7 @@ export default function Register() {
                 <div className="password-field">
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input id="confirmPassword"
-                        type="password"
+                        type="text"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm your password"
