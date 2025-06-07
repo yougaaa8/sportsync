@@ -87,7 +87,7 @@ SIMPLE_JWT = {
 
 # CORS Configuration
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:5176'
+    'http://localhost:5173'
 ]
 
 # Database

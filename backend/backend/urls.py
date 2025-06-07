@@ -25,7 +25,7 @@ def about_view(request):
     """Simple about page endpoint"""
     return JsonResponse({
         'name': 'SportsSync',
-        'description': 'A centralized digital platform designed for the sports landscape at NUS',
+        'description': 'A centralized digital platform platform that makes sports activities at NUS more organized and accessible.',
         'version': '1.0.0',
         'team': 'SportsSync Team: Alex (Y1 CS) and Yoga (Y1 EE)',
         'features': [
