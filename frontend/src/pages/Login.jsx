@@ -36,9 +36,11 @@ export default function Login() {
                 // Login successful
                 console.log("Login successful:", data);
                 
-                // Store token if provided     
+                // Store token and username if provided  
                 if (data.tokens && data.tokens.access) {
-                    localStorage.setItem("authToken", data.tokens.access); // ← CHANGED
+                    localStorage.setItem("authToken", data.tokens.access);
+                    localStorage.setItem("refreshToken", data.tokens.refresh);
+                    localStorage.setItem("username", data.user.username);
                 }
 
                 const loggedInUsername = data.user.username;

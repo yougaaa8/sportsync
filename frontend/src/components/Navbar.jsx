@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SoccerBall from "../assets/soccer-ball.png"
+import SportSyncLogo from "../assets/sportsync-logo.png"
 import "../stylesheets/navbar.css"
 
 export default function Navbar() {
@@ -26,6 +27,7 @@ export default function Navbar() {
     }, [dropdownRef]);
 
     async function handleLogout() {
+        const refresh = localStorage.getItem("refreshToken");
         try {
             const token = localStorage.getItem("authToken");
             const response = await fetch("http://localhost:8000/api/auth/logout/", {
@@ -33,14 +35,17 @@ export default function Navbar() {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
-                }
+                },
+                body: JSON.stringify({ refresh })
             });
             if (response.ok) {
                 localStorage.removeItem("authToken");
+                localStorage.removeItem("username");
                 navigate("/login");
             }
             else {
                 console.error("Logout failed with status: ", response.status);
+                console.log("The logged in user is: ", localStorage.getItem("username"));
             }
         }
         catch (err) {
@@ -50,11 +55,12 @@ export default function Navbar() {
 
     return (
         <>
-            <header>
-                <nav>
+            <h1 className="italic font-bold">Hello</h1>
+            <header className="navbar-container">
+                <nav className="navbar">
                     <div className="navbar-left">
                         <img className="sportsync-logo" 
-                            src={ SoccerBall } />
+                            src={ SportSyncLogo } />
                         <span className="logo-text">
                             SportSync</span>
                     </div>
@@ -67,11 +73,13 @@ export default function Navbar() {
                                     <a className="dropdown-link" href="/">Home</a>
                                 </li>
                                 <li>
+                                    <a className="dropdown-link" href="/cca-home">CCAs</a>
+                                </li>
+                                <li>
                                     <a className="dropdown-link" href="/profile">Profile</a>
                                 </li>
                                 <li>
-                                    <a className="dropdown-link" href="/login">Logout</a>
-                                    {/* <button
+                                    {<button
                                     className="dropdown-link"
                                     onClick={handleLogout}
                                     style={{
@@ -84,7 +92,7 @@ export default function Navbar() {
                                     }}
                                     >
                                       Logout
-                                    </button> */}
+                                    </button>}
                                 </li>
                             </ul>)}
                     </div>

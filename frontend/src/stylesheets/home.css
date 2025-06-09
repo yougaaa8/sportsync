@@ -1,3 +1,5 @@
 main {
-    background-image: url(../assets/sports-background.jpg);
+    background-image: url(../assets/main-background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }

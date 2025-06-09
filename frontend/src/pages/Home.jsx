@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom"
 export default function Home() {
     const location = useLocation();
     const newUser = location.state?.username || location.state?.email
-                    || "User";
+                    || localStorage.getItem("username") || "User";
 
     return (
         <>

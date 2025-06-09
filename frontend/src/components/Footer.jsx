@@ -1,31 +1,31 @@
 import "../stylesheets/footer.css"
+import SportSyncLogo from "../assets/sportsync-logo.png"
 
 export default function Footer() {
     return (
         <>
             <nav className="footer">
-                <div className="links">
-                    <ul className="first-column">
-                        <li>
-                            <a href="/about">About Us</a>
-                        </li>
-                        <li>
-                            <a href="/contact">Contact</a>
-                        </li>
-                    </ul>
-                    <ul className="second-column">
-                        <li>
-                            <a href="/">Home</a>
-                        </li>
-                        <li>
-                            <a href="/register">Register</a>
-                        </li>
-                        <li>
-                            <a href="/login">Login</a>
-                        </li>
-                    </ul>
+                <div className="footer-left">
+                    <img className="footer-sportsync-logo" src={ SportSyncLogo }></img>
+                    <p>2025 SportSync. All rights reserved.</p>
                 </div>
-                <p>2025 SportSync. All rights reserved.</p>
+                <ul className="links">
+                    <li>
+                        <a className="footer-links"href="/">Home</a>
+                    </li>
+                    <li>
+                        <a className="footer-links"href="/about">About Us</a>
+                    </li>
+                    <li>
+                        <a className="footer-links"href="/contact">Contact</a>
+                    </li>
+                    <li>
+                        <a className="footer-links"href="/login">Login</a>
+                    </li>
+                    <li>
+                        <a className="footer-links"href="/register">Register</a>
+                    </li>
+                </ul>
             </nav>
         </>
     )

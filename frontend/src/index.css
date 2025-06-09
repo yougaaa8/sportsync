@@ -1,4 +1,7 @@
 /* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* 1) Reset browser defaults so nothing “pushes” inward */
 html,
@@ -8,16 +11,6 @@ body,
   padding: 0;
   box-sizing: border-box;
 }
-
-/* 2) Make <nav> fill exactly its parent width, not 100vw */
-.navbar-left {
-  width: 100%;            /* ← was 100vw before */
-  display: flex;
-  align-items: center;
-  background-color: orange;
-  padding: 0px 10px;
-}
-
 
 :root {
   font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;

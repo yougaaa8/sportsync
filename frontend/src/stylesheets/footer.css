@@ -1,27 +1,31 @@
 .footer {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    background-color: white;
+    align-items: center;
+    justify-content: space-between;
+    border-top: solid 1px;
 }
 
 .links {
     display: flex;
-}
-
-.first-column {
-    color: white;
-    list-style: none;
+    align-items: center;
+    margin-left: 40px;
+    gap: 50px;
     margin-right: 20px;
 }
 
-.first-column a {
-    color: white;
+.footer-left {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
-.second-column {
-    color: white;
-    list-style: none;
+.footer-links {
+    color: orange;
 }
 
-.second-column a {
-    color: white;
+.footer-sportsync-logo {
+    width: 40px;
 }

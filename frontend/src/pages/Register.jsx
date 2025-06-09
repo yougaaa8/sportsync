@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import { useState } from "react"
 import "../stylesheets/login.css"
+import "../stylesheets/register.css"
 import { useNavigate } from "react-router-dom"
 
 export default function Register() {
@@ -73,75 +74,77 @@ export default function Register() {
             setIsLoading(false);
         }
     }
-    
+
     // Rendered webpage
     return (
         <>
             <Navbar />
-            <h1 className="login-message">
-                Create a new username and password
-            </h1>
-            <form className="login-form" onSubmit={handleSubmit}>
-                {error && (
-                    <div className="error-message">
-                        {error}
+            <main className="register-body">
+                <h1 className="register-message">
+                    Create a new username and password
+                </h1>
+                <form className="login-form" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="error-message">
+                            {error}
+                        </div>
+                    )}
+                    {success && (
+                        <div className="success-message">
+                            {success}
+                        </div>
+                    )}
+                    <div className="username-field">
+                        <label htmlFor="username">Username</label>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter your username"
+                            required
+                        />
                     </div>
-                )}
-                {success && (
-                    <div className="success-message">
-                        {success}
+                    <div className="email-field">
+                        <label htmlFor="username">Email</label>
+                        <input
+                            id="email"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
+                            required
+                        />
                     </div>
-                )}
-                <div className="username-field">
-                    <label htmlFor="username">Username</label>
-                    <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
-                        required
-                    />
-                </div>
-                <div className="email-field">
-                    <label htmlFor="username">Email</label>
-                    <input
-                        id="email"
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
-                        required
-                    />
-                </div>
-                <div className="password-field">
-                    <label htmlFor="password">Password</label>
-                    <input id="password"
-                        type="text"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
-                <div className="password-field">
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input id="confirmPassword"
-                        type="text"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm your password"
-                        required
-                    />
-                </div>
-                <button 
-                    className="login-button" 
-                    type="submit"
-                    disabled={isLoading}
-                >
-                    {isLoading ? "Creating Account..." : "Register"}
-                </button>
-            </form>
+                    <div className="password-field">
+                        <label htmlFor="password">Password</label>
+                        <input id="password"
+                            type="text"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+                    <div className="password-field">
+                        <label htmlFor="confirmPassword">Confirm Password</label>
+                        <input id="confirmPassword"
+                            type="text"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Confirm your password"
+                            required
+                        />
+                    </div>
+                    <button 
+                        className="login-button" 
+                        type="submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Creating Account..." : "Register"}
+                    </button>
+                </form>
+            </main>
             <Footer />
         </>
     )

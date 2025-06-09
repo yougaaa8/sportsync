@@ -8,6 +8,7 @@ import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
 import About from "./pages/About.jsx"
 import Profile from "./pages/Profile.jsx"
+import CCAHome from "./pages/CCAHome.jsx"
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,6 +22,7 @@ function App() {
           <Route path="/register" element={<Register />} /> 
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/cca-home" element={<CCAHome />}/>
         </Routes>
       </BrowserRouter>
     </>

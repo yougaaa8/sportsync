@@ -35,3 +35,25 @@ form {
     color: rgb(91, 108, 235);
     font-size: 17px;
 }
+
+/* Make the divs "disappear" to flatten the markup and make the inputs
+and labels as direct children of the grid container */
+.login-form > div {
+    display: contents;
+}
+
+.login-form > label {
+    grid-column: 1;
+    justify-self: end;
+}
+
+.login-form > input {
+    grid-column: 2;
+    width: 100%;
+}
+
+.login-button {
+  margin-top: 20px;
+  grid-column: 2;
+  justify-self: start;
+}

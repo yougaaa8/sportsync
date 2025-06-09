@@ -1,18 +1,31 @@
-header {
-    display: flex;
-    align-items: center;
-}
 
-nav {
+.navbar {
   width: 100%;
   display: flex;
   align-items: center;
-  background-color: orange;
+  background-color: white;
   padding: 10px 20px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+/* 2) Make <nav> fill exactly its parent width, not 100vw */
+.navbar-left {           
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 0px 10px;
 }
 
 .dropdown {
+    background-color: orange;
+    color: orange;
     position: relative;
+}
+
+.dropdown-trigger {
+    background-color: orange;
+    color: white;
 }
 
 .dropdown-menu {
@@ -21,13 +34,19 @@ nav {
     right: 0;
     padding: 0;
     list-style: none;
-    background-color: orange;
+    background-color: white;
 }
 
 .dropdown-link {
     list-style: none;
-    color: white;
+    color: orange;
     margin-bottom: 100px;
+}
+
+.logo-text {
+    color: orange;
+    font-size: 1.1rem;
+    font-weight: 1000;
 }
 
 li {
