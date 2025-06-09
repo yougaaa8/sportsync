@@ -55,7 +55,7 @@ export default function Navbar() {
 
     return (
         <>
-            <h1 className="italic font-bold">Hello</h1>
+            {/* <h1 className="italic font-bold">Hello</h1> */}
             <header className="navbar-container">
                 <nav className="navbar">
                     <div className="navbar-left">

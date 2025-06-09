@@ -9,6 +9,9 @@ import Register from "./pages/Register.jsx"
 import About from "./pages/About.jsx"
 import Profile from "./pages/Profile.jsx"
 import CCAHome from "./pages/CCAHome.jsx"
+import Archery from "./pages/Archery.jsx"
+import LobbyCreation from "./pages/OpenMatchmaking.jsx"
+import AvailableMatches from './pages/AvailableMatches.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -23,6 +26,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/cca-home" element={<CCAHome />}/>
+          <Route path="/archery" element={<Archery />}/>
+          <Route path="/lobby-creation" element={<LobbyCreation />} />
+          <Route path="/available-matches" element={<AvailableMatches />} />
         </Routes>
       </BrowserRouter>
     </>
