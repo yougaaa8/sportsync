@@ -25,7 +25,7 @@ class IsLobbyMember(permissions.BasePermission):
 
 class LobbyListView(generics.ListAPIView):
     """
-    GET /api/lobby/list/
+    GET /api/lobbies/list/
     List all active Lobbies
     """
     queryset = Lobby.objects.all()
@@ -34,7 +34,7 @@ class LobbyListView(generics.ListAPIView):
 
 class LobbyCreateView(generics.CreateAPIView):
     """
-    POST /api/lobby/create/
+    POST /api/lobbies/create/
     Create a new Lobby
     """
     permission_classes = [permissions.IsAuthenticated]
@@ -52,10 +52,12 @@ class LobbyCreateView(generics.CreateAPIView):
 
 class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
-    GET /api/lobby/{id}/
+    GET /api/lobbies/{id}/
     Retrieve detailed information about a specific Lobby.
-    PUT/PATCH /api/lobby/{id}/
+    PUT/PATCH /api/lobbies/{id}/
     Update a Lobby's details (admin only).
+    DELETE /api/lobbies/{id}/
+    Delete a Lobby (admin only).
     """
     queryset = Lobby.objects.all()
     serializer_class = LobbyDetailSerializer
@@ -101,8 +103,8 @@ class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class LobbyMembersView(generics.GenericAPIView):
     """
-    GET /api/lobby/{id}/members            - List all members of a Lobby
-    POST /api/lobby/{id}/members           - Add/edit a member
+    GET /api/lobbies/{id}/members            - List all members of a Lobby
+    POST /api/lobbies/{id}/members           - Add/edit a member
     """
     permission_classes = [permissions.IsAuthenticated, IsLobbyMember]
     serializer_class = LobbyMemberSerializer
@@ -150,7 +152,7 @@ class LobbyMembersView(generics.GenericAPIView):
 @permission_classes([permissions.IsAuthenticated, IsLobbyMember])
 def delete_member(request, lobby_id, user_id):
     """
-    DELETE /api/lobby/{id}/members/
+    DELETE /api/lobbies/{id}/members/
     Remove a member from the Lobby
     """
     lobby = get_object_or_404(Lobby, id=lobby_id)
@@ -185,7 +187,7 @@ def delete_member(request, lobby_id, user_id):
 @permission_classes([permissions.IsAuthenticated])
 def join_lobby(request, id):
     """
-    POST /api/lobby/{id}/join/
+    POST /api/lobbies/{id}/join/
     Join a lobby
     """
     lobby = get_object_or_404(Lobby, id=id)
@@ -210,7 +212,7 @@ def join_lobby(request, id):
 @permission_classes([permissions.IsAuthenticated])
 def leave_lobby(request, id):
     """
-    DELETE /api/lobby/{id}/leave/
+    DELETE /api/lobbies/{id}/leave/
     Leave a lobby
     """
     lobby = get_object_or_404(Lobby, id=id)
