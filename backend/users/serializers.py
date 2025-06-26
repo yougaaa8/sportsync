@@ -12,7 +12,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'email', 'password', 'password_confirm', 'first_name', 'last_name'
+            'email', 'password', 'password_confirm'
         ]
 
     def validate_email(self, value):
@@ -32,7 +32,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """Create new user"""
         validated_data.pop('password_confirm')
         # Pass email as username since our User model uses email as USERNAME_FIELD
-        validated_data['username'] = validated_data['email']
         user = User.objects.create_user(**validated_data)
         return user
 
