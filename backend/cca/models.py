@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 import os
 
-from django.utils.autoreload import start_django
-
 
 class CCA(models.Model):
     name = models.CharField(max_length=100)
@@ -32,7 +30,6 @@ class CCAMember(models.Model):
     role = models.CharField(max_length=100, blank=True)
     date_joined = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    emergency_contact = models.CharField(max_length=200, blank=True)
     notes = models.TextField(blank=True)
 
     def __str__(self):

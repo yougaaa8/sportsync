@@ -53,6 +53,8 @@ class User(AbstractUser):
     ]
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='student', blank=True)
+    emergency_contact = models.CharField(max_length=200, blank=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -64,10 +66,6 @@ class User(AbstractUser):
     def get_full_name(self):
         """Return the first_name plus the last_name, with a space in between."""
         return f'{self.first_name} {self.last_name}'.strip()
-
-    def get_short_name(self):
-        """Return the short name for the user."""
-        return self.first_name
 
     def resize_image(self):
         """Resize profile picture to max 300x300 pixels"""
