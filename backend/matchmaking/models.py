@@ -8,11 +8,23 @@ class Lobby(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     sport = models.CharField(max_length=50)
+    date = models.DateField()
     start_time = models.TimeField()
-    end_time = models.TimeField(blank=True)
+    end_time = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=200)
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through='LobbyMember', related_name='lobbies', blank=True)
+    max_capacity = models.PositiveIntegerField(default=10)
+    open_lobby = models.BooleanField(default=True)
+    password = models.CharField(max_length=100, blank=True)
+
+    @property
+    def participant_count(self):
+        return self.lobbymember_set.count()
+
+    @property
+    def is_full(self):
+        return self.participant_count >= self.max_capacity
 
     def __str__(self):
         return self.name
