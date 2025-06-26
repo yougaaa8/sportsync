@@ -94,6 +94,9 @@ export default function Navbar() {
                                       Logout
                                     </button>}
                                 </li>
+                                <li className="dropdown-link">
+                                    <a href="/available-matches">Matches</a>
+                                </li>
                             </ul>)}
                     </div>
                 </nav>
