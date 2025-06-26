@@ -36,16 +36,16 @@ export default function Navbar() {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({ refresh })
+                body: JSON.stringify({ refresh_token: refresh })
             });
             if (response.ok) {
                 localStorage.removeItem("authToken");
-                localStorage.removeItem("username");
+                localStorage.removeItem("email");
                 navigate("/login");
             }
             else {
                 console.error("Logout failed with status: ", response.status);
-                console.log("The logged in user is: ", localStorage.getItem("username"));
+                console.log("The logged in user is: ", localStorage.getItem("email"));
             }
         }
         catch (err) {

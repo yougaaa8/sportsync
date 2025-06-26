@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
+import "../stylesheets/available-matches.css"
 
 export default function AvailableMatches() {
     return (

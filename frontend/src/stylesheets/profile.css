@@ -22,8 +22,17 @@
 
 .profile-page-username {
     font-size: 2rem;
-    margin-bottom: 35px;
+    margin-bottom: 10px;
     font-weight: 700;
+}
+
+.profile-page-user-status {
+    font-size: 1.5rem;
+    margin-bottom: 35px;
+}
+
+.profile-page-user-status::first-letter {
+    text-transform: capitalize;
 }
 
 .profile-page-links {
@@ -42,7 +51,6 @@
 .profile-right {
     margin-top: 70px;
     margin-left: 100px;
-    margin-right: 100000px;
 }
 
 .profile-form {

@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom"
 
 export default function Register() {
     // Create state for username and password
-    const [username, setUsername] = useState("")
+    const [first_name, setFirstName] = useState();
+    const [last_name, setLastName] = useState();
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -39,10 +40,11 @@ export default function Register() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: username,
                     email: email,
+                    first_name: first_name,
+                    last_name: last_name,
                     password: password,
-                    password_confirm: confirmPassword
+                    password_confirm: confirmPassword,
                 })
             });
 
@@ -51,11 +53,14 @@ export default function Register() {
             if (response.ok) {
                 // Registration successful
                 console.log("Registration successful:", data);
+                console.log("The account is created for: ", data.user.first_name);
                 setSuccess("Account created successfully! You can now log in.");
                 
+                localStorage.setItem("email", data.user.email);
+                
                 // Redirect to home page after successful registration
-                navigate("/", {
-                    state: { username: username }
+                navigate("/login", {
+                    state: { email: email }
                 });
                 
                 // Clear form
@@ -64,8 +69,13 @@ export default function Register() {
                 setConfirmPassword("");
                 
             } else {
-                // Registration failed
-                setError(data.message || 'Registration failed. Please try again.');
+                // Registration failed — log the full validation payload
+                console.warn("Registration validation errors:", data);
+                // Turn those field errors into a single string to show the user
+                const msg = Object.entries(data)
+                    .map(([field, errs]) => `${field}: ${errs.join(" ")}`)
+                    .join("\n");
+                setError(msg || "Registration failed. Please try again.");
             }
         } catch (err) {
             console.error('Registration error:', err);
@@ -94,14 +104,25 @@ export default function Register() {
                             {success}
                         </div>
                     )}
-                    <div className="username-field">
-                        <label htmlFor="username">Username</label>
+                    <div className="first-name-field">
+                        <label htmlFor="firstName">First Name</label>
                         <input
-                            id="username"
+                            id="firstName"
                             type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your username"
+                            value={first_name}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="Enter your first name"
+                            required
+                        />
+                    </div>
+                    <div className="last-name-field">
+                        <label htmlFor="lastName">Last Name</label>
+                        <input 
+                            id="lastName"
+                            type="text"
+                            value={last_name}
+                            onChange={(e) => setLastName(e.target.value)}
+                            placeholder="Enter your last name"
                             required
                         />
                     </div>

@@ -40,7 +40,7 @@ export default function Login() {
                 if (data.tokens && data.tokens.access) {
                     localStorage.setItem("authToken", data.tokens.access);
                     localStorage.setItem("refreshToken", data.tokens.refresh);
-                    localStorage.setItem("username", data.user.username);
+                    localStorage.setItem("email", data.user.email);
                 }
 
                 const loggedInUsername = data.user.username;

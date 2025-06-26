@@ -4,9 +4,7 @@ import "../stylesheets/home.css"
 import { useLocation } from "react-router-dom"
 
 export default function Home() {
-    const location = useLocation();
-    const newUser = location.state?.username || location.state?.email
-                    || localStorage.getItem("username") || "User";
+    const newUser = localStorage.getItem("email") || "User";
 
     return (
         <>

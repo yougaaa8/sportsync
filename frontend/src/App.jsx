@@ -10,7 +10,7 @@ import About from "./pages/About.jsx"
 import Profile from "./pages/Profile.jsx"
 import CCAHome from "./pages/CCAHome.jsx"
 import Archery from "./pages/Archery.jsx"
-import LobbyCreation from "./pages/OpenMatchmaking.jsx"
+import LobbyCreation from "./pages/MatchmakingForm.jsx"
 import AvailableMatches from './pages/AvailableMatches.jsx'
 
 function App() {
