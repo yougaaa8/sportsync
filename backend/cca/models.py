@@ -36,7 +36,7 @@ class CCAMember(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"{self.user.email} {self.cca.name} membership status"
 
 
 class TrainingSession(models.Model):
@@ -47,6 +47,7 @@ class TrainingSession(models.Model):
     location = models.CharField(max_length=200)
     max_participants = models.PositiveIntegerField(default=30)
     note = models.TextField(blank=True)
+
     @property
     def participant_count(self):
         return self.attendance_set.filter(status='registered').count()
@@ -63,6 +64,7 @@ class Attendance(models.Model):
     member = models.ForeignKey(CCAMember, on_delete=models.CASCADE)
     training_session = models.ForeignKey(
         TrainingSession, on_delete=models.CASCADE)
+    registered_at = models.DateTimeField(auto_now_add=True)
     STATUS_CHOICES = [
         ('registered', 'Registered'),
         ('waitlisted', 'Waitlisted'),
