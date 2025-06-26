@@ -7,8 +7,29 @@ import Baseball from "../assets/baseball image.webp"
 import Cricket from "../assets/cricket image.webp"
 import "../stylesheets/cca-home.css"
 import { Link } from "react-router-dom"
+import CCAItem from "../components/CCAItem.jsx"
+
+import React, { useState, useEffect } from "react"
 
 export default function CCAHome() {
+    // Get the list of CCAs from the API
+    // Map that list of CCAs to a list of <Links >
+
+    // ccas is a state that contains an array of CCA objects
+    const [ccas, setCcas] = React.useState([])
+
+    useEffect(() => {
+        fetch("/api/cca/list")
+        .then(response => response.json())
+        .then(data => setCcas(data))
+        .catch(err => console.error("Fetch error: ", err))
+    }, [])
+
+    // Each CCA will be turned into a Link component in React
+    const ccaList = ccas.map(cca => {
+        <CCAItem ccainfo={cca}/>
+    })
+    
     return (
         <>
             <Navbar />
@@ -24,40 +45,7 @@ export default function CCAHome() {
                     </div>
                 </div>
                 <div className="cca-home-cca-row">
-                    <Link className="cca-home-individual-cca"
-                          to="/archery"
-                          style={{ textDecoration: "none" }}>
-                        <img className="cca-home-cca-pictures" src={ Archery }></img>
-                        <h1 className="cca-home-cca-titles">Archery</h1>
-                        <p className="cca-home-cca-description">Hone precision, build strength, compete fiercely, and bond with fellow archers in a supportive, vibrant club environment.</p>
-                    </Link>
-                    <div className="cca-home-individual-cca">
-                        <img className="cca-home-cca-pictures" src={ Baseball }></img>
-                        <h1 className="cca-home-cca-titles">Baseball</h1>
-                        <p className="cca-home-cca-description">Train with dedicated coaches, sharpen skills, compete intervarsity, and forge lifelong friendships on the diamond, building community.</p>
-                    </div>
-                    <div className="cca-home-individual-cca">
-                        <img className="cca-home-cca-pictures" src={ Cricket }></img>
-                        <h1 className="cca-home-cca-titles">Cricket</h1>
-                        <p className="cca-home-cca-description">Train with dedicated coaches, sharpen skills, compete intervarsity, and forge lifelong friendships on the diamond, building community.</p>
-                    </div>
-                    <Link className="cca-home-individual-cca"
-                          to="/archery"
-                          style={{ textDecoration: "none" }}>
-                        <img className="cca-home-cca-pictures" src={ Archery }></img>
-                        <h1 className="cca-home-cca-titles">Archery</h1>
-                        <p className="cca-home-cca-description">Hone precision, build strength, compete fiercely, and bond with fellow archers in a supportive, vibrant club environment.</p>
-                    </Link>
-                    <div className="cca-home-individual-cca">
-                        <img className="cca-home-cca-pictures" src={ Baseball }></img>
-                        <h1 className="cca-home-cca-titles">Baseball</h1>
-                        <p className="cca-home-cca-description">Train with dedicated coaches, sharpen skills, compete intervarsity, and forge lifelong friendships on the diamond, building community.</p>
-                    </div>
-                    <div className="cca-home-individual-cca">
-                        <img className="cca-home-cca-pictures" src={ Cricket }></img>
-                        <h1 className="cca-home-cca-titles">Cricket</h1>
-                        <p className="cca-home-cca-description">Train with dedicated coaches, sharpen skills, compete intervarsity, and forge lifelong friendships on the diamond, building community.</p>
-                    </div>
+                    {ccaList}
                 </div>
             </main>
             <Footer />
