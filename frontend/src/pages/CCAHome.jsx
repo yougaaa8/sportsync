@@ -22,7 +22,7 @@ export default function CCAHome() {
         fetch("/api/cca/list")
         .then(response => response.json())
         .then(data => setCcas(data))
-        .catch(err => console.error("Fetch error: ", err))
+        .catch(err => console.error("CCA List fetch error: ", err))
     }, [])
 
     // Each CCA will be turned into a Link component in React

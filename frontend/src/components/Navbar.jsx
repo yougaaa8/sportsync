@@ -97,6 +97,12 @@ export default function Navbar() {
                                 <li className="dropdown-link">
                                     <a href="/available-matches">Matches</a>
                                 </li>
+                                <li>
+                                    <a href="/event-list">Events</a>
+                                </li>
+                                <li>
+                                    <a href="/facility-list">Facilities</a>
+                                </li>
                             </ul>)}
                     </div>
                 </nav>

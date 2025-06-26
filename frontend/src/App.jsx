@@ -12,6 +12,9 @@ import CCAHome from "./pages/CCAHome.jsx"
 import Archery from "./pages/Archery.jsx"
 import MatchmakingForm from "./pages/MatchmakingForm.jsx"
 import AvailableMatches from './pages/AvailableMatches.jsx'
+import EventList from "./pages/EventList.jsx"
+import EventForm from "./pages/EventForm.jsx"
+import FacilityList from './pages/FacilityList.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +32,9 @@ function App() {
           <Route path="/archery" element={<Archery />}/>
           <Route path="/matchmaking-form" element={<MatchmakingForm />} />
           <Route path="/available-matches" element={<AvailableMatches />} />
+          <Route path="/event-list" element={<EventList />} />
+          <Route path="/event-form" element={<EventForm />} />
+          <Route path="/facility-list" element={<FacilityList />} />
         </Routes>
       </BrowserRouter>
     </>
