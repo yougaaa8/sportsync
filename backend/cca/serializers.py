@@ -24,7 +24,7 @@ class CCAMemberSerializer(serializers.ModelSerializer):
         model = CCAMember
         fields = [
             'id', 'user', 'cca', 'position', 'role', 'date_joined',
-            'is_active', 'emergency_contact', 'notes',
+            'is_active', 'notes',
             'first_name', 'last_name'
         ]
 
