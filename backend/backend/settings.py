@@ -115,6 +115,11 @@ CORS_ORIGIN_WHITELIST = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://sportsync-backend-8gbr.onrender.com",
+]
+
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
