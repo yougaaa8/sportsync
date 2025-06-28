@@ -38,7 +38,7 @@ export default function CCAHome() {
 
     // Each CCA will be turned into a Link component in React
     const ccaList = ccas.map(cca => {
-        <CCAItem ccainfo={cca}/>
+        return <CCAItem ccainfo={cca}/>
     })
     
     return (
