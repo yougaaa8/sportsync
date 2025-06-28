@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     # CCA endpoints
     path('list/', views.CCAListView.as_view(), name='cca-list'),
-    path('<int:pk>/', views.CCADetailView.as_view(), name='cca-detail'),
+    path('<int:id>/', views.CCADetailView.as_view(), name='cca-detail'),
     path('<int:id>/members/', views.CCAMembersView.as_view(), name='cca-members'),
     path('<int:id>/training/', views.CCATrainingView.as_view(), name='cca-training'),
 

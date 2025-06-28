@@ -46,4 +46,5 @@ urlpatterns = [
     path('api/about/', about_view, name='about'),
     path('api/cca/', include('cca.urls')),
     path('api/matchmaking/', include('matchmaking.urls')),
+    path('api/tournament/', include('tournament.urls')),
 ]
