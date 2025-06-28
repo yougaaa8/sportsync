@@ -36,7 +36,7 @@ class TeamListView(generics.ListAPIView):
     def get_queryset(self):
         tournament_sport = get_object_or_404(
             TournamentSport, id=self.kwargs['sport_id'])
-        queryset = Team.objects.filter(tournamentsport=tournament_sport)
+        queryset = Team.objects.filter(tournament_sport=tournament_sport)
         return queryset
 
     def get(self, request, *args, **kwargs):
