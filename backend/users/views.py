@@ -87,3 +87,31 @@ def logout(request):
         return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_user_id_by_email(request):
+    """
+    Get user ID by email address
+    Usage: GET /api/user-id/?email=user@example.com
+    """
+    email = request.GET.get('email')
+
+    if not email:
+        return Response({
+            'error': 'Email parameter is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(email=email)
+        return Response({
+            'user_id': user.id,
+            'email': user.email,
+            'full_name': user.get_full_name(),
+            'emergency_contact': user.emergency_contact,
+        }, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({
+            'error': 'User not found'
+        }, status=status.HTTP_404_NOT_FOUND)
