@@ -34,7 +34,6 @@ def about_view(request):
             'CCA Dashboard',
             'Tournament Information',
             'Event Management',
-            'Venue Booking System',
             'Merchandise Shop'
         ]
     })
@@ -48,4 +47,5 @@ urlpatterns = [
     path('api/matchmaking/', include('matchmaking.urls')),
     path('api/tournament/', include('tournament.urls')),
     path('api/event/', include('event.urls')),
+    path('api/merch/', include('merch.urls')),
 ]
