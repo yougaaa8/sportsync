@@ -47,4 +47,5 @@ urlpatterns = [
     path('api/matchmaking/', include('matchmaking.urls')),
     path('api/tournament/', include('tournament.urls')),
     path('api/event/', include('event.urls')),
+    path('api/merch/', include('merch.urls')),
 ]
