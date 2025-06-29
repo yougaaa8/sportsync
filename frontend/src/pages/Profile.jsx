@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import BlankProfilePicture from "../assets/blank-user-profile.jpg"
 import "../stylesheets/profile.css"
+import { Paper } from "@mui/material"
 
 export default function Profile() {
     const [email, setEmail] = useState("");
@@ -93,65 +94,69 @@ export default function Profile() {
             <div className="back-button"></div>
             <main className="profile-page-main">
                 <div className="profile-left">
-                    <img className="profile-picture" 
-                         src={profilePicPreview || BlankProfilePicture} 
-                         alt="Profile"
-                    />
-                    {/* Hidden file input that can be controlled by the button below it,
-                        pointed to by fileInputRef */}
-                    <input 
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                    />
-                    <button
-                        className="edit-profile-picture-button"
-                        onClick={() => fileInputRef.current.click()}
-                    >
-                        Edit profile picture
-                    </button>
-                    <h1 className="profile-page-username">{firstName || "Guest"}</h1>
-                    <h2 className="profile-page-user-status">{ status }</h2>
-                    <div className="profile-page-links">
-                        <a className="profile-page-profile-link">Profile</a>
-                        <a className="profile-page-individual-link">Events</a>
-                        <a className="profile-page-individual-link">Bookings</a>
-                        <a className="profile-page-individual-link">Orders</a>
-                    </div>
+                    <Paper sx={{p: 6, mt: 4}}>
+                        <img className="profile-picture" 
+                            src={profilePicPreview || BlankProfilePicture} 
+                            alt="Profile"
+                        />
+                        {/* Hidden file input that can be controlled by the button below it,
+                            pointed to by fileInputRef */}
+                        <input 
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                        />
+                        <button
+                            className="edit-profile-picture-button"
+                            onClick={() => fileInputRef.current.click()}
+                        >
+                            Edit profile picture
+                        </button>
+                        <h1 className="profile-page-username">{firstName || "Guest"}</h1>
+                        <h2 className="profile-page-user-status">{ status }</h2>
+                        <div className="profile-page-links">
+                            <a className="profile-page-profile-link">Profile</a>
+                            <a className="profile-page-individual-link">Events</a>
+                            <a className="profile-page-individual-link">Bookings</a>
+                            <a className="profile-page-individual-link">Orders</a>
+                        </div>
+                    </Paper>
                 </div>
                 <div className="profile-right">
-                    <form className="profile-form" 
-                          onSubmit={handleSubmit}
-                          encType="multipart/form-data"
-                    >
-                        <label htmlFor="first-name">First Name</label>
-                        <input 
-                            id="first-name"
-                            value={firstName}
-                            type="text"
-                            onChange={e => setFirstName(e.target.value)}
-                        />
-                        <label htmlFor="status">Last Name</label>
-                        <input 
-                            id="last-name"
-                            value={lastName}
-                            type="text"
-                            onChange={e => setLastName(e.target.value)}
-                        />
-                        <label htmlFor="status">Status</label>
-                        <select
-                            id="status"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
+                    <Paper sx={{pt: 5, px: 5, pb:10}}>
+                        <form className="profile-form" 
+                            onSubmit={handleSubmit}
+                            encType="multipart/form-data"
                         >
-                            <option value="student">Student</option>
-                            <option value="staff">Staff</option>
-                            <option value="others">Others</option>
-                        </select>
-                        <button type="submit">Save changes</button>
-                    </form>
+                            <label htmlFor="first-name">First Name</label>
+                            <input 
+                                id="first-name"
+                                value={firstName}
+                                type="text"
+                                onChange={e => setFirstName(e.target.value)}
+                            />
+                            <label htmlFor="status">Last Name</label>
+                            <input 
+                                id="last-name"
+                                value={lastName}
+                                type="text"
+                                onChange={e => setLastName(e.target.value)}
+                            />
+                            <label htmlFor="status">Status</label>
+                            <select
+                                id="status"
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                            >
+                                <option value="student">Student</option>
+                                <option value="staff">Staff</option>
+                                <option value="others">Others</option>
+                            </select>
+                            <button type="submit">Save changes</button>
+                        </form>
+                    </Paper>
                 </div>
             </main>
             <Footer />

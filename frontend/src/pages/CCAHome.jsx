@@ -7,7 +7,7 @@ import Baseball from "../assets/baseball image.webp"
 import Cricket from "../assets/cricket image.webp"
 import "../stylesheets/cca-home.css"
 import { Link } from "react-router-dom"
-import CCAItem from "../components/CCAItem.jsx"
+import CCAHomeItem from "../components/CCAHomeItem.jsx"
 
 import React, { useState, useEffect } from "react"
 
@@ -38,13 +38,14 @@ export default function CCAHome() {
 
     // Each CCA will be turned into a Link component in React
     const ccaList = ccas.map(cca => {
-        return <CCAItem ccainfo={cca}/>
+        return <CCAHomeItem ccainfo={cca}/>
     })
     
     return (
         <>
             <Navbar />
             <main className="cca-home">
+                <h1 className="page-title">NUS CCAs</h1>
                 <div className="cca-home-search-row">
                     <p className="cca-home-displaying-text">Displaying 8 out of 8 results</p>
                     <div className="cca-home-search-bar">

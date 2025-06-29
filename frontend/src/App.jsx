@@ -9,36 +9,49 @@ import Register from "./pages/Register.jsx"
 import About from "./pages/About.jsx"
 import Profile from "./pages/Profile.jsx"
 import CCAHome from "./pages/CCAHome.jsx"
-import Archery from "./components/CCALayout.jsx"
+import Archery from "./components/CCADetailLayout.jsx"
 import MatchmakingForm from "./pages/MatchmakingForm.jsx"
 import AvailableMatches from './pages/AvailableMatches.jsx'
 import EventList from "./pages/EventList.jsx"
 import EventForm from "./pages/EventForm.jsx"
 import FacilityList from './pages/FacilityList.jsx'
 import CCADetailPage from './pages/CCADetailPage.jsx'
+import CCADashboardPage from './pages/CCADashboardPage.jsx'
+import CCAMemberManagementLayout from './pages/CCAMemberManagementLayout.jsx'
+import CCATrainingSessionManagement from "./pages/CCATrainingSessionManagement.jsx"
+import { Container } from "@mui/material"
+import { ThemeProvider } from '@mui/material/styles';
+import theme from "../theme.jsx";
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> 
-          <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/cca-home" element={<CCAHome />}/>
-          <Route path="/archery" element={<Archery />}/>
-          <Route path="/matchmaking-form" element={<MatchmakingForm />} />
-          <Route path="/available-matches" element={<AvailableMatches />} />
-          <Route path="/event-list" element={<EventList />} />
-          <Route path="/event-form" element={<EventForm />} />
-          <Route path="/facility-list" element={<FacilityList />} />
-          <Route path="/cca-detail/:ccaId" element={<CCADetailPage />} />
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Container />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} /> 
+              <Route path="/about" element={<About />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/cca-home" element={<CCAHome />}/>
+              <Route path="/archery" element={<Archery />}/>
+              <Route path="/matchmaking-form" element={<MatchmakingForm />} />
+              <Route path="/available-matches" element={<AvailableMatches />} />
+              <Route path="/event-list" element={<EventList />} />
+              <Route path="/event-form" element={<EventForm />} />
+              <Route path="/facility-list" element={<FacilityList />} />
+              <Route path="/cca-detail/:ccaId" element={<CCADetailPage />} />
+              <Route path="/cca-dashboard/:ccaId" element={<CCADashboardPage />} />
+              <Route path="/cca-member-management/:ccaId" element={<CCAMemberManagementLayout />} />
+              <Route path="/cca-training-management/:ccaId" element={<CCATrainingSessionManagement />} />
+            </Routes>
+          <Container />
+        </BrowserRouter>
+      </ThemeProvider>
     </>
   )
 }

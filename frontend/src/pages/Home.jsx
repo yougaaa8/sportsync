@@ -10,7 +10,7 @@ export default function Home() {
         <>
             <main>
                 <Navbar />
-                <h1>Welcome to SportSync, {newUser}!</h1>
+                <h1 className="page-title">Welcome to SportSync, {newUser}!</h1>
                 <Footer />
             </main>
         </>

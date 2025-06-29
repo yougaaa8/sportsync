@@ -7,7 +7,7 @@ export default function OpenMatchmaking() {
         <>
             <Navbar />
             <main className="matchmaking-lobby-main">
-                <h1 className="matchmaking-lobby-header">Create a new matchmaking lobby</h1>
+                <h1 className="matchmaking-lobby-header page-title">Create a new matchmaking lobby</h1>
                 <form className="matchmaking-lobby-form">
                     <label>Lobby Name</label>
                     <input placeholder="Enter lobby name"></input>

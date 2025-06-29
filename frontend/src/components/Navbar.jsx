@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SoccerBall from "../assets/soccer-ball.png"
 import SportSyncLogo from "../assets/sportsync-logo.png"
 import "../stylesheets/navbar.css"
+import { Box } from "@mui/material"
 
 export default function Navbar() {
 
@@ -55,58 +56,62 @@ export default function Navbar() {
 
     return (
         <>
-            {/* <h1 className="italic font-bold">Hello</h1> */}
-            <header className="navbar-container">
-                <nav className="navbar">
-                    <div className="navbar-left">
-                        <img className="sportsync-logo" 
-                            src={ SportSyncLogo } />
-                        <span className="logo-text">
-                            SportSync</span>
-                    </div>
-                    <div className="dropdown" ref={dropdownRef}>
-                        <button className="dropdown-trigger"
-                                onClick={() => setIsOpen((prev) => !prev)}>☰</button>
-                        {isOpen && (
-                            <ul className="dropdown-menu">
-                                <li>
-                                    <a className="dropdown-link" href="/">Home</a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-link" href="/cca-home">CCAs</a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-link" href="/profile">Profile</a>
-                                </li>
-                                <li>
-                                    {<button
-                                    className="dropdown-link"
-                                    onClick={handleLogout}
-                                    style={{
-                                        background: "none",
-                                        border: "none",
-                                        padding: 0,
-                                        cursor: "pointer",
-                                        color: "inherit",
-                                        font: "inherit",
-                                    }}
-                                    >
-                                      Logout
-                                    </button>}
-                                </li>
-                                <li className="dropdown-link">
-                                    <a href="/available-matches">Matches</a>
-                                </li>
-                                <li>
-                                    <a href="/event-list">Events</a>
-                                </li>
-                                <li>
-                                    <a href="/facility-list">Facilities</a>
-                                </li>
-                            </ul>)}
-                    </div>
-                </nav>
-            </header>
+            <Box sx = {{ 
+                boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)",
+                mb: "1.5px"
+             }}>
+                <header className="navbar-container">
+                    <nav className="navbar">
+                        <div className="navbar-left">
+                            <img className="sportsync-logo" 
+                                src={ SportSyncLogo } />
+                            <span className="logo-text">
+                                SportSync</span>
+                        </div>
+                        <div className="dropdown" ref={dropdownRef}>
+                            <button className="dropdown-trigger"
+                                    onClick={() => setIsOpen((prev) => !prev)}>☰</button>
+                            {isOpen && (
+                                <ul className="dropdown-menu">
+                                    <li>
+                                        <a className="dropdown-link" href="/">Home</a>
+                                    </li>
+                                    <li>
+                                        <a className="dropdown-link" href="/cca-home">CCAs</a>
+                                    </li>
+                                    <li>
+                                        <a className="dropdown-link" href="/profile">Profile</a>
+                                    </li>
+                                    <li>
+                                        {<button
+                                        className="dropdown-link"
+                                        onClick={handleLogout}
+                                        style={{
+                                            background: "none",
+                                            border: "none",
+                                            padding: 0,
+                                            cursor: "pointer",
+                                            color: "inherit",
+                                            font: "inherit",
+                                        }}
+                                        >
+                                        Logout
+                                        </button>}
+                                    </li>
+                                    <li className="dropdown-link">
+                                        <a href="/available-matches">Matches</a>
+                                    </li>
+                                    <li>
+                                        <a href="/event-list">Events</a>
+                                    </li>
+                                    <li>
+                                        <a href="/facility-list">Facilities</a>
+                                    </li>
+                                </ul>)}
+                        </div>
+                    </nav>
+                </header>
+            </Box>
         </>
     )
 }
