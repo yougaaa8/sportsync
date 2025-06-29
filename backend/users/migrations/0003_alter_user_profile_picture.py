@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='profile_picture',
-            field=models.ImageField(blank=True, help_text='Upload a profile picture (JPG, JPEG, PNG only)', null=True, upload_to=users.models.user_profile_image_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]),
+            field=models.ImageField(blank=True, help_text='Upload a profile picture (JPG, JPEG, PNG only)', null=True, validators=[
+                                    django.core.validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]),
         ),
     ]
