@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
+from cloudinary.utils import cloudinary_url
 from .models import User
 
 
@@ -12,7 +13,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'email', 'password', 'password_confirm'
+            'email', 'password', 'password_confirm', 'first_name', 'last_name'
         ]
 
     def validate_email(self, value):
@@ -31,7 +32,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create new user"""
         validated_data.pop('password_confirm')
-        # Pass email as username since our User model uses email as USERNAME_FIELD
         user = User.objects.create_user(**validated_data)
         return user
 
@@ -58,9 +58,54 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    profile_picture_url = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'email', 'date_joined', 'profile_picture', 'status'
+            'id', 'first_name', 'last_name', 'full_name', 'email',
+            'date_joined', 'profile_picture', 'profile_picture_url',
+            'status', 'emergency_contact'
         ]
         read_only_fields = ['id', 'email', 'date_joined']
+
+    def get_profile_picture_url(self, obj):
+        """Get optimized profile picture URL from Cloudinary"""
+        if obj.profile_picture:
+            try:
+                url, options = cloudinary_url(
+                    obj.profile_picture.public_id,
+                    width=300,
+                    height=300,
+                    crop='fill',
+                    gravity='face',
+                    quality='auto',
+                    fetch_format='auto'
+                )
+                return url
+            except Exception:
+                return None
+        return None
+
+    def get_full_name(self, obj):
+        return obj.get_full_name()
+
+
+class ProfilePictureUploadSerializer(serializers.Serializer):
+    profile_picture = serializers.ImageField()
+
+    def validate_profile_picture(self, value):
+        """Validate image file"""
+        # Check file size (max 5MB)
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("Image file too large ( > 5MB )")
+
+        # Check file type
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+        if value.content_type not in allowed_types:
+            raise serializers.ValidationError(
+                "Unsupported file type. Please upload JPG, PNG, or WebP images."
+            )
+
+        return value
