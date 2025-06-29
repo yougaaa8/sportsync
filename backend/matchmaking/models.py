@@ -16,7 +16,7 @@ class Lobby(models.Model):
         settings.AUTH_USER_MODEL, through='LobbyMember', related_name='lobbies', blank=True)
     max_capacity = models.PositiveIntegerField(default=10)
     open_lobby = models.BooleanField(default=True)
-    password = models.CharField(max_length=100, blank=True)
+    password = models.CharField(max_length=30, blank=True)
 
     @property
     def participant_count(self):

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'cca',
     'matchmaking',
     'tournament',
+    'event'
 ]
 
 
