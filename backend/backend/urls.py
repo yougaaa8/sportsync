@@ -34,7 +34,6 @@ def about_view(request):
             'CCA Dashboard',
             'Tournament Information',
             'Event Management',
-            'Venue Booking System',
             'Merchandise Shop'
         ]
     })
