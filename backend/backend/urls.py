@@ -41,9 +41,9 @@ def about_view(request):
 
 
 urlpatterns = [
+    path('', about_view, name='about'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
-    path('api/about/', about_view, name='about'),
     path('api/cca/', include('cca.urls')),
     path('api/matchmaking/', include('matchmaking.urls')),
     path('api/tournament/', include('tournament.urls')),
