@@ -35,7 +35,7 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <Container />
+          <Container>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -54,12 +54,12 @@ function App() {
               <Route path="/cca-member-management/:ccaId" element={<CCAMemberManagementLayout />} />
               <Route path="/cca-training-management/:ccaId" element={<CCATrainingSessionManagement />} />
               <Route path="/match-detail/:lobbyId" element={<MatchDetailLayout />} />  
-              <Route path="event-detail/:eventId" element={<EventDetailPage />} />
+              <Route path="/event-detail/:eventId" element={<EventDetailPage />} />
               <Route path="/merchandise-shop" element={<MerchandiseShop />} />
               <Route path="/tournament" element={<TournamentPage />} /> 
               <Route path="/tournament-sports/:tournamentId" element={<TournamentSportsPage />} />
             </Routes>
-          <Container />
+          </Container>
         </BrowserRouter>
       </ThemeProvider>
     </>
