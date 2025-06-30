@@ -23,7 +23,7 @@ export default function TrainingSessionManagement() {
     useEffect(() => {
         const fetchCcaData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/cca/${ccaId}/`, {
+                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -55,7 +55,7 @@ export default function TrainingSessionManagement() {
     useEffect(() => {
         const fetchCcaTrainingdata = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/cca/${ccaId}/training/`, {
+                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/training/`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export default function TrainingSessionManagement() {
     }
 
     function addNewTrainingSession() {
-        
+
     }
 
     return (

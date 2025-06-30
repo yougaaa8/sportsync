@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import SoccerBall from "../assets/soccer-ball.png"
 import SportSyncLogo from "../assets/sportsync-logo.png"
 import "../stylesheets/navbar.css"
@@ -31,7 +31,7 @@ export default function Navbar() {
         const refresh = localStorage.getItem("refreshToken");
         try {
             const token = localStorage.getItem("authToken");
-            const response = await fetch("http://localhost:8000/api/auth/logout/", {
+            const response = await fetch("https://sportsync-backend-8gbr.onrender.com//api/auth/logout/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -77,35 +77,46 @@ export default function Navbar() {
                                         <a className="dropdown-link" href="/">Home</a>
                                     </li>
                                     <li>
-                                        <a className="dropdown-link" href="/cca-home">CCAs</a>
+                                        <Link className="dropdown-link" to="/cca-home">CCAs</Link>
                                     </li>
                                     <li>
                                         <a className="dropdown-link" href="/profile">Profile</a>
                                     </li>
                                     <li>
-                                        {<button
-                                        className="dropdown-link"
-                                        onClick={handleLogout}
-                                        style={{
-                                            background: "none",
-                                            border: "none",
-                                            padding: 0,
-                                            cursor: "pointer",
-                                            color: "inherit",
-                                            font: "inherit",
-                                        }}
+                                        <Link className="dropdown-link" to="/available-matches">Matches</Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-link" to="/event-list">Events</Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-link" to="/tournament">Tournaments</Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-link" to="/merchandise-shop">Merchandise</Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-link" to="/facility-list">Facilities</Link>
+                                    </li>
+                                    <li>
+                                        <button
+                                            className="dropdown-link"
+                                            onClick={handleLogout}
+                                            style={{
+                                                background: "none",
+                                                border: "none",
+                                                padding: 0,
+                                                cursor: "pointer",
+                                                color: "orange",
+                                                font: "inherit",
+                                                width: "100%",
+                                                textAlign: "left",
+                                                transition: "background 0.2s, color 0.2s",
+                                            }}
+                                            onMouseOver={e => e.currentTarget.style.background = '#ffe5b4'}
+                                            onMouseOut={e => e.currentTarget.style.background = 'none'}
                                         >
-                                        Logout
-                                        </button>}
-                                    </li>
-                                    <li className="dropdown-link">
-                                        <a href="/available-matches">Matches</a>
-                                    </li>
-                                    <li>
-                                        <a href="/event-list">Events</a>
-                                    </li>
-                                    <li>
-                                        <a href="/facility-list">Facilities</a>
+                                            Logout
+                                        </button>
                                     </li>
                                 </ul>)}
                         </div>

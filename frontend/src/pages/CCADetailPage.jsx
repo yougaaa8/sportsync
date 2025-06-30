@@ -16,7 +16,7 @@ export default function CCADetailPage() {
         console.log("helo")
         const fetchCcaData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/cca/${ccaId}`, {
+                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`, 

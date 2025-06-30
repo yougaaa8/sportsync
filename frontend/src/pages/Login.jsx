@@ -19,7 +19,7 @@ export default function Login() {
         setError("");
 
         try {
-            const response = await fetch('http://localhost:8000/api/auth/login/', {
+            const response = await fetch('https://sportsync-backend-8gbr.onrender.com/api/auth/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,6 +41,7 @@ export default function Login() {
                     localStorage.setItem("authToken", data.tokens.access);
                     localStorage.setItem("refreshToken", data.tokens.refresh);
                     localStorage.setItem("email", data.user.email);
+                    localStorage.setItem("userId", data.user.id)
                 }
 
                 const loggedInUsername = data.user.username;

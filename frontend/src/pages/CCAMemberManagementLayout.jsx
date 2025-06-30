@@ -22,7 +22,7 @@ export default function CCAMemberManagementLayout() {
     useEffect(() => {
         const fetchCcaData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/cca/${ccaId}/`, {
+                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -54,7 +54,7 @@ export default function CCAMemberManagementLayout() {
     useEffect(() => {
             const fetchCcaMembersData = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8000/api/cca/${ccaId}/members/`, {
+                    const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function CCAMemberManagementLayout() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/api/cca/${ccaId}/members/`, {
+            const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

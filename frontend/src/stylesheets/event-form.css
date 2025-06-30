@@ -1,43 +1,27 @@
-.matchmaking-lobby-main {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.matchmaking-lobby-header {
-  margin-top: 32px;
-  margin-bottom: 24px;
-  color: #f59e0b;
-  font-weight: 700;
-  font-size: 2.2rem;
-  text-align: center;
-}
-
-.matchmaking-lobby-form {
+.event-form-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 32px 28px;
   background: #fffdfa;
   border-radius: 16px;
   box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.08);
   border: 1px solid #ffe5b4;
-  max-width: 420px;
-  width: 100%;
-  margin: 0 auto 40px auto;
-  padding: 36px 32px 28px 32px;
+}
+
+.event-form-container form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.matchmaking-lobby-form label {
+.event-form-container label {
   font-weight: 500;
   color: #333;
   margin-bottom: 4px;
-  margin-top: 2px;
 }
 
-.matchmaking-lobby-form input,
-.matchmaking-lobby-form select {
+.event-form-container input[type="text"],
+.event-form-container input[type="date"] {
   padding: 10px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
@@ -45,16 +29,15 @@
   background: #fff;
   color: #222;
   transition: border 0.2s;
-  margin-bottom: 6px;
 }
 
-.matchmaking-lobby-form input:focus,
-.matchmaking-lobby-form select:focus {
+.event-form-container input[type="text"]:focus,
+.event-form-container input[type="date"]:focus {
   border: 1.5px solid #f59e0b;
   outline: none;
 }
 
-.matchmaking-lobby-form button {
+.event-form-container button {
   margin-top: 18px;
   padding: 12px 0;
   background: #f59e0b;
@@ -73,7 +56,7 @@
   display: block;
 }
 
-.matchmaking-lobby-form button:hover {
+.event-form-container button:hover {
   background: #d97706;
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);
   transform: translateY(-2px) scale(1.03);

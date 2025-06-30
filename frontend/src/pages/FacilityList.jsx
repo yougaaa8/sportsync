@@ -6,7 +6,7 @@ export default function FacilityList() {
         <>
             <Navbar />
             <main>
-                <h1>Facilities For Booking</h1>
+                <h1 className="page-title">Facilities For Booking</h1>
             </main>
             <Footer />
         </>

@@ -8,7 +8,7 @@ export default function CCALayout(props) {
         <>
             <main>
                 <img className="cca-layout-cca-logo" src={props.entry.logo} />
-                <h1 className="cca-layout-cca-name">{props.entry.name}</h1>
+                <h1 className="cca-layout-cca-name page-title">{props.entry.name}</h1>
                 <p className="cca-layout-cca-info">{props.entry.description}</p>
                 <br />
                 <hr />

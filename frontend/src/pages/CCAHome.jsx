@@ -20,7 +20,7 @@ export default function CCAHome() {
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
-        fetch("http://localhost:8000/api/cca/list/", {
+        fetch("https://sportsync-backend-8gbr.onrender.com/api/cca/list/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export default function CCAHome() {
         }})
         .then(response => {
             if (!response.ok) throw new Error(`Response: ${response.status} ${response.statusText}`);
-            console.log(`This is the response: ${response}`)
+            console.log("This is the response: ", response)
             return response.json()})
         .then(data => setCcas(data))
         .catch(err => console.error("CCA List fetch error: ", err))
