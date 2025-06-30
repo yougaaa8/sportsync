@@ -34,6 +34,8 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
+    bio = models.TextField(blank=True, help_text="Short bio about yourself")
+    telegram_handle = models.CharField(max_length=100, blank=True)
 
     # Using Cloudinary for profile pictures
     profile_picture = CloudinaryField(
