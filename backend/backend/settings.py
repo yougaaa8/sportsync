@@ -107,7 +107,6 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:5176',
     'http://localhost:5174',
     "https://sportsync-frontend-deployment-11ik-5zaefn47k.vercel.app/"
-
 ]
 
 CORS_ALLOW_CREDENTIALS = True
