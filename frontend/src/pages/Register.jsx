@@ -140,7 +140,7 @@ export default function Register() {
                     <div className="password-field">
                         <label htmlFor="password">Password</label>
                         <input id="password"
-                            type="text"
+                            type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter your password"
@@ -150,7 +150,7 @@ export default function Register() {
                     <div className="password-field">
                         <label htmlFor="confirmPassword">Confirm Password</label>
                         <input id="confirmPassword"
-                            type="text"
+                            type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="Confirm your password"

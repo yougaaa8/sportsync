@@ -86,7 +86,7 @@ export default function Login() {
                     <div className="password-field">
                         <label htmlFor="password">Password</label>
                         <input id="password"
-                            type="text"
+                            type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter your password"
