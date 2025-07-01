@@ -68,7 +68,7 @@ export default function Login() {
         <>
             <div className="login-page">
                 <Navbar />
-                <h1 className="page-title">Please login to continue</h1>
+                <h1 className="page-title">Sign into SportSync</h1>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className="username-field">
                         <label htmlFor="email">Email</label>
