@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 
 export default function TournamentItem(props) {
     console.log("These are the props for the tournament item: ", props);
+    console.log("This is the tournament start date: ", props.entry.start_date)
+
     return (
-        <Link to={`/tournament-sports/${props.id}`}>
+        <Link to={`/tournament-sports/${props.entry.id}`}>
             <Paper
                 elevation={3}
                 sx={{
@@ -22,11 +24,11 @@ export default function TournamentItem(props) {
                     bgcolor: "#fffdfa",
                 }}
             >
-                {props.logo && (
+                {props.entry.logo && (
                     <Box sx={{ mb: 2 }}>
                         <img
-                            src={props.logo}
-                            alt={`${props.name} logo`}
+                            src={props.entry.logo}
+                            alt={`${props.entry.name} logo`}
                             style={{
                                 width: 70,
                                 height: 70,
@@ -49,11 +51,11 @@ export default function TournamentItem(props) {
                         letterSpacing: 0.2
                     }}
                 >
-                    {props.name}
+                    {props.entry.name}
                 </Typography>
                 <Chip
-                    label={props.status}
-                    color={props.status === "upcoming" ? "warning" : "default"}
+                    label={props.entry.status}
+                    color={props.entry.status === "upcoming" ? "warning" : "default"}
                     sx={{
                         mb: 1,
                         fontWeight: 500,
@@ -67,14 +69,14 @@ export default function TournamentItem(props) {
                 <Divider sx={{ width: "100%", my: 1 }} />
                 <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
                     <Typography sx={{ fontSize: 15, color: "#444" }}>
-                        <b>Start:</b> {props.startDate}
+                        <b>Start:</b> {props.entry.start_date}
                     </Typography>
                     <Typography sx={{ fontSize: 15, color: "#444" }}>
-                        <b>End:</b> {props.endDate}
+                        <b>End:</b> {props.entry.end_date}
                     </Typography>
                 </Box>
                 <Typography sx={{ color: "#666", textAlign: "center", lineHeight: 1.6 }}>
-                    {props.description}
+                    {props.entry.description}
                 </Typography>
             </Paper>
         </Link>

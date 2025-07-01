@@ -25,29 +25,29 @@ export default function MatchItem(props) {
                 }
             }}
         >
-            <Link to={`/match-detail/${props.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+            <Link to={`/match-detail/${props.entry.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <Box sx={{ p: 2 }}>
                     <Typography variant="h1" sx={{ color: "#F59E0B", fontSize: 22, fontWeight: 700, textAlign: "center", mb: 1 }}>
-                        {props.name}
+                        {props.entry.name}
                     </Typography>
                     <Divider sx={{ mb: 1 }} />
                     <Typography variant="h2" sx={{ color: "#888", fontSize: 16, fontWeight: 500, mb: 0.5 }}>
-                        Sport: {props.sport}
+                        Sport: {props.entry.sport}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Date: {props.date}
+                        Date: {props.entry.date}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Location: {props.location}
+                        Location: {props.entry.location}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Start: {props.startTime}
+                        Start: {props.entry.startTime}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        End: {props.endTime}
+                        End: {props.entry.endTime}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Capacity: 5/{props.maxCapacity}
+                        Capacity: 5/{props.entry.maxCapacity}
                     </Typography>
                     <Paper
                         sx={{
@@ -62,15 +62,15 @@ export default function MatchItem(props) {
                         }}
                         elevation={0}
                     >
-                        <Typography sx={{ fontSize: 15 }}>{props.description}</Typography>
+                        <Typography sx={{ fontSize: 15 }}>{props.entry.description}</Typography>
                     </Paper>
                 </Box>
             </Link>
             <Box sx={{ px: 2, pb: 2 }}>
-                <JoinLobbyButton id={props.id} />
+                <JoinLobbyButton id={props.entry.id} />
             </Box>
             <Box sx={{ px: 2, pb: 2 }}>
-                <LeaveLobbyButton id={props.id} />
+                <LeaveLobbyButton id={props.entry.id} />
             </Box>
         </Paper>
     );

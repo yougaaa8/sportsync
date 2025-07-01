@@ -19,14 +19,7 @@ export default function TournamentPage() {
     const tournamentList = tournamentData ? tournamentData.map(tournament => {
         return (
             <TournamentItem 
-                key={tournament.id}
-                id={tournament.id}
-                name={tournament.name}
-                logo={tournament.logo}
-                status={tournament.status}
-                startDate={tournament.start_date}
-                endDate={tournament.end_date}
-                description={tournament.description}
+                entry={tournament}
             >
             </TournamentItem>
         );

@@ -42,6 +42,7 @@ export default function Login() {
                     localStorage.setItem("refreshToken", data.tokens.refresh);
                     localStorage.setItem("email", data.user.email);
                     localStorage.setItem("userId", data.user.id)
+                    localStorage.setItem("fullName", data.user.full_name);
                 }
 
                 const loggedInUsername = data.user.username;
