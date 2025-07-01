@@ -34,15 +34,18 @@ def about_view(request):
             'CCA Dashboard',
             'Tournament Information',
             'Event Management',
-            'Venue Booking System',
             'Merchandise Shop'
         ]
     })
 
 
 urlpatterns = [
+    path('', about_view, name='about'),
     path('admin/', admin.site.urls),
-    path('api/auth/', include('users.urls')),
-    path('api/about/', about_view, name='about'),
+    path('api/', include('users.urls')),
     path('api/cca/', include('cca.urls')),
+    path('api/matchmaking/', include('matchmaking.urls')),
+    path('api/tournament/', include('tournament.urls')),
+    path('api/event/', include('event.urls')),
+    path('api/merch/', include('merch.urls')),
 ]

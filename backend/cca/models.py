@@ -2,16 +2,19 @@ from django.db import models
 from django.conf import settings
 import os
 
-from django.utils.autoreload import start_django
-
 
 class CCA(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     logo = models.ImageField(upload_to='cca_logos', blank=True,
                              null=True, help_text="Upload a logo for the CCA")
-    contact_email = models.EmailField()
-    contact_telegram = models.CharField(max_length=100, blank=True)
+    contact_email = models.EmailField(blank=True)
+    website = models.URLField(
+        blank=True, help_text="Official website of the CCA")
+    instagram = models.URLField(
+        blank=True, help_text="Instagram profile of the CCA")
+    facebook = models.URLField(
+        blank=True, help_text="Facebook page of the CCA")
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through='CCAMember', related_name='ccas', blank=True)
 
@@ -32,7 +35,6 @@ class CCAMember(models.Model):
     role = models.CharField(max_length=100, blank=True)
     date_joined = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    emergency_contact = models.CharField(max_length=200, blank=True)
     notes = models.TextField(blank=True)
 
     def __str__(self):
