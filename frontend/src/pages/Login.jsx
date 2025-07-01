@@ -68,9 +68,7 @@ export default function Login() {
         <>
             <div className="login-page">
                 <Navbar />
-                <h1 className="login-message">
-                    Please login to continue
-                </h1>
+                <h1 className="page-title">Please login to continue</h1>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className="username-field">
                         <label htmlFor="email">Email</label>
@@ -93,7 +91,9 @@ export default function Login() {
                             required
                         />
                     </div>
-                    <button className="login-button" type="submit">Login</button>
+                    <button className="login-button" type="submit" disabled={isLoading}>
+                        {isLoading ? "Logging in..." : "Login"}
+                    </button>
                 </form>
                 <div>
                     <p>Don't have an account?</p>

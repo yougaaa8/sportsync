@@ -1,6 +1,3 @@
-.login-page {
-    background-image: url(../assets/sports-background.jpg);
-}
 
 form {
     display: flex;
@@ -12,11 +9,13 @@ form {
     font-size: 40px;
 }
 
-.username-field {
+.username-field,
+.password-field {
     display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 5px;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 1rem;
+    width: 100%;
 }
 
 .password-field {
@@ -43,8 +42,10 @@ and labels as direct children of the grid container */
 }
 
 .login-form > label {
-    grid-column: 1;
-    justify-self: end;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
 }
 
 .login-form > input {
@@ -56,4 +57,52 @@ and labels as direct children of the grid container */
   margin-top: 20px;
   grid-column: 2;
   justify-self: start;
+}
+
+.login-form {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px 0 rgba(245, 158, 11, 0.08);
+    padding: 2.5rem 25rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 340px;
+    max-width: 350px;
+    margin: 0 auto 2rem auto;
+    width: 100%;
+}
+
+.login-form input:focus {
+    outline: none;
+    border: 1.5px solid #f59e0b;
+    background: #fffdfa;
+}
+
+.login-button {
+    background-color: #f59e0b;
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 0;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.18s;
+    box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.07);
+    width: 90%;
+}
+
+.login-button:hover,
+.login-button:focus {
+    background-color: #d97706;
+}
+
+.login-form > div:last-child {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #334155;
+    font-size: 1rem;
 }
