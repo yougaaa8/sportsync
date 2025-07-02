@@ -177,7 +177,7 @@ def logout(request):
 def get_user_by_email(request):
     """
     Get user information by email address
-    Usage: GET /api/user-by-email/?email=user@example.com
+    Usage: GET /api/get-user-profile/?email=user@example.com
     """
     email = request.GET.get('email')
 
@@ -188,6 +188,10 @@ def get_user_by_email(request):
 
     try:
         user = User.objects.get(email=email)
+
+        # Get list of CCA IDs that the user is linked to
+        cca_ids = list(user.ccamember_set.values_list('cca_id', flat=True))
+
         return Response({
             'user_id': user.id,
             'email': user.email,
@@ -196,7 +200,8 @@ def get_user_by_email(request):
             'last_name': user.last_name,
             'status': user.status,
             'emergency_contact': user.emergency_contact,
-            'profile_picture_url': UserProfileSerializer(user).data['profile_picture_url']
+            'profile_picture_url': UserProfileSerializer(user).data['profile_picture_url'],
+            'cca_ids': cca_ids
         }, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({
