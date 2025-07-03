@@ -4,6 +4,8 @@ import CCAMembersTable from "../components/CCAMembersTable.jsx"
 import { useState, useEffect } from "react" 
 import { useParams } from "react-router-dom"
 import "../stylesheets/cca-training-session-management.css"
+import RemoveCCAMemberButton from "../components/RemoveCCAMemberButton.jsx"
+import { Typography, TableRow, TableCell } from "@mui/material"
 
 export default function CCAMemberManagementLayout() {
     const token = localStorage.getItem("authToken")
@@ -13,6 +15,8 @@ export default function CCAMemberManagementLayout() {
     const [ccaMembersData, setCcaMembersData] = useState(null)
     const [ccaMembersDataError, setCcaMembersDataError] = useState(null)
     const [showForm, setShowForm] = useState(false)
+    const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(false)
+    let userId;
 
     // Get the CCA ID from the URL
     const { ccaId } = useParams()
@@ -85,34 +89,125 @@ export default function CCAMemberManagementLayout() {
     // into an array of table rows 
     let membersList
     if (ccaMembersData) {
-        membersList = ccaMembersData?.map(member => (
-            <tr key={member.id}>
-                <td>{member.id}</td>
-                <td>{member.first_name}</td>
-                <td>{member.last_name}</td>
-                <td>{member.position}</td>
-                <td>{member.role}</td>
-            </tr>
-        ))
-    }
+    membersList = ccaMembersData?.map((member, idx) => (
+        <TableRow
+            key={member.id}
+            sx={{
+                backgroundColor: idx % 2 === 0 ? "#fff" : "#fcf7ee",
+                transition: "background 0.2s",
+                "&:hover": {
+                    backgroundColor: "#fff7e6"
+                }
+            }}
+        >
+            <TableCell
+                align="center"
+                sx={{ fontWeight: 500, color: "#f59e0b", border: 0, textAlign: "center" }}
+            >
+                {idx + 1}
+            </TableCell>
+            <TableCell align="center" sx={{ border: 0, textAlign: "center" }}>
+                {member.first_name}
+            </TableCell>
+            <TableCell align="center" sx={{ border: 0, textAlign: "center" }}>
+                {member.last_name}
+            </TableCell>
+            <TableCell
+                align="center"
+                sx={{
+                    border: 0,
+                    color: "#f59e0b",
+                    fontWeight: 500,
+                    textTransform: "capitalize",
+                    textAlign: "center"
+                }}
+            >
+                {member.position}
+            </TableCell>
+            <TableCell
+                align="center"
+                sx={{
+                    border: 0,
+                    color: "#f59e0b",
+                    fontWeight: 500,
+                    textAlign: "center"
+                }}
+            >
+                {member.role}
+            </TableCell>
+            <TableCell align="center" sx={{ border: 0, textAlign: "center" }}>
+                <button
+                    style={{
+                        background: "#fff",
+                        border: "2px solid #f59e0b",
+                        borderRadius: 8,
+                        padding: "6px 18px",
+                        fontWeight: 600,
+                        color: "#f59e0b",
+                        cursor: "pointer",
+                        transition: "all 0.2s",
+                        fontSize: "1rem",
+                        boxShadow: "0 2px 8px 0 rgba(245,158,11,0.04)",
+                        textAlign: "center"
+                    }}
+                    onMouseOver={e => {
+                        e.currentTarget.style.background = "#f59e0b";
+                        e.currentTarget.style.color = "#fff";
+                    }}
+                    onMouseOut={e => {
+                        e.currentTarget.style.background = "#fff";
+                        e.currentTarget.style.color = "#f59e0b";
+                    }}
+                    onClick={removeMember}
+                >
+                    Remove CCA member
+                </button>
+            </TableCell>
+        </TableRow>
+    ))
+}
 
     function showFormClick() {
-        console.log("CLICK CLICK")
         setShowForm(prevShowForm => !prevShowForm)
     }
 
     async function addNewMember(formData) {
+        // Resolve the user id from the email
+        console.log("The email of the user to be added is: ", formData.get("email"))
+        const email = formData.get("email")
+        try {
+            const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/get-user-profile/?email=${email}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`  
+                }
+            })
+            if (!response.ok) {
+                throw new Error("Cannot fetch user by email")
+            }
+            const userIdData = await response.json()
+            console.log("The retrieved user id is: ", userIdData)
+            userId = userIdData.user_id
+        }
+        catch (err) {
+            console.log("Error fetching user by email ", err)
+            return
+        }
+        
         // Create an object to represent the data
         const data = {
-            'user': formData.get("email"),
-            'cca': formData.get("cca"),
+            'user': userId,
+            'cca': ccaId,
             'position': formData.get("position"),
             'role': formData.get("role"),
             'is_active': formData.get("is_active"), 
             'emergency_contact': formData.get("emergency_contact"),
             'notes': formData.get("notes")
         }
+        
 
+        // POST to add a new member with the user id field
         try {
             const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
                 method: "POST",
@@ -126,13 +221,17 @@ export default function CCAMemberManagementLayout() {
                 throw new Error("Cannot add new member")
             }
             console.log("CCA member added, here's the POST response: ", response)
+            setIsRegistrationSuccessful(prev => (!prev))
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000) // Reload the page after 1 second to show the new member
         }
         catch (err) {
             console.log(`Catch block error: ${err}`)
         }
     }
 
-    // Map all the current CCAs into options that the user can choose from 
+    function removeMember() {}
 
     return (
         <>
@@ -176,6 +275,8 @@ export default function CCAMemberManagementLayout() {
                         <button>Add new member</button>
                     </form>
                   : null}
+                {isRegistrationSuccessful && 
+                <Typography variant="h1">Successfully Registered New Member</Typography>}
                 <CCAMembersTable membersList={membersList}/>
             </main>
             <Footer />

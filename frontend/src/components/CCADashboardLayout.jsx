@@ -17,6 +17,9 @@ export default function CCADashboardLayout(props) {
             <TableCell align="center">{member.last_name}</TableCell>
             <TableCell align="center">{member.position}</TableCell>
             <TableCell align="center">{member.role}</TableCell>
+            <TableCell>
+                <button>Remove member</button>
+            </TableCell>
         </TableRow>
     ))
 

@@ -4,3 +4,4 @@ profile_pics
 media
 staticfiles
 .env
+./frontend/node_modules

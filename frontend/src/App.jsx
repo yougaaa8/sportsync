@@ -27,6 +27,7 @@ import EventDetailPage from './pages/EventDetailPage.jsx'
 import MerchandiseShop from './pages/MerchandiseShop.jsx'
 import TournamentPage from './pages/TournamentPage.jsx'
 import TournamentSportsPage from './pages/TournamentSportsPage.jsx'
+import CCADashboardWelcome from './pages/CCADashboardWelcome.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -50,6 +51,7 @@ function App() {
               <Route path="/event-form" element={<EventForm />} />
               <Route path="/facility-list" element={<FacilityList />} />
               <Route path="/cca-detail/:ccaId" element={<CCADetailPage />} />
+              <Route path="/cca-dashboard/" element={<CCADashboardWelcome />} />
               <Route path="/cca-dashboard/:ccaId" element={<CCADashboardPage />} />
               <Route path="/cca-member-management/:ccaId" element={<CCAMemberManagementLayout />} />
               <Route path="/cca-training-management/:ccaId" element={<CCATrainingSessionManagement />} />

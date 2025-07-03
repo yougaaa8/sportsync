@@ -98,6 +98,9 @@ export default function Navbar() {
                                         <Link className="dropdown-link" to="/facility-list">Facilities</Link>
                                     </li>
                                     <li>
+                                        <Link className="dropdown-link" to="/cca-dashboard/">CCA Dashboard</Link>
+                                    </li>
+                                    <li>
                                         <button
                                             className="dropdown-link"
                                             onClick={handleLogout}
