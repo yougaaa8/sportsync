@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom"
 import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import CCATrainingTable from "../components/CCATrainingTable"
-import { Box } from "@mui/material"
+import { Box, TableCell, TableRow, Button } from "@mui/material"
 import "../stylesheets/cca-training-session-management.css"
+import joinTrainingSession from "../api-calls/joinTrainingSession.js"
+import leaveTrainingSession from "../api-calls/leaveTrainingSession.js"
 
 export default function TrainingSessionManagement() {
     // Set the states
@@ -12,6 +14,10 @@ export default function TrainingSessionManagement() {
     const [ccaTrainingDataError, setCcaTrainingDataError] = useState(null)
     const [ccaData, setCcaData] = useState(null)
     const [showForm, setShowForm] = useState(null)
+    const [joinButtonPlaceholder, setJoinButtonPlaceholder] = useState("Join training session")
+    const [successfulJoin, setSuccessfulJoin] = useState(false)
+    const [leaveButtonPlaceholder, setLeaveButtonPlaceholder] = useState("Leave training session")
+    const [successfulLeave, setSuccessfulLeave] = useState(false)
 
     // Set the token value
     const token = localStorage.getItem("authToken")
@@ -82,20 +88,123 @@ export default function TrainingSessionManagement() {
         }
     }, [ccaId])
 
+    async function joinSessionClick(ccaId, sessionId) {
+        try {
+            await joinTrainingSession(ccaId, sessionId)
+            setJoinButtonPlaceholder("Successfully joined training session")
+        }
+        catch (error) {
+            setJoinButtonPlaceholder("Failed to join training session")
+        }
+        finally {
+            setTimeout(() => window.location.reload(), 1000)
+        }
+    }
+
+    async function leaveSessionClick(ccaId, sessionId) {
+        try {
+            await leaveTrainingSession(ccaId, sessionId)
+            setLeaveButtonPlaceholder("Successfully left training session")
+        }
+        catch (error) {
+            setLeaveButtonPlaceholder("Failed to leave training session")
+        }
+        finally {
+            setTimeout(() => window.location.reload(), 1000)
+        }
+    }
+
     // Map the CCA Training sessions into an array of 
     let trainingList
-    if (ccaTrainingSessions) {
-        trainingList = ccaTrainingSessions.map(training => (
-            <tr key={training.id}>
-                <td>{training.id}</td>
-                <td>{training.date}</td>
-                <td>{training.start_time}</td>
-                <td>{training.end_time}</td>
-                <td>{training.location}</td>
-                <td>{training.note}</td>
-            </tr>
-        ))
-    }
+if (ccaTrainingSessions) {
+    trainingList = ccaTrainingSessions.map((training, idx) => (
+        <TableRow
+            key={training.id}
+            sx={{
+                backgroundColor: idx % 2 === 0 ? "#fff" : "#fcf7ee",
+                transition: "background 0.2s",
+                "&:hover": {
+                    backgroundColor: "#fff7e6"
+                }
+            }}
+        >
+            <TableCell align="center" sx={{ fontWeight: 500, color: "#f59e0b", border: 0 }}>{training.id}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>{training.date}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>{training.start_time}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>{training.end_time}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>{training.location}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>{training.note}</TableCell>
+            <TableCell align="center" sx={{ border: 0 }}>
+                <Button
+                    variant="outlined"
+                    sx={{
+                        borderColor: "#f59e0b",
+                        color: "#f59e0b",
+                        fontWeight: 600,
+                        borderRadius: 2,
+                        px: 2.5,
+                        py: 1,
+                        mx: 0.5,
+                        textTransform: "none",
+                        transition: "all 0.2s",
+                        "&:hover": {
+                            backgroundColor: "#f59e0b",
+                            color: "#fff",
+                            borderColor: "#f59e0b"
+                        }
+                    }}
+                    onClick={() => joinSessionClick(ccaId, training.id)}
+                >
+                    {joinButtonPlaceholder}
+                </Button>
+                <Button
+                    variant="outlined"
+                    sx={{
+                        borderColor: "#f59e0b",
+                        color: "#f59e0b",
+                        fontWeight: 600,
+                        borderRadius: 2,
+                        px: 2.5,
+                        py: 1,
+                        mx: 0.5,
+                        textTransform: "none",
+                        transition: "all 0.2s",
+                        "&:hover": {
+                            backgroundColor: "#f59e0b",
+                            color: "#fff",
+                            borderColor: "#f59e0b"
+                        }
+                    }}
+                    onClick={() => leaveSessionClick(ccaId, training.id)}
+                >
+                    {leaveButtonPlaceholder}
+                </Button>
+                <Button
+                    variant="outlined"
+                    sx={{
+                        borderColor: "#f59e0b",
+                        color: "#f59e0b",
+                        fontWeight: 600,
+                        borderRadius: 2,
+                        px: 2.5,
+                        py: 1,
+                        mx: 0.5,
+                        textTransform: "none",
+                        transition: "all 0.2s",
+                        "&:hover": {
+                            backgroundColor: "#f59e0b",
+                            color: "#fff",
+                            borderColor: "#f59e0b"
+                        }
+                    }}
+                    onClick={() => joinSessionClick(ccaId, training.id)}
+                >
+                    View Training Session Details
+                </Button>
+            </TableCell>
+        </TableRow>
+    ))
+}
 
     function showFormClick() {
         console.log("CLICK CLICK")
