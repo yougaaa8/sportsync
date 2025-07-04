@@ -1,5 +1,8 @@
+import { useState } from "react"
+
 export default function RemoveLobbyMemberButton(props) {
     const token = localStorage.getItem("authToken");
+    const [buttonPlaceholder, setButtonPlaceholder] = useState("Remove member")
 
     console.log("The Remove Member button is being rendered for lobby ID: ", props.lobbyId);
     console.log("The Remove Member button is being rendered for user ID: ", props.userId);
@@ -13,15 +16,26 @@ export default function RemoveLobbyMemberButton(props) {
                     "Authorization": `Bearer ${token}`
                 }
             });
-            // Optionally handle response here
+            if (!response.ok) {
+                console.log("Failed to remove member")
+                setButtonPlaceholder("Failed to remove member")
+            }
+            else {
+                console.log("Successfully removed member")
+                setButtonPlaceholder("Successfully removed member")
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
+            }
         } catch (error) {
+            setButtonPlaceholder("Failed to remove member")
             console.error("Error removing member:", error);
         }
     }
     
     return (
         <>
-            <button onClick={removeMember}>Remove member</button>
+            <button onClick={removeMember}>{buttonPlaceholder}</button>
         </>
     )
 }

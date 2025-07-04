@@ -7,6 +7,8 @@ import JoinLobbyButton from "../components/JoinLobbyButton.jsx"
 import LeaveLobbyButton from "../components/LeaveLobbyButton.jsx"
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
 import RemoveLobbyMemberButton from "./RemoveLobbyMemberButton.jsx"
+import UpdateLobbyDetailsButton from "./UpdateLobbyDetailsButton.jsx"
+import DeleteLobbyButton from "./DeleteLobbyButton.jsx"
 
 export default function MatchDetailLayout() {
     // Get the token from local storage
@@ -83,7 +85,9 @@ export default function MatchDetailLayout() {
             <TableCell>{member.date_joined}</TableCell>
             <TableCell>{member.status}</TableCell>
             <TableCell>{member.notes}</TableCell>
-            <TableCell><RemoveLobbyMemberButton userId={member.id} lobbyId={member.lobby}></RemoveLobbyMemberButton></TableCell>
+            <TableCell>
+                <RemoveLobbyMemberButton userId={member.user} lobbyId={member.lobby}></RemoveLobbyMemberButton>
+            </TableCell>
         </TableRow>)
     )
 
@@ -124,13 +128,13 @@ export default function MatchDetailLayout() {
                                 <b>Location:</b> {matchDetails.location}
                             </Typography>
                             <Typography sx={{ color: "#444", fontSize: 16, mb: 0.5 }}>
-                                <b>Start:</b> {matchDetails.startTime}
+                                <b>Start:</b> {matchDetails.start_time}
                             </Typography>
                             <Typography sx={{ color: "#444", fontSize: 16, mb: 0.5 }}>
-                                <b>End:</b> {matchDetails.endTime}
+                                <b>End:</b> {matchDetails.end_time}
                             </Typography>
                             <Typography sx={{ color: "#444", fontSize: 16, mb: 2 }}>
-                                <b>Capacity:</b> 5/{matchDetails.maxCapacity}
+                                <b>Maximum Capacity:</b> {matchDetails.max_capacity}
                             </Typography>
                             <Paper
                                 sx={{
@@ -149,6 +153,7 @@ export default function MatchDetailLayout() {
                                 <Typography sx={{ fontSize: 16 }}>{matchDetails.description}</Typography>
                             </Paper>
                         </Box>
+                        <UpdateLobbyDetailsButton matchDetails={matchDetails} lobbyId={lobbyId}/>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -166,9 +171,10 @@ export default function MatchDetailLayout() {
                             </TableBody> : null}
                         </Table>
                         <Box sx={{ px: 2, pb: 2, mt: 2 }}>
-                            <JoinLobbyButton id={lobbyId} />
+                            <JoinLobbyButton id={lobbyId} isDetailedView={true}/>
                             <LeaveLobbyButton id={lobbyId} />
                         </Box>
+                        <DeleteLobbyButton lobbyId={lobbyId}/>
                     </Paper>
                     <Footer />
                 </>

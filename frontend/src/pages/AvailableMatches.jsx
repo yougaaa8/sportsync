@@ -45,18 +45,10 @@ export default function AvailableMatches() {
 
     // The map data returned is an array of match objects
     // Each match object will be mapped to a match component
-    const matchList = availableMatches.map(match => 
+    const matchList = availableMatches?.map(match => 
         <MatchItem 
             key={match.id}
-            id={match.id}
-            name={match.name}
-            sport={match.sport}
-            location={match.location}
-            date={match.date}
-            description={match.description}
-            startTime={match.start_time}
-            endTime={match.end_time}
-            maxCapacity={match.max_capacity}
+            entry={match}
         />
     )
 

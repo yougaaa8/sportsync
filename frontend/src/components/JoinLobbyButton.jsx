@@ -9,7 +9,7 @@ export default function JoinLobbyButton(props) {
 
     // Set state
     const [joinLobbyResponse, setJoinLobbyResponse] = useState(null);
-    
+    const [buttonPlaceholder, setButtonPlaceholder] = useState("Join lobby")
     console.log("The lobby ID is: ", props.id);
 
     async function joinLobby() {
@@ -23,17 +23,32 @@ export default function JoinLobbyButton(props) {
             });
             if (!response.ok) {
                 console.error("Failed to join lobby");
+                setButtonPlaceholder("Failed to join lobby")
+                setTimeout(() => {
+                    window.location.reload() // Redirect to match detail page after one second
+                }, 1000)
             }
-            const data = await response.json();
-            console.log("Join lobby response data: ", data);
-            setJoinLobbyResponse(data);
-            navigate(`/match-detail/${props.id}`); // Redirect to match detail page after joining
+            else {
+                const data = await response.json();
+                console.log("Join lobby response data: ", data);
+                setJoinLobbyResponse(data);
+                setButtonPlaceholder("Sucessfully joined lobby")
+                setTimeout(() => {
+                    props.isDetailedView
+                    ? window.location.reload()
+                    : navigate(`/match-detail/${props.id}`); // Redirect to match detail page after one second
+                }, 1000)
+            }
         } catch (error) {
             console.error("Error joining lobby:", error);
+            setButtonPlaceholder("Failed to join lobby")
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
         }
     }
 
     return (
-        <button onClick={joinLobby}>Join this lobby</button>
+        <button onClick={joinLobby}>{buttonPlaceholder}</button>
     )
-}
+};
