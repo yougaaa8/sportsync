@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
 
 export default function EventRegistrationButton(props) {
     const token = localStorage.getItem("authToken");
     const [success, setSuccess] = useState(false);
+    const [fail, setFail] = useState(false)
     const navigate = useNavigate();     
 
     async function registerForEvent() {
@@ -23,6 +25,7 @@ export default function EventRegistrationButton(props) {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error(errorData)
+                setFail(true)
                 throw new Error("Failed to register for event");
             }
 
@@ -33,6 +36,7 @@ export default function EventRegistrationButton(props) {
             console.log("Registration successful:", data);
             navigate("/event-list")
         } catch (error) {
+            setFail(true)
             console.error("Error registering for event:", error);
         }
     }
@@ -45,6 +49,11 @@ export default function EventRegistrationButton(props) {
                     Successfully registered!
                 </div>
             )}
+            {
+                fail && (
+                    <Typography>You already registered for this event</Typography>
+                )
+            }
         </>
     );
 }
