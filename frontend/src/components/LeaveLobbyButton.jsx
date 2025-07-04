@@ -9,6 +9,7 @@ export default function JoinLobbyButton(props) {
 
     // Set state
     const [leaveLobbyResponse, setLeaveLobbyResponse] = useState(null);
+    const [buttonPlaceholder, setButtonPlaceholder] = useState("Leave lobby")
     
     console.log("The lobby ID is: ", props.id);
 
@@ -23,17 +24,26 @@ export default function JoinLobbyButton(props) {
             });
             if (!response.ok) {
                 console.error("Failed to join lobby");
+                setButtonPlaceholder("Failed to join lobby")
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             }
-            const data = await response.json();
-            console.log("Leave lobby response data: ", data);
-            setLeaveLobbyResponse(data);
-            navigate("/available-matches"); // Redirect to available matches after leaving
+            else {
+                const data = await response.json();
+                console.log("Leave lobby response data: ", data);
+                setLeaveLobbyResponse(data);
+                setButtonPlaceholder("Successfully left lobby")
+                setTimeout(() => {
+                    navigate("/available-matches"); // Redirect to available matches after leaving
+                }, 1000)
+            }
         } catch (error) {
             console.error("Error leaving lobby:", error);
         }
     }
 
     return (
-        <button onClick={leaveLobby}>Leave this lobby</button>
+        <button onClick={leaveLobby}>{buttonPlaceholder}</button>
     )
 }
