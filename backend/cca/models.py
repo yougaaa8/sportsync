@@ -8,8 +8,13 @@ class CCA(models.Model):
     description = models.TextField(blank=True)
     logo = models.ImageField(upload_to='cca_logos', blank=True,
                              null=True, help_text="Upload a logo for the CCA")
-    contact_email = models.EmailField()
-    contact_telegram = models.CharField(max_length=100, blank=True)
+    contact_email = models.EmailField(blank=True)
+    website = models.URLField(
+        blank=True, help_text="Official website of the CCA")
+    instagram = models.URLField(
+        blank=True, help_text="Instagram profile of the CCA")
+    facebook = models.URLField(
+        blank=True, help_text="Facebook page of the CCA")
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through='CCAMember', related_name='ccas', blank=True)
 

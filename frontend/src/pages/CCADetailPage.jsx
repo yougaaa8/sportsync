@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import CCALayout from "../components/CCALayout.jsx"
+import CCADetailLayout from "../components/CCADetailLayout.jsx"
 
 export default function CCADetailPage() {
     const { ccaId } = useParams()
@@ -16,7 +16,7 @@ export default function CCADetailPage() {
         console.log("helo")
         const fetchCcaData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/cca/${ccaId}`, {
+                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`, 
@@ -47,7 +47,7 @@ export default function CCADetailPage() {
     return (
         <>
             <Navbar />
-            {!ccaData ? <h1>Loading...</h1> : <CCALayout entry={ccaData}/>}
+            {!ccaData ? <h1>Loading...</h1> : <CCADetailLayout entry={ccaData}/>}
             <Footer />
         </>
     )

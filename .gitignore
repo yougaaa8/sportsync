@@ -3,3 +3,5 @@ user_test.json
 profile_pics
 media
 staticfiles
+.env
+./frontend/node_modules

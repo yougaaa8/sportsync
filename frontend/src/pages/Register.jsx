@@ -34,7 +34,7 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/api/auth/register/', {
+            const response = await fetch('https://sportsync-backend-8gbr.onrender.com/api/auth/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export default function Register() {
         <>
             <Navbar />
             <main className="register-body">
-                <h1 className="register-message">
+                <h1 className="register-message page-title">
                     Create a new username and password
                 </h1>
                 <form className="login-form" onSubmit={handleSubmit}>
@@ -140,7 +140,7 @@ export default function Register() {
                     <div className="password-field">
                         <label htmlFor="password">Password</label>
                         <input id="password"
-                            type="text"
+                            type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter your password"
@@ -150,7 +150,7 @@ export default function Register() {
                     <div className="password-field">
                         <label htmlFor="confirmPassword">Confirm Password</label>
                         <input id="confirmPassword"
-                            type="text"
+                            type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="Confirm your password"
