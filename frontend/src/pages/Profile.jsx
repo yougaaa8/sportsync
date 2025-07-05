@@ -11,6 +11,7 @@ export default function Profile() {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [status, setStatus] = useState("student")
+    const [emergencyContact, setEmergencyContact] = useState("")
     const [message, setMessage] = useState("")
     const navigate = useNavigate();
 
@@ -32,6 +33,7 @@ export default function Profile() {
                     setFirstName(data.first_name)
                     setLastName(data.last_name)
                     setStatus(data.status)
+                    setEmergencyContact(data.emergency_contact)
                     // get existing profile picture if available
                     if (data.profile_picture_url) { 
                         setProfilePicPreview(data.profile_picture_url)
@@ -60,7 +62,10 @@ export default function Profile() {
         // Create a FormData to send in the upcoming PATCH request
         const formData = new FormData();
         formData.append("email", email)
+        formData.append("first_name", firstName)
+        formData.append("last_name", lastName)
         formData.append("status", status)
+        formData.append("emergency_contact", emergencyContact)
         if (profilePicFile) {
             formData.append("profile_picture", profilePicFile)
         }
@@ -156,6 +161,13 @@ export default function Profile() {
                                 <option value="staff">Staff</option>
                                 <option value="others">Others</option>
                             </select>
+
+                            <label>Emergency Contact</label>
+                            <input 
+                                defaultValue={emergencyContact} 
+                                name="emergency_contact"
+                                value={emergencyContact}
+                                onChange={e => setEmergencyContact(e.target.value)} />
                             <button type="submit">Save changes</button>
                         </form>
                     </Paper>

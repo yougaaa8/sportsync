@@ -1,9 +1,11 @@
+import { Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function EventLeaveButton(props) {
     const token = localStorage.getItem("authToken");
     const [success, setSuccess] = useState(false);
+    const [fail, setFail] = useState(false)
     const navigate = useNavigate();     
 
     async function leaveEvent() {
@@ -23,6 +25,7 @@ export default function EventLeaveButton(props) {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error(errorData)
+                setFail(true)
                 throw new Error("Failed to leave event");
             }
 
@@ -32,6 +35,7 @@ export default function EventLeaveButton(props) {
             console.log("Successfully left event:");
             navigate("/event-list")
         } catch (error) {
+            setFail(true)
             console.error("Error leaving event:", error);
         }
     }
@@ -43,6 +47,9 @@ export default function EventLeaveButton(props) {
                 <div style={{ color: "#16a34a", marginTop: "12px", fontWeight: 500 }}>
                     Left Event Successfully
                 </div>
+            )}
+            {fail && (
+                <Typography>You have not signed up for this event</Typography>
             )}
         </>
     );

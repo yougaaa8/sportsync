@@ -32,22 +32,22 @@ export default function MatchItem(props) {
                     </Typography>
                     <Divider sx={{ mb: 1 }} />
                     <Typography variant="h2" sx={{ color: "#888", fontSize: 16, fontWeight: 500, mb: 0.5 }}>
-                        Sport: {props.entry.sport}
+                        <b>Sport: </b> {props.entry.sport}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Date: {props.entry.date}
+                        <b>Date:</b> {props.entry.date}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Location: {props.entry.location}
+                        <b>Location:</b> {props.entry.location}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Start: {props.entry.startTime}
+                        <b>Start:</b> {props.entry.start_time}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        End: {props.entry.endTime}
+                        <b>End:</b> {props.entry.end_time}
                     </Typography>
                     <Typography sx={{ color: "#444", fontSize: 15, mb: 0.5 }}>
-                        Capacity: 5/{props.entry.maxCapacity}
+                        <b>Maximum Capacity:</b> {props.entry.max_capacity}
                     </Typography>
                     <Paper
                         sx={{
@@ -67,7 +67,7 @@ export default function MatchItem(props) {
                 </Box>
             </Link>
             <Box sx={{ px: 2, pb: 2 }}>
-                <JoinLobbyButton id={props.entry.id} />
+                <JoinLobbyButton id={props.entry.id} isDetailedView={false}/>
             </Box>
             <Box sx={{ px: 2, pb: 2 }}>
                 <LeaveLobbyButton id={props.entry.id} />
