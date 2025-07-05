@@ -29,12 +29,12 @@ export default function OpenMatchmaking() {
                 })
             })
             if (!response.ok) {
-                throw new Error("Failed to update lobby");
+                throw new Error("Failed to create lobby");
             }
             navigate("/available-matches");
         }
         catch (error) {
-            console.error("Error updating lobby:", error);
+            console.error("Error creating lobby:", error);
         }
     }
     
