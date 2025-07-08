@@ -189,6 +189,10 @@ export default function ProductDetailLayout() {
         fetchProductData()
     }, [productId])
 
+    // If this product is offered by my CCA, then render: 
+    // 1. Edit Product button
+    // 2. Delete Product button
+
     const handlePurchase = () => {
         if (productData?.buy_link) {
             window.open(productData.buy_link, '_blank', 'noopener,noreferrer')

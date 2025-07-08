@@ -1,8 +1,10 @@
+import { API_BASE_URL } from "../config/api";
+
 export default async function removeFromWishlist(productId) {
   const token = localStorage.getItem("authToken");
   try {
     const response = await fetch(
-      `https://sportsync-backend-8gbr.onrender.com/api/merch/products/${productId}/remove-wishlist/`,
+      `${API_BASE_URL}/api/merch/products/${productId}/remove-wishlist/`,
       {
         method: "DELETE",
         headers: {
