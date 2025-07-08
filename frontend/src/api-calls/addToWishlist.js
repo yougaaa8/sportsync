@@ -1,8 +1,12 @@
+import { API_BASE_URL } from "../config/api";
+
 export default async function addToWishlist(productId) {
   const token = localStorage.getItem("authToken");
+  console.log("All env vars: ", import.meta.env);
+  console.log("API_BASE_URL: ", API_BASE_URL);
   try {
     const response = await fetch(
-      `https://sportsync-backend-8gbr.onrender.com/api/merch/products/${productId}/wishlist/`,
+      `${API_BASE_URL}/api/merch/products/${productId}/wishlist/`,
       {
         method: "POST",
         headers: {
@@ -18,6 +22,6 @@ export default async function addToWishlist(productId) {
       console.log("Added product to wishlist");
     }
   } catch (error) {
-    console.log("Failed to add product to wishlist ", response);
+    console.log("Failed to add product to wishlist ", error);
   }
 }
