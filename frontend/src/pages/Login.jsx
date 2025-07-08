@@ -31,7 +31,7 @@ export default function Login() {
                     password: password
                 })
             });
-
+            console.log("I just finished fetching from API")
             const data = await response.json();
 
             if (response.ok) {

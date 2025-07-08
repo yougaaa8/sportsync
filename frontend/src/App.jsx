@@ -28,6 +28,10 @@ import MerchandiseShop from './pages/MerchandiseShop.jsx'
 import TournamentPage from './pages/TournamentPage.jsx'
 import TournamentSportsPage from './pages/TournamentSportsPage.jsx'
 import CCADashboardWelcome from './pages/CCADashboardWelcome.jsx'
+import ProductDetailLayout from './components/ProductDetailLayout.jsx'
+import NewProductForm from './pages/NewProductForm.jsx'
+import Wishlist from './pages/Wishlist.jsx'
+import ProductEditLayout from './pages/ProductEditLayout.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -60,6 +64,10 @@ function App() {
               <Route path="/merchandise-shop" element={<MerchandiseShop />} />
               <Route path="/tournament" element={<TournamentPage />} /> 
               <Route path="/tournament-sports/:tournamentId" element={<TournamentSportsPage />} />
+              <Route path="/product-detail/:productId" element={<ProductDetailLayout />} />
+              <Route path="/new-product-form" element={<NewProductForm />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/product-edit/:productId" element={<ProductEditLayout />} /> 
             </Routes>
           </Container>
         </BrowserRouter>
