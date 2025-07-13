@@ -48,8 +48,6 @@ class UserLoginSerializer(serializers.Serializer):
             user = authenticate(username=email, password=password)
             if not user:
                 raise serializers.ValidationError('Invalid credentials')
-            if not user.is_active:
-                raise serializers.ValidationError('Account is disabled')
             attrs['user'] = user
         else:
             raise serializers.ValidationError('Email and password required')
@@ -63,8 +61,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
-        read_only_fields = ['id', 'email', 'date_joined']
+        fields = [
+            'id', 'email', 'first_name', 'last_name',
+            'bio', 'telegram_handle', 'profile_picture', 'profile_picture_url',
+            'status', 'emergency_contact', 'full_name'
+        ]
+        read_only_fields = ['id', 'email']
 
     def get_profile_picture_url(self, obj):
         """Get optimized profile picture URL from Cloudinary"""
