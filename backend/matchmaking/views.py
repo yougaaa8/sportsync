@@ -15,7 +15,7 @@ class IsLobbyMember(permissions.BasePermission):
     def has_permission(self, request, view):
         lobby_id = view.kwargs.get('lobby_id') or view.kwargs.get('id')
         if not lobby_id:
-            return False  # No Lobby ID provided in URL
+            return False
         try:
             lobby = Lobby.objects.get(id=lobby_id)
             return LobbyMember.objects.filter(lobby=lobby, user=request.user).exists()
@@ -30,6 +30,7 @@ class LobbyListView(generics.ListAPIView):
     """
     queryset = Lobby.objects.all()
     serializer_class = LobbyListSerializer
+    permission_classes = []
 
 
 class LobbyCreateView(generics.CreateAPIView):
@@ -47,7 +48,6 @@ class LobbyCreateView(generics.CreateAPIView):
             lobby=lobby,
             status='admin'
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -124,16 +124,22 @@ class LobbyMembersView(generics.GenericAPIView):
 
     def post(self, request, id):
         lobby = get_object_or_404(Lobby, id=id)
-        member = LobbyMember.objects.get(lobby=lobby, user=request.user)
-        if member.status == 'player':
+        try:
+            member = LobbyMember.objects.get(lobby=lobby, user=request.user)
+            if member.status != 'admin':
+                return Response(
+                    {"error": "Only administrators can add members"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        except LobbyMember.DoesNotExist:
             return Response(
-                {"error": "Only administrators can add members"},
+                {"error": "You are not a member of this lobby."},
                 status=status.HTTP_403_FORBIDDEN
             )
-        # Create new membership
-        data = request.data.copy()
 
-        # Check if user is already a member
+        data = request.data.copy()
+        data['lobby'] = lobby.id
+
         if LobbyMember.objects.filter(lobby=lobby, user_id=data.get('user')).exists():
             return Response(
                 {"error": "User is already a member of this Lobby"},
@@ -142,7 +148,7 @@ class LobbyMembersView(generics.GenericAPIView):
 
         serializer = LobbyMemberSerializer(data=data)
         if serializer.is_valid():
-            serializer.save(lobby=lobby)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
