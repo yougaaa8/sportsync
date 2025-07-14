@@ -30,6 +30,7 @@ class CCAListView(generics.ListAPIView):
     """
     queryset = CCA.objects.all()
     serializer_class = CCAListSerializer
+    permission_classes = []
 
 
 class CCADetailView(generics.RetrieveAPIView):
@@ -66,13 +67,16 @@ class CCAMembersView(generics.GenericAPIView):
     def post(self, request, id):
         cca = get_object_or_404(CCA, id=id)
         member = CCAMember.objects.get(cca=cca, user=request.user)
+
         if member.position == 'member':
             return Response(
                 {"error": "Only committee members can add members"},
                 status=status.HTTP_403_FORBIDDEN
             )
+
         # Create new membership
         data = request.data.copy()
+        data['cca'] = cca.id
 
         # Check if user is already a member
         if CCAMember.objects.filter(cca=cca, user_id=data.get('user')).exists():
@@ -83,7 +87,7 @@ class CCAMembersView(generics.GenericAPIView):
 
         serializer = CCAMemberSerializer(data=data)
         if serializer.is_valid():
-            serializer.save(cca=cca)
+            serializer.save()  # Fix: Don't pass cca again since it's in data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -128,7 +132,7 @@ class CCATrainingView(generics.GenericAPIView):
         # (must be committee member or above)
         try:
             member = CCAMember.objects.get(cca=cca, user=request.user)
-            if member.role == 'member':
+            if member.position == 'member':
                 return Response(
                     {"error": "Only committee members can create training sessions"},
                     status=status.HTTP_403_FORBIDDEN
@@ -139,10 +143,12 @@ class CCATrainingView(generics.GenericAPIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = TrainingSessionSerializer(data=request.data)
+        data = request.data.copy()
+        data['cca'] = cca.id
+
+        serializer = TrainingSessionSerializer(data=data)
         if serializer.is_valid():
-            training_session = serializer.save(
-                cca=cca, created_by=request.user)
+            serializer.save()  # Fix: Don't pass extra parameters
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

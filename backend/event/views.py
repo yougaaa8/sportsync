@@ -14,6 +14,7 @@ class EventListView(generics.ListAPIView):
     """
     queryset = Event.objects.all()
     serializer_class = EventListSerializer
+    permission_classes = []
 
 
 class EventDetailView(generics.RetrieveAPIView):
@@ -34,8 +35,14 @@ class EventSignUpView(generics.CreateAPIView):
     serializer_class = EventSignUpSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
         event = get_object_or_404(Event, id=self.kwargs['pk'])
+        context['event'] = event
+        return context
+
+    def perform_create(self, serializer):
+        event = self.get_serializer_context()['event']
         serializer.save(user=self.request.user, event=event)
 
 
@@ -63,6 +70,7 @@ class EventParticipantListView(generics.ListAPIView):
     List all participants of an event
     """
     serializer_class = EventParticipantSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         event = get_object_or_404(Event, id=self.kwargs['pk'])
