@@ -10,6 +10,7 @@ from .serializers import TournamentSerializer, TournamentSportSerializer, TeamSe
 class TournamentListView(generics.ListAPIView):
     queryset = Tournament.objects.all()
     serializer_class = TournamentSerializer
+    permission_classes = []
 
 
 class TournamentSportListView(generics.ListAPIView):
