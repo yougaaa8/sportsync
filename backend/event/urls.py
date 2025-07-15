@@ -8,5 +8,7 @@ urlpatterns = [
     path('<int:pk>/leave/', views.EventLeaveView.as_view(), name='event-leave'),
     path('<int:pk>/participants/', views.EventParticipantListView.as_view(),
          name='event-participant-list'),
+    path('<int:pk>/upload-poster/',
+         views.upload_poster, name='upload-poster'),
     path('create/', views.EventCreateView.as_view(), name='event-create'),
 ]

@@ -1,10 +1,13 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
+from cloudinary.uploader import upload
+
 
 from .models import Event, EventParticipant
-from .serializers import EventListSerializer, EventDetailSerializer, EventSignUpSerializer, EventParticipantSerializer
+from .serializers import EventListSerializer, EventDetailSerializer, EventSignUpSerializer, EventParticipantSerializer, PosterUploadSerializer
 
 
 class EventListView(generics.ListAPIView):
@@ -94,3 +97,50 @@ class EventCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Assuming organizer is the user creating the event
         serializer.save()
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def upload_poster(request, pk):
+    """Upload/update event poster to Cloudinary"""
+    event = get_object_or_404(Event, id=pk)
+    serializer = PosterUploadSerializer(data=request.data)
+
+    if serializer.is_valid():
+        try:
+            image_file = serializer.validated_data['poster']
+
+            # Delete old poster if exists
+            if event.poster:
+                event.delete_old_poster()
+            public_id = f"{event.name.replace(' ', '_')}_poster"
+            # Upload new image to Cloudinary
+            upload_result = upload(
+                image_file,
+                folder="sportsync/event_poster/",
+                public_id=public_id,
+                transformation=[
+                    {'width': 600, 'height': 800, 'crop': 'fill', 'gravity': 'auto'},
+                    {'quality': 'auto:good'},
+                    {'fetch_format': 'auto'}
+                ],
+                overwrite=True,
+                resource_type="image"
+            )
+
+            # Update user logo picture field
+            event.poster = upload_result['public_id']
+            event.save()
+
+            return Response({
+                'message': 'Poster uploaded successfully',
+                'poster_url': upload_result['secure_url'],
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': f'Upload failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
