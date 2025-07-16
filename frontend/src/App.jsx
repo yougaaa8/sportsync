@@ -19,7 +19,7 @@ import CCADetailPage from './pages/CCADetailPage.jsx'
 import CCADashboardPage from './pages/CCADashboardPage.jsx'
 import CCAMemberManagementLayout from './pages/CCAMemberManagementLayout.jsx'
 import CCATrainingSessionManagement from "./pages/CCATrainingSessionManagement.jsx"
-import { Container } from "@mui/material"
+import { Box, Container } from "@mui/material"
 import { ThemeProvider } from '@mui/material/styles';
 import theme from "../theme.jsx";
 import MatchDetailLayout from './components/MatchDetailLayout.jsx'
@@ -40,7 +40,9 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <Container>
+          <Box sx={{ backgroundColor: "white", width: "100vw", 
+            minHeight: "100vh", height: "auto", padding: 0, display: "flex",
+            flexDirection: "column" }}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -69,7 +71,7 @@ function App() {
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/product-edit/:productId" element={<ProductEditLayout />} /> 
             </Routes>
-          </Container>
+          </Box>
         </BrowserRouter>
       </ThemeProvider>
     </>

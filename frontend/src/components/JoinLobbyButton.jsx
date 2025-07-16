@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@mui/material"
 
 export default function JoinLobbyButton(props) {
     // Get the token from local storage
@@ -49,6 +50,8 @@ export default function JoinLobbyButton(props) {
     }
 
     return (
-        <button onClick={joinLobby}>{buttonPlaceholder}</button>
+        <Button onClick={joinLobby} className="bg-blue-500">
+            {buttonPlaceholder}
+        </Button>
     )
 };

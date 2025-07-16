@@ -3,6 +3,7 @@ import Footer from "../components/Footer.jsx"
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import CCADetailLayout from "../components/CCADetailLayout.jsx"
+import pullCCADetail from "../api-calls/pullCCADetail.js"
 
 export default function CCADetailPage() {
     const { ccaId } = useParams()
@@ -13,33 +14,10 @@ export default function CCADetailPage() {
     console.log("This is the extracted CCA ID: ", ccaId)
 
     useEffect(() => {
-        console.log("helo")
         const fetchCcaData = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, 
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA not found")
-                }
-                
-                const data = await response.json()
-                setCcaData(data)
-                console.log("CCA data retrieved")
-            }
-            catch (err) {
-                setError(err.message)
-            }
+            setCcaData(await pullCCADetail(ccaId))
         }
-
-        if (ccaId) {
-            fetchCcaData()
-        }
+        if (ccaId) {fetchCcaData()}
     }, [ccaId])
 
     console.log("The CCA Data is: ", ccaData)

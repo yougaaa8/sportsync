@@ -7,6 +7,9 @@ import { Box, TableCell, TableRow, Button } from "@mui/material"
 import "../stylesheets/cca-training-session-management.css"
 import joinTrainingSession from "../api-calls/joinTrainingSession.js"
 import leaveTrainingSession from "../api-calls/leaveTrainingSession.js"
+import createTrainingSession from "../api-calls/createTrainingSession.js"
+import pullCCATrainingData from "../api-calls/pullCCATrainingData.js"
+import pullCCADetail from "../api-calls/pullCCADetail.js"
 
 export default function TrainingSessionManagement() {
     // Set the states
@@ -28,26 +31,7 @@ export default function TrainingSessionManagement() {
     // Get the CCA data from the API
     useEffect(() => {
         const fetchCcaData = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA not found")
-                }
-
-                const data = await response.json()
-                setCcaData(data)
-                console.log("CCA data retrieved into state")
-            }
-            catch (err) {
-                console.log("The CCA Data Error is: ", err)
-            }
+            setCcaData(await pullCCADetail(ccaId))
         }
 
         if (ccaId) {
@@ -59,33 +43,10 @@ export default function TrainingSessionManagement() {
 
     // Get the CCA Training Session information from the API endpoint
     useEffect(() => {
-        const fetchCcaTrainingdata = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/training/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA Training Data not found")
-                }
-
-                const ccaTrainingData = await response.json()
-                setCcaTrainingSessions(ccaTrainingData)
-                console.log("CCA Training Data successfully retrieved")
-            }
-            catch (err) {
-                console.log("An error has occured fetching")
-                setCcaTrainingDataError(err)
-            }
+        const fetchCCATrainingData = async () => {
+            setCcaTrainingSessions(await pullCCATrainingData(ccaId))
         }
-
-        if (ccaId) {
-            fetchCcaTrainingdata()
-        }
+        fetchCCATrainingData()
     }, [ccaId])
 
     async function joinSessionClick(ccaId, sessionId) {
@@ -211,8 +172,9 @@ if (ccaTrainingSessions) {
         setShowForm(prevShowForm => !prevShowForm)
     }
 
-    function addNewTrainingSession() {
-
+    function addNewTrainingSession(formData) {
+        formData.append("cca", ccaId)
+        createTrainingSession(ccaId, formData)
     }
 
     return (
@@ -230,22 +192,22 @@ if (ccaTrainingSessions) {
                 {showForm
                  ? <form className="cca-submission-form" action={addNewTrainingSession}>
                     <label>Date: </label>
-                    <input type="date"></input>
+                    <input type="date" name="date"></input>
 
                     <label>Start Time: </label>
-                    <input type="time"></input>
+                    <input type="time" name="start_time"></input>
 
                     <label>End Time: </label>
-                    <input type="time"></input>
+                    <input type="time" name="end_time"></input>
 
                     <label>Location: </label>
-                    <input></input>
+                    <input name="location"></input>
 
                     <label>Max Participants</label>
-                    <input></input>
+                    <input name="max_participants"></input>
 
                     <label>Note: </label>
-                    <input></input>
+                    <input name="note"></input>
 
                     <label>CCA: </label>
                     <select defaultValue={ccaData.name}>

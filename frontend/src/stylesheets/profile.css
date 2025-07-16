@@ -6,6 +6,8 @@
 .profile-page-main {
     display: flex;
     gap: 100px;
+    height: 100vh;
+    background-color: white;
 }
 
 .profile-left {

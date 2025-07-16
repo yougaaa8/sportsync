@@ -6,6 +6,11 @@ import { useParams } from "react-router-dom"
 import "../stylesheets/cca-training-session-management.css"
 import RemoveCCAMemberButton from "../components/RemoveCCAMemberButton.jsx"
 import { Typography, TableRow, TableCell } from "@mui/material"
+import { API_BASE_URL } from "../config/api.js"
+import pullCCAMembersList from "../api-calls/pullCCAMembersList.js"
+import pullCCADetail from "../api-calls/pullCCADetail.js"
+import pullUserProfileFromEmail from "../api-calls/pullUserProfileFromEmail.js"
+import addCcaMember from "../api-calls/addCcaMember.js"
 
 export default function CCAMemberManagementLayout() {
     const token = localStorage.getItem("authToken")
@@ -25,65 +30,30 @@ export default function CCAMemberManagementLayout() {
     // Get the CCA data from the API
     useEffect(() => {
         const fetchCcaData = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA not found")
-                }
-
-                const data = await response.json()
-                setCcaData(data)
-                console.log("CCA data retrieved into state")
-            }
-            catch (err) {
-                console.log("The CCA Data Error is: ", err)
-            }
+            setCcaData(await pullCCADetail(ccaId))
         }
-
-        if (ccaId) {
-            console.log("Running fetchCcaData")
-            fetchCcaData()
-        }
+        fetchCcaData()
     }, [ccaId])
     console.log("The CCA Data is: ", ccaData)
 
     // Get the CCA members data from the API
     useEffect(() => {
-            const fetchCcaMembersData = async () => {
-                try {
-                    const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        }
-                    })
-    
-                    if (!response.ok) {
-                        throw new Error("CCA not found")
-                    }
-    
-                    const membersData = await response.json()
-                    setCcaMembersData(membersData)
-                    console.log("CCA Members Data retrieved")
-                }
-                catch (err) {
-                    setCcaMembersDataError(err)
-                }
+        const fetchCcaMembersData = async () => {
+            try {
+                const data = await pullCCAMembersList(ccaId);
+                setCcaMembersData(data);
+                console.log("CCA Members Data set to state:", data);
+            } catch (err) {
+                console.error("Error fetching CCA members:", err);
+                setCcaMembersDataError(err);
             }
+        }; // ← Add missing semicolon here
     
-            if (ccaId) {
-                fetchCcaMembersData()
-            }
-        }, [ccaId])
-        console.log("The CCA members data is: ", ccaMembersData)
+        if (ccaId) {
+            fetchCcaMembersData();
+        }
+    }, [ccaId]); // ← Proper closing
+    console.log("The CCA members data is: ", ccaMembersData)
     
     // Map the CCA members data, which is an array of member objects,
     // into an array of table rows 
@@ -175,25 +145,8 @@ export default function CCAMemberManagementLayout() {
         // Resolve the user id from the email
         console.log("The email of the user to be added is: ", formData.get("email"))
         const email = formData.get("email")
-        try {
-            const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/get-user-profile/?email=${email}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`  
-                }
-            })
-            if (!response.ok) {
-                throw new Error("Cannot fetch user by email")
-            }
-            const userIdData = await response.json()
-            console.log("The retrieved user id is: ", userIdData)
-            userId = userIdData.user_id
-        }
-        catch (err) {
-            console.log("Error fetching user by email ", err)
-            return
-        }
+        const userProfile = await pullUserProfileFromEmail(email)
+        userId = userProfile.user_id
         
         // Create an object to represent the data
         const data = {
@@ -208,27 +161,7 @@ export default function CCAMemberManagementLayout() {
         
 
         // POST to add a new member with the user id field
-        try {
-            const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
-            })
-            if (!response.ok) {
-                throw new Error("Cannot add new member")
-            }
-            console.log("CCA member added, here's the POST response: ", response)
-            setIsRegistrationSuccessful(prev => (!prev))
-            setTimeout(() => {
-                window.location.reload()
-            }, 1000) // Reload the page after 1 second to show the new member
-        }
-        catch (err) {
-            console.log(`Catch block error: ${err}`)
-        }
+        addCcaMember(ccaId, data)
     }
 
     function removeMember() {}

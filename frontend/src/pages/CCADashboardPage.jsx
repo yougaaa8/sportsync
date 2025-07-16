@@ -5,6 +5,9 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import "../stylesheets/cca-dashboard-page.css"
 import { Typography, Paper, Box } from "@mui/material"
+import pullCCADetail from "../api-calls/pullCCADetail.js"
+import pullCCAMembersList from "../api-calls/pullCCAMembersList.js"
+import pullCCATrainingData from "../api-calls/pullCCATrainingData.js"
 
 export default function CCADashboardPage() {
     // Obtain the authorization token from localStorage
@@ -25,61 +28,17 @@ export default function CCADashboardPage() {
     // Use that CCA ID to:
     // 1. Fetch the CCA Data
     useEffect(() => {
-        const fetchCcaData = async () => {
-            console.log("asdhfkahsdkjfahsdf")
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA not found")
-                }
-
-                const data = await response.json()
-                setCcaData(data)
-                console.log("CCA data retrieved into state")
-            }
-            catch (err) {
-                setCcaDataError(err.message)
-                console.log("The CCA Data Error is: ", ccaDataError)
-            }
+        const fetchCCAData = async () => {
+            setCcaData(await pullCCADetail(ccaId))
         }
-
-        if (ccaId) {
-            console.log("Running fetchCcaData")
-            fetchCcaData()
-        }
+        fetchCCAData()
     }, [ccaId])
     console.log("The CCA Data is: ", ccaData)
 
     // 2. Fetch the CCA Members Data
     useEffect(() => {
         const fetchCcaMembersData = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/members/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA not found")
-                }
-
-                const membersData = await response.json()
-                setCcaMembersData(membersData)
-                console.log("CCA Members Data retrieved")
-            }
-            catch (err) {
-                setCcaMembersDataError(err)
-            }
+            setCcaMembersData(await pullCCAMembersList(ccaId))
         }
 
         if (ccaId) {
@@ -91,26 +50,7 @@ export default function CCADashboardPage() {
     // 3. Fetch the CCA Training Data
     useEffect(() => {
         const fetchCcaTrainingData = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/training/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("CCA Training Data not found")
-                }
-
-                const trainingData = await response.json()
-                setCcaTrainingData(trainingData)
-                console.log("CCA Training Dat retrieved")
-            }
-            catch (err) {
-                setCcaTrainingDataError(err)
-            }
+            setCcaTrainingData(await pullCCATrainingData(ccaId))
         }
 
         if (ccaId) {

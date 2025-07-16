@@ -5,7 +5,7 @@ export default function Event(props) {
     console.log("Event props for each event item: ", props.event);
     
     return (
-        <Link to={`/event-detail/${props.event.id}`}>
+        <Link sx={{bgcolor: "#fffdfa"}} to={`/event-detail/${props.event.id}`}>
             <Paper
                 elevation={3}
                 sx={{
