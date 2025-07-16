@@ -6,37 +6,36 @@ import FilterIcon from "../assets/sort-icon.png";
 import "../stylesheets/cca-home.css";
 import { Link } from "react-router-dom";
 import CCAHomeItem from "../components/CCAHomeItem.jsx";
+import pullCCAList from "../api-calls/pullCCAList.js";
 
 export default function CCAHome() {
     const [ccas, setCcas] = useState([]);
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        const token = localStorage.getItem("authToken");
-        fetch("https://sportsync-backend-8gbr.onrender.com/api/cca/list/", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+        const fetchCcas = async () => {
+            try {
+                console.log("Fetching CCA list...")
+                const data = await pullCCAList()
+                console.log("data is", data)
+                setCcas(data || []) // Ensure it's always an array
+            } catch (error) {
+                console.error("Error fetching CCAs:", error)
+                setCcas([]) // Set empty array on error
             }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`Response: ${response.status} ${response.statusText}`);
-            return response.json();
-        })
-        .then(data => setCcas(data))
-        .catch(err => console.error("CCA List fetch error: ", err));
+        }
+        fetchCcas()
     }, []);
 
-    // Filter and sort CCAs based on search
+    // Add safety checks in your filtering logic
     const filteredCcas = React.useMemo(() => {
-        if (!search.trim()) return ccas;
+        if (!Array.isArray(ccas) || !search.trim()) return ccas || [];
         // Case-insensitive search, bring matches to the top
         const lower = search.trim().toLowerCase();
         const matches = [];
         const nonMatches = [];
         for (const cca of ccas) {
-            if (cca.name.toLowerCase().includes(lower)) {
+            if (cca && cca.name && cca.name.toLowerCase().includes(lower)) {
                 matches.push(cca);
             } else {
                 nonMatches.push(cca);
@@ -45,7 +44,8 @@ export default function CCAHome() {
         return [...matches, ...nonMatches];
     }, [ccas, search]);
 
-    const ccaList = filteredCcas.map(cca => (
+    // Add safety check for mapping
+    const ccaList = (filteredCcas || []).map(cca => (
         <CCAHomeItem key={cca.id} ccainfo={cca} />
     ));
 

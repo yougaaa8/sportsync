@@ -1,8 +1,10 @@
+import { API_BASE_URL } from "../config/api";
+
 export default async function leaveTrainingSession(ccaId, sessionId) {
   const token = localStorage.getItem("authToken");
   try {
     const response = await fetch(
-      `https://sportsync-backend-8gbr.onrender.com/api/cca/${ccaId}/training/${sessionId}/leave/`,
+      `${API_BASE_URL}/api/cca/${ccaId}/training/${sessionId}/leave/`,
       {
         method: "DELETE",
         headers: {

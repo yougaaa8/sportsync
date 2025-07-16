@@ -35,6 +35,11 @@ body,
   padding: 0;
 }
 
+main {
+  min-height: 100vh;
+  background-color: white;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -121,10 +126,4 @@ header {
     background-clip: text;
     position: relative;
     display: inline-block;
-}
-
-main {
-    /* background-image: url(../assets/main-background.jpg); */
-    /* background-repeat: no-repeat;
-    background-size: cover; */
 }

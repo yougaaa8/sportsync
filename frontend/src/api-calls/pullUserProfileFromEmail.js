@@ -1,8 +1,10 @@
+import { API_BASE_URL } from "../config/api";
+
 export default async function pullUserProfileFromEmail(email) {
   try {
     const token = localStorage.getItem("authToken");
     const response = await fetch(
-      `https://sportsync-backend-8gbr.onrender.com/api/get-user-profile/?email=${email}`,
+      `${API_BASE_URL}/api/get-user-profile/?email=${email}`,
       {
         method: "GET",
         headers: {

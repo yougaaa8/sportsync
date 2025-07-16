@@ -8,10 +8,13 @@ export default function Footer() {
         <Box
             component="footer"
             sx={{
+                position: "relative",
+                bottom: 0,
+                marginTop: "auto",
                 borderTop: "1px solid #e5e7eb",
                 bgcolor: "#fff",
                 py: 2,
-                mt: 6,
+                mt: 0,
                 boxShadow: "0 -2px 8px 0 rgba(245, 158, 11, 0.03)",
             }}
         >
