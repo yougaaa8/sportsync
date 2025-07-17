@@ -4,6 +4,7 @@ import { useState } from "react"
 import "../stylesheets/login.css"
 import "../stylesheets/register.css"
 import { useNavigate } from "react-router-dom"
+import register from "../api-calls/register.js"
 
 export default function Register() {
     // Create state for username and password
@@ -34,23 +35,9 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch('https://sportsync-backend-8gbr.onrender.com/api/auth/register/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    first_name: first_name,
-                    last_name: last_name,
-                    password: password,
-                    password_confirm: confirmPassword,
-                })
-            });
+            const data = await register(email, first_name, last_name, password, confirmPassword)
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (data) {
                 // Registration successful
                 console.log("Registration successful:", data);
                 console.log("The account is created for: ", data.user.first_name);
@@ -64,7 +51,6 @@ export default function Register() {
                 });
                 
                 // Clear form
-                setUsername("");
                 setPassword("");
                 setConfirmPassword("");
                 

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import SportSyncLogo from "../assets/sportsync-logo.png"
+import logout from "../api-calls/logout";
 import { 
     Box, 
     AppBar, 
@@ -81,30 +82,9 @@ export default function Navbar() {
 
     async function handleLogout() {
         const refresh = localStorage.getItem("refreshToken");
-        try {
-            const token = localStorage.getItem("authToken");
-            const response = await fetch("https://sportsync-backend-8gbr.onrender.com//api/auth/logout/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({ refresh_token: refresh })
-            });
-            if (response.ok) {
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("email");
-                navigate("/login");
-            }
-            else {
-                console.error("Logout failed with status: ", response.status);
-                console.log("The logged in user is: ", localStorage.getItem("email"));
-            }
-        }
-        catch (err) {
-            console.error("Network error during logout:", err);
-        }
+        logout(refresh);
         handleMenuClose();
+        navigate("/login");
     }
 
     return (
