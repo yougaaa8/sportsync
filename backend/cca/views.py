@@ -206,7 +206,7 @@ class CCATrainingView(generics.GenericAPIView):
             )
 
         data = request.data.copy()
-        data['cca'] = cca.cca_id
+        data['cca'] = cca.id
 
         serializer = TrainingSessionSerializer(data=data)
         if serializer.is_valid():
