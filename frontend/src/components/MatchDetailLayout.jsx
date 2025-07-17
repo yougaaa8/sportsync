@@ -9,6 +9,9 @@ import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
 import RemoveLobbyMemberButton from "./RemoveLobbyMemberButton.jsx"
 import UpdateLobbyDetailsButton from "./UpdateLobbyDetailsButton.jsx"
 import DeleteLobbyButton from "./DeleteLobbyButton.jsx"
+import pullMatchMembers from "../api-calls/pullMatchMembers.js"
+import pullMatchesData from "../api-calls/pullMatchesData.js"
+import pullMatchDetails from "../api-calls/pullMatchDetails.js"
 
 export default function MatchDetailLayout() {
     // Get the token from local storage
@@ -24,25 +27,7 @@ export default function MatchDetailLayout() {
     // Use the lobbyId to fetch match details
     useEffect(() => {
         const fetchMatchDetails = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/matchmaking/lobbies/${lobbyId}/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("Match details not found")
-                }
-
-                const data = await response.json()
-                setMatchDetails(data)   
-                console.log("Match details retrieved: ", data)
-            } catch (error) {
-                console.error("Error fetching match details: ", error)
-            }
+            setMatchDetails(await pullMatchDetails(lobbyId))
         }
         if (lobbyId) {
             fetchMatchDetails()
@@ -52,25 +37,7 @@ export default function MatchDetailLayout() {
     // Use the lobbyId to fetch match members
     useEffect(() => {
         const fetchMatchMembers = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/matchmaking/lobbies/${lobbyId}/members/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("Match members not found")
-                }
-
-                const data = await response.json()
-                setMatchMembers(data)
-                console.log("Match members retrieved: ", data)
-            } catch (error) {
-                console.error("Error fetching match members: ", error)
-            }
+            setMatchMembers(await pullMatchMembers(lobbyId))
         }
         if (lobbyId) {
             fetchMatchMembers()
