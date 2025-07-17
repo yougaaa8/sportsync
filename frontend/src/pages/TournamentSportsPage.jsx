@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import TournamentSportsItem from "../components/TournamentSportsItem.jsx"
 import { pullTournamentData } from "../api-calls/pullTournamentData.js"
+import { pullTournamentSportsData } from "../api-calls/pullTournamentSportsData.js";
 
 
 export default function TournamentSportsPage() {
@@ -19,24 +20,7 @@ export default function TournamentSportsPage() {
     // Fetch the tournament sports list
     useEffect(() => {
         const fetchTournamentSports = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/tournament/${tournamentId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch tournament details");
-                }
-                const data = await response.json();
-                setTournamentSports(data);   
-                console.log("Tournament sports: ", data);
-            } catch (error) {
-                console.error(error);
-            }
+            setTournamentSports(await pullTournamentSportsData(tournamentId))
         };
         if (token) {
             fetchTournamentSports();

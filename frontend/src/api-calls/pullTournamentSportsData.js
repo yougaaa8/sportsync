@@ -1,22 +1,26 @@
-export async function pullTournamentSportsData(arg) {
+import { API_BASE_URL } from "../config/api";
+
+export async function pullTournamentSportsData(tournamentId) {
+  const token = localStorage.getItem("authToken");
   try {
     const response = await fetch(
-      "https://sportsync-backend-8gbr.onrender.com/api/tournament/list",
+      `${API_BASE_URL}/api/tournament/${tournamentId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
+
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error("Failed to fetch tournament details");
     }
     const data = await response.json();
-    console.log("Tournaments data: ", data);
+    console.log("Tournament sports: ", data);
     return data;
   } catch (error) {
-    console.error("Error fetching tournaments data: ", error);
+    console.error(error);
   }
 }

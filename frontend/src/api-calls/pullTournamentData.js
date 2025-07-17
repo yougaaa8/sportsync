@@ -1,15 +1,14 @@
+import { API_BASE_URL } from "../config/api";
+
 export async function pullTournamentData(arg) {
   try {
-    const response = await fetch(
-      "https://sportsync-backend-8gbr.onrender.com/api/tournament/list",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/api/tournament/list`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    });
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
