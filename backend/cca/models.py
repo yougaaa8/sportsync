@@ -1,13 +1,27 @@
 from django.db import models
 from django.conf import settings
-import os
+from cloudinary.models import CloudinaryField
+from cloudinary.uploader import destroy
 
 
 class CCA(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='cca_logos', blank=True,
-                             null=True, help_text="Upload a logo for the CCA")
+    logo = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+        folder='sportsync/cca_logo/',
+        transformation={
+            'width': 300,
+            'height': 300,
+            'crop': 'fill',
+            'gravity': 'face',
+            'quality': 'auto',
+            'fetch_format': 'auto'
+        },
+        help_text="Upload a cca logo"
+    )
     contact_email = models.EmailField(blank=True)
     website = models.URLField(
         blank=True, help_text="Official website of the CCA")
@@ -20,6 +34,14 @@ class CCA(models.Model):
 
     def __str__(self):
         return self.name
+
+    def delete_old_logo(self):
+        """Delete old logo from Cloudinary when updating"""
+        if self.logo:
+            try:
+                destroy(self.logo.public_id)
+            except Exception as e:
+                print(f"Error deleting old logo: {e}")
 
 
 class CCAMember(models.Model):

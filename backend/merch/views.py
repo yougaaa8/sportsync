@@ -1,9 +1,11 @@
 from cca.models import CCAMember
 from rest_framework import generics, status, permissions, exceptions
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from cloudinary.uploader import upload, destroy
 from .models import Product, ProductImage, Wishlist, WishlistItem
 from .serializers import ProductSerializer, ProductListSerializer, WishlistSerializer, ProductImageSerializer
 
@@ -204,71 +206,144 @@ def clear_wishlist(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
 def add_product_images(request, product_id):
     """
+    POST /api/merch/products/{id}/images/
     Add new images to an existing product (committee members only)
+    Supports multiple image upload
+    """
+    product = get_object_or_404(Product, id=product_id)
+
+    # Check permissions
+    try:
+        member = CCAMember.objects.get(user=request.user, cca=product.cca)
+        if member.position != 'committee':
+            return Response(
+                {'error': 'Only committee members can add images'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+    except CCAMember.DoesNotExist:
+        return Response(
+            {'error': 'You are not a member of this CCA'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # Get all uploaded images
+    uploaded_images = request.FILES.getlist('images')
+    alt_texts = request.POST.getlist('alt_texts')
+
+    if not uploaded_images:
+        return Response(
+            {'error': 'No images provided'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    uploaded_results = []
+    failed_uploads = []
+
+    for i, image_file in enumerate(uploaded_images):
+        try:
+            # Get alt text for this image (if provided)
+            alt_text = alt_texts[i] if i < len(
+                alt_texts) else f"Product image {i+1}"
+
+            # Validate image file
+            serializer = ProductImageSerializer(data={
+                'image': image_file,
+                'alt_text': alt_text
+            })
+
+            if not serializer.is_valid():
+                failed_uploads.append({
+                    'image': f"image_{i+1}",
+                    'errors': serializer.errors
+                })
+                continue
+
+            # Generate unique public_id for Cloudinary
+            public_id = f"{product.cca.name}_{product.name}_{alt_text}_{i+1}".replace(
+                ' ', '_').lower()
+
+            # Upload image to Cloudinary
+            upload_result = upload(
+                image_file,
+                folder=f"sportsync/merch/{product.cca.name}",
+                public_id=public_id,
+                transformation=[
+                    {'width': 800, 'height': 800, 'crop': 'fill',
+                        'gravity': 'auto', 'background': 'white'},
+                    {'quality': 'auto:eco'},
+                    {'fetch_format': 'auto'}
+                ],
+                overwrite=True,
+                resource_type="image"
+            )
+
+            # Create ProductImage record
+            product_image = ProductImage.objects.create(
+                product=product,
+                image=upload_result['public_id'],
+                alt_text=alt_text
+            )
+
+            uploaded_results.append({
+                'id': product_image.id,
+                'image_url': upload_result['secure_url'],
+                'alt_text': alt_text,
+                'public_id': upload_result['public_id']
+            })
+
+        except Exception as e:
+            failed_uploads.append({
+                'image': f"image_{i+1}",
+                'error': str(e)
+            })
+
+    # Prepare response
+    response_data = {
+        'message': f'Successfully uploaded {len(uploaded_results)} images',
+        'uploaded_images': uploaded_results
+    }
+
+    if failed_uploads:
+        response_data['failed_uploads'] = failed_uploads
+        response_data['message'] += f', {len(failed_uploads)} failed'
+
+    status_code = status.HTTP_201_CREATED if uploaded_results else status.HTTP_400_BAD_REQUEST
+    return Response(response_data, status=status_code)
+
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def manage_product_image(request, product_id, image_id):
+    """
+    GET /api/merch/products/{product_id}/images/{image_id}/ - Get image info
+    DELETE /api/merch/products/{product_id}/images/{image_id}/ - Delete image
     """
     try:
         product = Product.objects.get(id=product_id)
-
-        # Check permissions
-        try:
-            member = CCAMember.objects.get(user=request.user, cca=product.cca)
-            if member.position != 'committee':
-                return Response(
-                    {'error': 'Only committee members can add images'},
-                    status=status.HTTP_403_FORBIDDEN
-                )
-        except CCAMember.DoesNotExist:
-            return Response(
-                {'error': 'You are not a member of this CCA'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # Get uploaded images from request
-        images = request.FILES.getlist('images')
-        if not images:
-            return Response(
-                {'error': 'No images provided'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Create ProductImage objects
-        created_images = []
-        for image in images:
-            product_image = ProductImage.objects.create(
-                product=product,
-                image=image,
-                alt_text=request.data.get('alt_text', '')
-            )
-            created_images.append(ProductImageSerializer(product_image).data)
-
-        return Response(
-            {
-                'message': f'{len(created_images)} images added successfully',
-                'images': created_images
-            },
-            status=status.HTTP_201_CREATED
-        )
-
+        image = ProductImage.objects.get(id=image_id, product=product)
     except Product.DoesNotExist:
         return Response(
             {'error': 'Product not found'},
             status=status.HTTP_404_NOT_FOUND
         )
+    except ProductImage.DoesNotExist:
+        return Response(
+            {'error': 'Image not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
+    if request.method == 'GET':
+        """Get image information"""
+        serializer = ProductImageSerializer(
+            image, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated, HasCCAPermission])
-def delete_product_image(request, product_id, image_id):
-    """
-    Delete a specific product image (committee members only)
-    """
-    try:
-        product = Product.objects.get(id=product_id)
-        image = ProductImage.objects.get(id=image_id, product=product)
-
-        # Check permissions using the custom permission class logic
+    elif request.method == 'DELETE':
+        """Delete a specific product image (committee members only)"""
+        # Check permissions
         try:
             member = CCAMember.objects.get(user=request.user, cca=product.cca)
             if member.position != 'committee':
@@ -282,19 +357,46 @@ def delete_product_image(request, product_id, image_id):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        image.delete()
-        return Response(
-            {'message': 'Image deleted successfully'},
-            status=status.HTTP_200_OK
-        )
+        try:
+            # Delete from Cloudinary if image exists
+            if image.image:
+                destroy(image.image.public_id)
 
+            # Delete from database
+            image.delete()
+
+            return Response(
+                {'message': 'Image deleted successfully'},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to delete image: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_product_images(request, product_id):
+    """
+    GET /api/merch/products/{product_id}/images/
+    Get all images for a specific product
+    """
+    try:
+        product = Product.objects.get(id=product_id)
+        images = ProductImage.objects.filter(
+            product=product).order_by('created_at')
+        serializer = ProductImageSerializer(
+            images, many=True, context={'request': request})
+        return Response({
+            'product_id': product_id,
+            'product_name': product.name,
+            'images': serializer.data,
+            'total_images': len(serializer.data)
+        }, status=status.HTTP_200_OK)
     except Product.DoesNotExist:
         return Response(
             {'error': 'Product not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
-    except ProductImage.DoesNotExist:
-        return Response(
-            {'error': 'Image not found'},
             status=status.HTTP_404_NOT_FOUND
         )

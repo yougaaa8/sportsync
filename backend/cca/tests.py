@@ -198,7 +198,7 @@ class CCADetailViewTest(APITestCase):
             name='Test CCA',
             description='Test description'
         )
-        self.url = reverse('cca-detail', kwargs={'pk': self.cca.pk})
+        self.url = reverse('cca-detail', kwargs={'cca_id': self.cca.id})
 
     def test_get_cca_detail_authenticated(self):
         self.client.force_authenticate(user=self.user)
@@ -236,7 +236,7 @@ class CCAMembersViewTest(APITestCase):
             cca=self.cca,
             position='committee'
         )
-        self.url = reverse('cca-members', kwargs={'id': self.cca.id})
+        self.url = reverse('cca-members', kwargs={'cca_id': self.cca.id})
 
     def test_get_members_as_member(self):
         self.client.force_authenticate(user=self.user)
@@ -296,7 +296,7 @@ class CCATrainingViewTest(APITestCase):
             end_time=time(16, 0),
             location='Test Location'
         )
-        self.url = reverse('cca-training', kwargs={'id': self.cca.id})
+        self.url = reverse('cca-training', kwargs={'cca_id': self.cca.id})
 
     def test_get_training_sessions(self):
         self.client.force_authenticate(user=self.user)
