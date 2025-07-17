@@ -1,16 +1,15 @@
+import { API_BASE_URL } from "../config/api";
+
 export async function pullEventsData() {
   try {
     const token = localStorage.getItem("authToken");
-    const response = await fetch(
-      "https://sportsync-backend-8gbr.onrender.com/api/event/list",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/api/event/list`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch events");

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import EventItem from "../components/EventItem.jsx"
+import { pullEventsData } from "../api-calls/pullEventsData.js"
 
 export default function EventList() {
     // Create state to store array of JSX event objects
@@ -12,26 +13,8 @@ export default function EventList() {
     // Fetch the events from the backend
     useEffect(() => {
         const fetchEvents = async () => {
-            try {
-                const response = await fetch("https://sportsync-backend-8gbr.onrender.com/api/event/list", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch events")
-                }
-                const data = await response.json();
-                console.log("Events data: ", data);
-                setEvents(data);
-            } catch (error) {
-                console.error(error);
-            }
+            setEvents(await pullEventsData())
         };
-
         fetchEvents();
     }, [token]);
 

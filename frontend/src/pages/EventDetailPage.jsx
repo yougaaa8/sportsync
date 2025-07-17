@@ -6,6 +6,8 @@ import Footer from "../components/Footer.jsx"
 import EventRegistrationButton from "../components/EventRegistrationButton.jsx";
 import EventLeaveButton from "../components/EventLeaveButton.jsx";
 import { Table, TableHead, TableRow, TableCell } from "@mui/material";
+import pullEventDetails from "../api-calls/pullEventDetails.js";
+import pullEventParticipants from "../api-calls/pullEventParticipants.js";
 
 export default function EventDetailPage() {
     const { eventId } = useParams();
@@ -16,23 +18,7 @@ export default function EventDetailPage() {
     // Get detailed data for the event using the eventId
     useEffect(() => {
         const fetchEventDetails = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/event/${eventId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error("Failed to fetch event details");
-                }
-                const data = await response.json();
-                console.log("Event details: ", data);
-                setEventDetails(data);
-            } catch (error) {
-                console.error("Error fetching event details: ", error);
-            }
+            setEventDetails(await pullEventDetails(eventId))
         };
         fetchEventDetails();
     }, [eventId, token]);
@@ -40,23 +26,7 @@ export default function EventDetailPage() {
     // Get the participant data for the event
     useEffect(() => {
         const fetchEventParticipants = async () => {
-            try {
-                const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/event/${eventId}/participants/`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error("Failed to fetch event participants");
-                }
-                const data = await response.json();
-                console.log("Event participants: ", data);
-                setEventParticipants(data);
-            } catch (error) {
-                console.error("Error fetching event participants: ", error);
-            }
+            setEventParticipants(await pullEventParticipants(eventId))
         };
         if (eventId) {
             fetchEventParticipants();
