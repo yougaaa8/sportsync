@@ -5,6 +5,7 @@ import "../stylesheets/login.css"
 import { useNavigate } from "react-router-dom"
 import pullCCAMembersList from "../api-calls/pullCCAMembersList.js"
 import pullUserProfileFromEmail from "../api-calls/pullUserProfileFromEmail.js"
+import login from "../api-calls/login.js"
 
 export default function Login() {
     // Create state for username and password
@@ -21,21 +22,11 @@ export default function Login() {
         setError("");
 
         try {
-            const response = await fetch('https://sportsync-backend-8gbr.onrender.com/api/auth/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            });
-            console.log("I just finished fetching from API")
-            const data = await response.json();
+            const response = await login(email, password)
 
-            if (response.ok) {
+            if (response) {
                 // Login successful
+                const data = response
                 console.log("Login successful:", data);
                 
                 // Store token and username if provided  
