@@ -2,50 +2,25 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import "../stylesheets/event-form.css"
 import { useNavigate } from "react-router-dom";
+import createEvent from "../api-calls/createEvent.js";
 
 export default function EventForm() {
     const token = localStorage.getItem("authToken");
-
     const navigate = useNavigate();
-    
-    async function createEvent(formData) {
-        try {
-            const response = await fetch("https://sportsync-backend-8gbr.onrender.com/api/event/create/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name: formData.get("name"),
-                    date: formData.get("date"),
-                    // location: formData.get("location"),
-                    registration_deadline: formData.get("registrationDeadline"),
-                    description: formData.get("description"),
-                    registration_fee: parseFloat(formData.get("registrationFee"))
-                })
-            })
 
-            if(!response.ok) {
-                throw new Error("Failed to create event")
-            }
+    const handleCreateEvent = async (formData) => {
+        const result = await createEvent(formData)
+        console.log("result: ", result)
+        navigate("/event-list")
+    }   
 
-            const data = await response.json()
-            console.log("Event created successfully:", data)
-            navigate("/event-list") // Redirect to event list page after creation
-        }
-        catch (error) {
-            console.error("Error creating event:", error)   
-        }
-    }
-    
     return (
         <>
             <Navbar />
             <main>
                 <h1 className="page-title">Create a new event</h1>
                 <div className="event-form-container">
-                    <form action={createEvent}>
+                    <form action={handleCreateEvent}>
                         <label>Event Name: </label>
                         <input name="name" type="text" placeholder="BizAd Charity Run 2025"/>
 
