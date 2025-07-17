@@ -4,6 +4,7 @@ import "../stylesheets/available-matches.css"
 import { useState, useEffect } from "react"
 import MatchItem from "../components/MatchItem.jsx"
 import { Box, Paper, Typography } from "@mui/material"
+import pullMatchesData from "../api-calls/pullMatchesData.js"
 
 export default function AvailableMatches() {
     // Get the token from local storage
@@ -15,29 +16,8 @@ export default function AvailableMatches() {
     // Get the list of available matches from the backend
     useEffect(() => {
         const fetchMatches = async () => {
-            try {
-                console.log("Fetching available matches...")
-                const response = await fetch("https://sportsync-backend-8gbr.onrender.com/api/matchmaking/lobbies", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch matches")
-                }
-
-                const data = await response.json()
-                console.log("Available matches data: ", data)
-                setAvailableMatches(data)
-            }
-            catch (error) {
-                console.error("Error fetching available matches:", error)
-            }
+            setAvailableMatches(await pullMatchesData())
         }
-
         if (token) {
             fetchMatches()
         }

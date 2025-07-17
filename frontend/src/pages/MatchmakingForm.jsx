@@ -2,39 +2,19 @@ import Navbar from "../components/Navbar.jsx"
 import Footer from "../components/Footer.jsx"
 import "../stylesheets/matchmaking-form.css"
 import { useNavigate } from "react-router-dom";
+import createMatchLobby from "../api-calls/createMatchLobby.js";
 
 export default function OpenMatchmaking() {
     const token = localStorage.getItem("authToken");
     const navigate = useNavigate();
 
-    async function createLobby(formData) {
-        try {
-            const response = await fetch("https://sportsync-backend-8gbr.onrender.com/api/matchmaking/lobbies/create/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name: formData.get("name"),
-                    description: formData.get("description"),
-                    sport: formData.get("sport"),
-                    date: formData.get("date"),
-                    start_time: formData.get("startTime"),
-                    end_time: formData.get("endTime"),
-                    location: formData.get("location"),
-                    open_lobby: formData.get("openLobby") === "Yes",
-                    password: formData.get("password"),
-                    max_capacity: parseInt(formData.get("maxCapacity"), 10)
-                })
-            })
-            if (!response.ok) {
-                throw new Error("Failed to create lobby");
-            }
+    function  handleCreateLobby(formData) {
+        const response = createMatchLobby(formData)
+        if (response) {
             navigate("/available-matches");
         }
-        catch (error) {
-            console.error("Error creating lobby:", error);
+        else {
+            console.log("Failed to create match")
         }
     }
     
@@ -43,7 +23,7 @@ export default function OpenMatchmaking() {
             <Navbar />
             <main className="matchmaking-lobby-main">
                 <h1 className="matchmaking-lobby-header page-title">Create a new matchmaking lobby</h1>
-                <form action={createLobby} className="matchmaking-lobby-form">
+                <form action={handleCreateLobby} className="matchmaking-lobby-form">
                     <label>Lobby Name: </label>
                     <input name="name" placeholder="Enter lobby name"></input>
 
