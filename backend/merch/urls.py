@@ -10,10 +10,14 @@ urlpatterns = [
          name='product-detail'),
     path('products/<int:pk>/edit/',
          views.ProductUpdateView.as_view(), name='product-update'),
+
+    # Product Image URLs
     path('products/<int:product_id>/images/',
          views.add_product_images, name='add-product-images'),
-    path('products/<int:product_id>/image/<int:image_id>/',
-         views.delete_product_image, name='delete-product-image'),
+    path('products/<int:product_id>/images/list/',
+         views.get_product_images, name='get-product-images'),
+    path('products/<int:product_id>/images/<int:image_id>/',
+         views.manage_product_image, name='manage-product-image'),
 
     # Wishlist URLs
     path('products/<int:product_id>/wishlist/',
