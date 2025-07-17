@@ -1,57 +1,25 @@
 import { Button } from "@mui/material"
 import { useState } from "react"
+import updateLobbyDetails from "../api-calls/updateLobbyDetails"
 
 export default function UpdateLobbyDetailsButton(props) {
     const [showForm, setShowForm] = useState(false)
     const [buttonPlaceholder, setButtonPlaceholder] = useState("Update Lobby Details")
-    const token = localStorage.getItem("authToken")
 
     async function updateLobby(formData) {
-        console.log("Update lobby function is running")
-        try {
-            console.log("I am inside the try block")
-            const response = await fetch(`https://sportsync-backend-8gbr.onrender.com/api/matchmaking/lobbies/${props.lobbyId}/`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name: formData.get("name"),
-                    description: formData.get("description"),
-                    sport: formData.get("sport"),
-                    date: formData.get("date"),
-                    start_time: formData.get("startTime"),
-                    end_time: formData.get("endTime"),
-                    location: formData.get("location"),
-                    open_lobby: formData.get("openLobby") === "Yes",
-                    password: formData.get("password"),
-                    max_capacity: parseInt(formData.get("maxCapacity"), 10)
-                })
-            })
-            if (!response.ok) {
-                const errorData = await response.json()
-                console.error("Failed to update lobby:", errorData)
-                setButtonPlaceholder("Failed to update lobby details")
-                setTimeout(() => {
-                    setButtonPlaceholder("Update Lobby Details")
-                })
-            }
-            else {
-                const data = await response.json()
-                setButtonPlaceholder("Successfully updated lobby details")
-                setTimeout(() => {
-                    window.location.reload()
-                }, 1500)
-            }
+        console.log("Update lobby function is running with props: ", props)
+        const response = await updateLobbyDetails(formData, props.lobbyId)
+        if (response) {
+            setButtonPlaceholder("Successfully updated lobby details");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         }
-        catch (error) {
-            console.error("Failed to update lobby with error:", error)
-            setButtonPlaceholder("Failed to update lobby details")
-                setTimeout(() => {
-                    setButtonPlaceholder("Update Lobby Details")
-                }
-        )
+        else {
+            setButtonPlaceholder("Failed to update lobby details");
+            setTimeout(() => {
+                setButtonPlaceholder("Update Lobby Details");
+            }, 1500);
         }
     }
 
