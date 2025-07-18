@@ -49,7 +49,6 @@ def login(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def profile(request):
     """Get user profile"""
     serializer = UserProfileSerializer(request.user)
@@ -57,9 +56,8 @@ def profile(request):
 
 
 @api_view(['PUT', 'PATCH'])
-@permission_classes([IsAuthenticated])
 def update_profile(request):
-    """Update user profile (excluding profile picture)"""
+    """Update user profile"""
     serializer = UserProfileSerializer(
         request.user,
         data=request.data,
@@ -75,7 +73,6 @@ def update_profile(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_profile_picture(request):
     """Upload/update user profile picture to Cloudinary"""
@@ -123,7 +120,6 @@ def upload_profile_picture(request):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
 def delete_profile_picture(request):
     """Delete user profile picture"""
     try:
@@ -151,7 +147,6 @@ def delete_profile_picture(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def logout(request):
     """Logout user by blacklisting refresh token"""
     try:
@@ -173,7 +168,6 @@ def logout(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def get_user_by_email(request):
     """
     Get user information by email address

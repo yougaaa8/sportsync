@@ -33,7 +33,7 @@ class ProductListView(generics.ListAPIView):
     List all available products
     """
     serializer_class = ProductListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = []
 
     def get_queryset(self):
         queryset = Product.objects.filter(available=True).select_related(
@@ -69,7 +69,7 @@ class ProductDetailView(generics.RetrieveAPIView):
     """
     queryset = Product.objects.all().select_related('cca').prefetch_related('images')
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = []
 
 
 class ProductCreateView(generics.CreateAPIView):
@@ -78,7 +78,6 @@ class ProductCreateView(generics.CreateAPIView):
     Create a new product
     """
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         cca = serializer.validated_data['cca']
@@ -110,7 +109,6 @@ class ProductUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 def add_to_wishlist(request, product_id):
     """
     POST /api/merch/products/{id}/wishlist/
@@ -144,7 +142,6 @@ def add_to_wishlist(request, product_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated])
 def remove_from_wishlist(request, product_id):
     """
     DELETE /api/merch/products/{id}/remove-wishlist
@@ -168,7 +165,6 @@ def remove_from_wishlist(request, product_id):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
 def get_wishlist(request):
     """
     GET /api/merch/wishlist/
@@ -183,7 +179,6 @@ def get_wishlist(request):
 
 
 @api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated])
 def clear_wishlist(request):
     """
     DELETE /api/merch/{id}/wishlist/clear
@@ -205,7 +200,6 @@ def clear_wishlist(request):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def add_product_images(request, product_id):
     """
@@ -315,7 +309,6 @@ def add_product_images(request, product_id):
 
 
 @api_view(['GET', 'DELETE'])
-@permission_classes([permissions.IsAuthenticated])
 def manage_product_image(request, product_id, image_id):
     """
     GET /api/merch/products/{product_id}/images/{image_id}/ - Get image info
@@ -377,7 +370,6 @@ def manage_product_image(request, product_id, image_id):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
 def get_product_images(request, product_id):
     """
     GET /api/merch/products/{product_id}/images/

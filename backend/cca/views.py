@@ -42,7 +42,6 @@ class CCADetailView(generics.RetrieveAPIView):
     """
     queryset = CCA.objects.all()
     serializer_class = CCADetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
     lookup_url_kwarg = 'cca_id'
 
 
@@ -219,7 +218,7 @@ class CCATrainingView(generics.GenericAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, IsCCAMember])
 def join_training_session(request, cca_id, session_id):
     """
     POST /api/cca/{cca_id}/training/{session_id}/join/
@@ -263,7 +262,7 @@ def join_training_session(request, cca_id, session_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated, IsCCAMember])
 def leave_training_session(request, cca_id, session_id):
     """
     DELETE /api/cca/{cca_id}/training/{session_id}/leave/
