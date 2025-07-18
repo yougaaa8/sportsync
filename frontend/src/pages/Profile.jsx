@@ -5,6 +5,8 @@ import Footer from "../components/Footer.jsx"
 import BlankProfilePicture from "../assets/blank-user-profile.jpg"
 import "../stylesheets/profile.css"
 import { Paper } from "@mui/material"
+import updateProfile from "../api-calls/updateProfile.js"
+import { pullUserProfile } from "../api-calls/pullUserProfile.js"
 
 export default function Profile() {
     const [email, setEmail] = useState("");
@@ -22,11 +24,7 @@ export default function Profile() {
 
     // 1) On mount, load the current profile
     useEffect(() => {
-        const token = localStorage.getItem("authToken")
-        if (!token) return
-
-        fetch("https://sportsync-backend-8gbr.onrender.com/api/profile/",
-              {headers: {"Authorization": `Bearer ${token}`}})
+        pullUserProfile()
               .then(res => res.json())
               .then(data => {
                     console.log(data)
@@ -69,30 +67,7 @@ export default function Profile() {
         if (profilePicFile) {
             formData.append("profile_picture", profilePicFile)
         }
-
-        try {
-            const res = await fetch ("https://sportsync-backend-8gbr.onrender.com/api/profile/update/", {
-                method: "PATCH",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData
-            })
-            const data = await res.json()
-            console.log(data)
-
-            if (res.ok) {
-                console.log("ashkfhaksdhfkjahsdkfhajkj")
-                // setMessage("Profile updated successfully!")
-                window.location.reload()
-            }
-            else {
-                // setMessage("Failed to update: " + JSON.stringify(data))
-            }
-        } catch(error) {
-            console.error(error)
-            // setMessage("An error occured while updating profile.")
-        }
+        updateProfile(formData)
     }
 
     return (
