@@ -1,8 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-# Create your models here.
-
 
 class Tournament(models.Model):
     name = models.TextField(max_length=100, unique=True)

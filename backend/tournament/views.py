@@ -4,7 +4,17 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from .models import Tournament, TournamentSport, Team, TeamMember, Match
 from .serializers import TournamentSerializer, TournamentSportSerializer, TeamSerializer, TeamMemberSerializer, MatchSerializer
-# Create your views here.
+
+
+class IsStaff(permissions.BasePermission):
+    """
+    Allows access only to staff members.
+    """
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.status == "staff"
 
 
 class TournamentListView(generics.ListAPIView):
@@ -13,8 +23,22 @@ class TournamentListView(generics.ListAPIView):
     permission_classes = []
 
 
+class TournamentCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = TournamentSerializer
+
+
+class TournamentEditView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = TournamentSerializer
+    queryset = Tournament.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'tournament_id'
+
+
 class TournamentSportListView(generics.ListAPIView):
     serializer_class = TournamentSportSerializer
+    permission_classes = []
 
     def get_queryset(self):
         tournament = get_object_or_404(
@@ -32,6 +56,7 @@ class TournamentSportListView(generics.ListAPIView):
 
 class TeamListView(generics.ListAPIView):
     serializer_class = TeamSerializer
+    permission_classes = []
 
     def get_queryset(self):
         tournament_sport = get_object_or_404(
@@ -49,6 +74,7 @@ class TeamListView(generics.ListAPIView):
 
 class TeamMemberListView(generics.ListAPIView):
     serializer_class = TeamMemberSerializer
+    permission_classes = []
 
     def get_queryset(self):
         team = get_object_or_404(Team, id=self.kwargs['team_id'])
@@ -65,6 +91,7 @@ class TeamMemberListView(generics.ListAPIView):
 
 class MatchListView(generics.ListAPIView):
     serializer_class = MatchSerializer
+    permission_classes = []
 
     def get_queryset(self):
         tournament_sport = get_object_or_404(
