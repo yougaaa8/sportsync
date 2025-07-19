@@ -176,3 +176,27 @@ class MatchListView(generics.ListAPIView):
             return Response({"error": "No matches found for this tournament sport"}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class MatchCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = MatchSerializer
+
+    def perform_create(self, serializer):
+        sport_id = self.kwargs.get('sport_id')
+        tournament_sport = get_object_or_404(TournamentSport, id=sport_id)
+        serializer.save(tournament_sport=tournament_sport)
+
+
+class MatchEditView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = MatchSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'match_id'
+
+    def get_queryset(self):
+        tournament_sport = get_object_or_404(
+            TournamentSport, id=self.kwargs['sport_id'])
+        queryset = Match.objects.filter(
+            tournament_sport=tournament_sport)
+        return queryset
