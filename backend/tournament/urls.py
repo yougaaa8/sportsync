@@ -16,5 +16,9 @@ urlpatterns = [
     # Staff tournament manager
     path('create/', views.TournamentCreateView.as_view(), name='tournament-create'),
     path('<int:tournament_id>/edit/',
-         views.TournamentEditView.as_view(), name='tournament-edit')
+         views.TournamentEditView.as_view(), name='tournament-edit'),
+    path('<int:tournament_id>/create/',
+         views.TournamentSportCreateView.as_view(), name='tournament-sport-create'),
+    path('<int:tournament_id>/<int:sport_id>/edit/',
+         views.TournamentSportEditView.as_view(), name='tournament-sport-edit')
 ]

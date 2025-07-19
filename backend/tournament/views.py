@@ -54,6 +54,29 @@ class TournamentSportListView(generics.ListAPIView):
         return Response(serializer.data)
 
 
+class TournamentSportCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = TournamentSportSerializer
+
+    def perform_create(self, serializer):
+        tournament_id = self.kwargs.get('tournament_id')
+        tournament = get_object_or_404(Tournament, id=tournament_id)
+        serializer.save(tournament=tournament)
+
+
+class TournamentSportEditView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+    serializer_class = TournamentSportSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'sport_id'
+
+    def get_queryset(self):
+        tournament = get_object_or_404(
+            Tournament, id=self.kwargs['tournament_id'])
+        queryset = TournamentSport.objects.filter(tournament=tournament)
+        return queryset
+
+
 class TeamListView(generics.ListAPIView):
     serializer_class = TeamSerializer
     permission_classes = []

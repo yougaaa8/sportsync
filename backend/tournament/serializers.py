@@ -13,7 +13,7 @@ class TournamentSportSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentSport
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'tournament']
 
 
 class TeamSerializer(serializers.ModelSerializer):
