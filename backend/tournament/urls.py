@@ -24,5 +24,9 @@ urlpatterns = [
     path('<int:tournament_id>/<int:sport_id>/teams/create/',
          views.TeamCreateView.as_view(), name='team-create'),
     path('<int:tournament_id>/<int:sport_id>/teams/<int:team_id>/edit/',
-         views.TeamEditView.as_view(), name='team-edit')
+         views.TeamEditView.as_view(), name='team-edit'),
+    path('<int:tournament_id>/<int:sport_id>/teams/<int:team_id>/create/',
+         views.TeamMemberCreateView.as_view(), name='team-member-create'),
+    path('<int:tournament_id>/<int:sport_id>/teams/<int:team_id>/<int:team_member_id>/edit/',
+         views.TeamMemberEditView.as_view(), name='team-member-edit')
 ]
