@@ -20,7 +20,7 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'tournament_sport']
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):

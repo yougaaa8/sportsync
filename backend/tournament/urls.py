@@ -20,5 +20,9 @@ urlpatterns = [
     path('<int:tournament_id>/create/',
          views.TournamentSportCreateView.as_view(), name='tournament-sport-create'),
     path('<int:tournament_id>/<int:sport_id>/edit/',
-         views.TournamentSportEditView.as_view(), name='tournament-sport-edit')
+         views.TournamentSportEditView.as_view(), name='tournament-sport-edit'),
+    path('<int:tournament_id>/<int:sport_id>/teams/create/',
+         views.TeamCreateView.as_view(), name='team-create'),
+    path('<int:tournament_id>/<int:sport_id>/teams/<int:team_id>/edit/',
+         views.TeamEditView.as_view(), name='team-edit')
 ]
