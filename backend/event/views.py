@@ -36,7 +36,6 @@ class EventSignUpView(generics.CreateAPIView):
     Sign up for an event
     """
     serializer_class = EventSignUpSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -73,7 +72,6 @@ class EventParticipantListView(generics.ListAPIView):
     List all participants of an event
     """
     serializer_class = EventParticipantSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         event = get_object_or_404(Event, id=self.kwargs['pk'])
@@ -92,7 +90,6 @@ class EventCreateView(generics.CreateAPIView):
     Create a new event
     """
     serializer_class = EventDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         # Assuming organizer is the user creating the event
@@ -100,7 +97,6 @@ class EventCreateView(generics.CreateAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 @parser_classes([MultiPartParser, FormParser])
 def upload_poster(request, pk):
     """Upload/update event poster to Cloudinary"""

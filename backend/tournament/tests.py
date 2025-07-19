@@ -289,7 +289,6 @@ class TournamentSportSerializerTest(TestCase):
             end_date=date(2024, 1, 31)
         )
         self.sport_data = {
-            'tournament': self.tournament.id,
             'sport': 'Football',
             'gender': 'male',
             'description': 'Male football'
@@ -302,7 +301,7 @@ class TournamentSportSerializerTest(TestCase):
     def test_tournament_sport_serializer_create(self):
         serializer = TournamentSportSerializer(data=self.sport_data)
         self.assertTrue(serializer.is_valid())
-        sport = serializer.save()
+        sport = serializer.save(tournament=self.tournament)
         self.assertEqual(sport.sport, 'Football')
         self.assertEqual(sport.gender, 'male')
 
@@ -322,7 +321,6 @@ class TeamSerializerTest(TestCase):
         )
         self.team_data = {
             'name': 'Test Team',
-            'tournament_sport': self.tournament_sport.id,
             'description': 'Test team'
         }
 
@@ -333,7 +331,7 @@ class TeamSerializerTest(TestCase):
     def test_team_serializer_create(self):
         serializer = TeamSerializer(data=self.team_data)
         self.assertTrue(serializer.is_valid())
-        team = serializer.save()
+        team = serializer.save(tournament_sport=self.tournament_sport)
         self.assertEqual(team.name, 'Test Team')
         self.assertEqual(team.tournament_sport, self.tournament_sport)
 
@@ -360,7 +358,6 @@ class TeamMemberSerializerTest(TestCase):
             tournament_sport=self.tournament_sport
         )
         self.member_data = {
-            'team': self.team.id,
             'user': self.user.id,
             'jersey_name': 'Test Player',
             'jersey_number': 10,
@@ -374,7 +371,7 @@ class TeamMemberSerializerTest(TestCase):
     def test_team_member_serializer_create(self):
         serializer = TeamMemberSerializer(data=self.member_data)
         self.assertTrue(serializer.is_valid())
-        member = serializer.save()
+        member = serializer.save(team=self.team)
         self.assertEqual(member.jersey_name, 'Test Player')
         self.assertEqual(member.jersey_number, 10)
 
@@ -401,7 +398,6 @@ class MatchSerializerTest(TestCase):
             tournament_sport=self.tournament_sport
         )
         self.match_data = {
-            'tournament_sport': self.tournament_sport.id,
             'team1': self.team1.id,
             'team2': self.team2.id,
             'round': 1,
@@ -420,7 +416,7 @@ class MatchSerializerTest(TestCase):
     def test_match_serializer_create(self):
         serializer = MatchSerializer(data=self.match_data)
         self.assertTrue(serializer.is_valid())
-        match = serializer.save()
+        match = serializer.save(tournament_sport=self.tournament_sport)
         self.assertEqual(match.team1, self.team1)
         self.assertEqual(match.team2, self.team2)
         self.assertEqual(match.round, 1)
