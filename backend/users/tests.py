@@ -340,6 +340,7 @@ class GetUserByEmailViewTest(APITestCase):
             last_name='Doe'
         )
         self.url = reverse('get_user_profile_by_email')
+        self.client.force_authenticate(user=self.user)
 
     def test_get_user_by_email_success(self):
         response = self.client.get(self.url, {'email': 'test@u.nus.edu'})

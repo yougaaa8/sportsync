@@ -8,14 +8,14 @@ class Event(models.Model):
     name = models.CharField(max_length=255)
     cca = models.ForeignKey(
         'cca.CCA', related_name='events', on_delete=models.CASCADE, blank=True, null=True)
-    organizer = models.TextField(
-        max_length=255, blank=True, help_text="Optional if organized by a club")
-    description = models.TextField(max_length=255, blank=True)
-    date = models.DateTimeField()
+    admins = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, help_text="Optional if organized by a club")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='events', on_delete=models.CASCADE)
+    description = models.TextField(blank=True)
+    date = models.DateField()
     location = models.TextField(max_length=255, blank=True)
-    registration_fee = models.DecimalField(
-        max_digits=5, decimal_places=2, default=0.00)
-    registration_deadline = models.DateTimeField()
+    registration_deadline = models.DateField()
     is_public = models.BooleanField(
         default=True, help_text="Is this event open to everyone?")
     poster = CloudinaryField(
@@ -50,18 +50,10 @@ class Event(models.Model):
 
 class EventParticipant(models.Model):
     event = models.ForeignKey(
-        Event, on_delete=models.CASCADE)
+        Event, on_delete=models.CASCADE, related_name='participants')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    paid_registration_fee = models.BooleanField(
-        default=False)
     registered_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        # Automatically mark as paid if registration fee is 0
-        if self.event.registration_fee == 0:
-            self.paid_registration_fee = True
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.event.name}"

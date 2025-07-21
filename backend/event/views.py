@@ -1,6 +1,8 @@
-from rest_framework import generics, permissions, status
+from django.core import exceptions
+from rest_framework import generics, status
+from cca.models import CCAMember
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from cloudinary.uploader import upload
@@ -27,7 +29,43 @@ class EventDetailView(generics.RetrieveAPIView):
     """
     queryset = Event.objects.all()
     serializer_class = EventDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+
+class EventEditView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventDetailSerializer
+    queryset = Event.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'pk'
+
+    def get_object(self):
+        obj = super().get_object()
+        user = self.request.user
+
+        # Allow access if user is the creator
+        if user == obj.created_by:
+            return obj
+
+        # Allow access if user is in the admin list
+        if obj.admins.filter(id=user.id).exists():
+            return obj
+
+        # If associated with a CCA, check committee membership
+        cca = obj.cca
+        if cca:
+            try:
+                member = CCAMember.objects.get(user=user, cca=cca)
+                if member.position == 'committee':
+                    return obj
+                raise exceptions.PermissionDenied(
+                    "Only committee members can edit events.")
+            except CCAMember.DoesNotExist:
+                raise exceptions.PermissionDenied(
+                    "You are not a member of this CCA.")
+        else:
+            raise exceptions.PermissionDenied(
+                "You do not have permission to edit this event.")
+
+        return obj
 
 
 class EventSignUpView(generics.CreateAPIView):
@@ -92,8 +130,7 @@ class EventCreateView(generics.CreateAPIView):
     serializer_class = EventDetailSerializer
 
     def perform_create(self, serializer):
-        # Assuming organizer is the user creating the event
-        serializer.save()
+        serializer.save(created_by=self.request.user)
 
 
 @api_view(['POST'])
