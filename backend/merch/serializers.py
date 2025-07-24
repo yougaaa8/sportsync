@@ -165,8 +165,8 @@ class WishlistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wishlist
-        fields = ['id', 'items', 'item_count', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'items', 'item_count']
+        read_only_fields = ['id']
 
     def get_items(self, obj):
         """Get all wishlist items ordered by most recently added"""
