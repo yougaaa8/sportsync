@@ -38,7 +38,6 @@ class LobbyCreateView(generics.CreateAPIView):
     POST /api/lobbies/create/
     Create a new Lobby
     """
-    permission_classes = [permissions.IsAuthenticated]
     serializer_class = LobbyDetailSerializer
 
     def perform_create(self, serializer):
@@ -190,7 +189,6 @@ def delete_member(request, lobby_id, user_id):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 def join_lobby(request, id):
     """
     POST /api/lobbies/{id}/join/
@@ -215,7 +213,6 @@ def join_lobby(request, id):
 
 
 @api_view(['DELETE'])
-@permission_classes([permissions.IsAuthenticated])
 def leave_lobby(request, id):
     """
     DELETE /api/lobbies/{id}/leave/

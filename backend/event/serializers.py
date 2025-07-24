@@ -6,8 +6,9 @@ from cloudinary.utils import cloudinary_url
 class EventListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['id', 'name', 'date', 'cca', 'organizer', 'location',
-                  'registration_fee', 'is_public']
+        fields = ['id', 'name', 'date', 'cca',
+                  'admins', 'location', 'is_public']
+        read_only_fields = ['id']
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
@@ -17,9 +18,10 @@ class EventDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = '__all__'
+        read_only_fields = ['id', 'created_by']
 
     def get_participants_count(self, obj):
-        return obj.eventparticipant_set.count()
+        return obj.participants.count()
 
     def get_poster_url(self, obj):
         """Get optimized poster URL from Cloudinary"""
@@ -60,6 +62,7 @@ class EventParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventParticipant
         fields = '__all__'
+        read_only_fields = ['id', 'user', 'event']
 
 
 class PosterUploadSerializer(serializers.Serializer):

@@ -90,4 +90,4 @@ class WishlistItem(models.Model):
         ordering = ['-added_at']
 
     def __str__(self):
-        return f"{self.product.name} in {self.wishlist.user.username}'s wishlist"
+        return f"{self.product.name} in {self.wishlist.user.get_full_name()}'s wishlist"

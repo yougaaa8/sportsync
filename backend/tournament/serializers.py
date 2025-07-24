@@ -6,27 +6,32 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = '__all__'
+        read_only_fields = ['id']
 
 
 class TournamentSportSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentSport
         fields = '__all__'
+        read_only_fields = ['id', 'tournament']
 
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
+        read_only_fields = ['id', 'tournament_sport']
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMember
         fields = '__all__'
+        read_only_fields = ['id', 'team']
 
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
         fields = '__all__'
+        read_only_fields = ['id', 'tournament_sport']
