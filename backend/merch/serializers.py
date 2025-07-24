@@ -150,15 +150,6 @@ class ProductListSerializer(serializers.ModelSerializer):
         return obj.images.count()
 
 
-class WishlistItemSerializer(serializers.ModelSerializer):
-    product = ProductListSerializer(read_only=True)
-
-    class Meta:
-        model = WishlistItem
-        fields = ['id', 'product', 'added_at']
-        read_only_fields = ['id', 'added_at']
-
-
 class WishlistSerializer(serializers.ModelSerializer):
     items = serializers.SerializerMethodField()
     item_count = serializers.SerializerMethodField()
@@ -175,4 +166,13 @@ class WishlistSerializer(serializers.ModelSerializer):
 
     def get_item_count(self, obj):
         """Get the total number of items in the wishlist"""
-        return obj.item_count
+        return WishlistItem.objects.filter(wishlist=obj).count()
+
+
+class WishlistItemSerializer(serializers.ModelSerializer):
+    product = ProductListSerializer(read_only=True)
+
+    class Meta:
+        model = WishlistItem
+        fields = ['id', 'product', 'added_at']
+        read_only_fields = ['id', 'added_at']
