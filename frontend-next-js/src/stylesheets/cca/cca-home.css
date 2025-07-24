@@ -1,0 +1,60 @@
+.cca-home {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.cca-home-search-row {
+    display: flex;
+    margin-left: 20px;
+}
+
+.cca-home-cca-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.cca-home-search-icon-image {
+    width: 30px;
+    margin-left: 10px;
+}
+
+.cca-home-search-bar {
+    display: flex;
+    position: absolute;
+    left: 35%;
+}
+
+.cca-home-search-bar-form {
+    margin-left: 20px;
+    display: flex;
+}
+
+.cca-home-individual-cca {
+    background-color: white;
+    text-align: left;
+    color: black;
+    font-weight: 400;
+}
+
+.cca-home-cca-titles {
+    margin-top: 10px;
+    margin-left: 15px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.cca-home-cca-pictures {
+    width: 151px;
+    height: 98px;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.cca-home-cca-description {
+    margin-left: 15px;
+}

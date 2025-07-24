@@ -1,0 +1,297 @@
+/* Login Page Styles - Clean, Professional, Minimalist */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+    font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #212121;
+    margin-bottom: 3rem;
+    text-align: center;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+.error-message {
+    background-color: #FFEBEE;
+    border: 1px solid #FFCDD2;
+    color: #D32F2F;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.08);
+}
+
+.login-form {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid #F0F0F0;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    min-width: 400px;
+    max-width: 400px;
+    width: 100%;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.login-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.username-field,
+.password-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.login-form label {
+    font-size: 0.95rem;
+    color: #424242;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.025em;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    background-color: #FAFAFA;
+    color: #212121;
+    outline: none;
+}
+
+.login-form input::placeholder {
+    color: #9E9E9E;
+    font-weight: 400;
+}
+
+.login-form input:focus {
+    border-color: #FF6B35;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    transform: translateY(-1px);
+}
+
+.login-form input:hover:not(:focus) {
+    border-color: #BDBDBD;
+    background-color: #FFFFFF;
+}
+
+.login-button {
+    background: linear-gradient(135deg, #FF6B35 0%, #E65100 100%);
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+    width: 100%;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-button:hover::before {
+    left: 100%;
+}
+
+.login-button:hover,
+.login-button:focus {
+    background: linear-gradient(135deg, #FF8A65 0%, #FF6B35 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+}
+
+.login-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+}
+
+.login-button:disabled {
+    background: linear-gradient(135deg, #BDBDBD 0%, #9E9E9E 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.login-button:disabled::before {
+    display: none;
+}
+
+/* Register section styling */
+.login-form > div:last-of-type {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #F0F0F0;
+}
+
+.login-form > div:last-of-type p {
+    color: #757575;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-weight: 400;
+}
+
+.register-link {
+    color: #1A237E;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.register-link:hover {
+    color: #3949AB;
+    background-color: #F3F4F6;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.register-link:focus {
+    outline: 2px solid #1A237E;
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .login-page {
+        padding: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .login-form {
+        min-width: 100%;
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .error-message {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .login-form {
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* Loading state animation */
+.login-button:disabled {
+    position: relative;
+}
+
+.login-button:disabled::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid #FFFFFF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Focus management and accessibility */
+.login-form input:focus,
+.login-button:focus,
+.register-link:focus {
+    outline: none;
+}
+
+.login-form input:focus-visible,
+.login-button:focus-visible,
+.register-link:focus-visible {
+    outline: 2px solid #FF6B35;
+    outline-offset: 2px;
+}
+
+/* Smooth animations for better UX */
+* {
+    box-sizing: border-box;
+}
+
+.login-form,
+.login-form input,
+.login-button,
+.register-link {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add subtle pattern to background */
+.login-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 107, 53, 0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: -1;
+}

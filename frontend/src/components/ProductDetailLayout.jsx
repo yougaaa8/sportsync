@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import pullProductData from "../api-calls/pullProductData"
+import pullProductData from "../api-calls/pullProductData.js"
 import { 
     Typography, 
     Container, 

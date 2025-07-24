@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
 import SearchIcon from "../assets/search-icon.png";
 import FilterIcon from "../assets/sort-icon.png";
 import "../stylesheets/cca-home.css";
