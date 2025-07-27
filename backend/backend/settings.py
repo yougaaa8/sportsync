@@ -130,44 +130,39 @@ CELERY_BEAT_SCHEDULE = {
     'process-scheduled-notifications': {
         'task': 'notifications.tasks.process_scheduled_notifications',
         'schedule': crontab(minute='*/5'),  # Every 5 minutes
-        'options': {
-            'description': 'Process notifications scheduled to be sent'
-        }
-    },
-    # Daily training reminders
-    'send-daily-training-reminders': {
-        'task': 'cca.tasks.send_training_reminders',
-        # Every day at 5:00 PM for next day's training
-        'schedule': crontab(hour=17, minute=0),
-        'options': {
-            'description': 'Send training reminders for tomorrow\'s sessions'
-        }
     },
     # Weekly cleanup tasks
     'cleanup-old-notifications': {
         'task': 'notifications.tasks.cleanup_old_notifications',
         # Every Monday at 2 AM
         'schedule': crontab(hour=2, minute=0, day_of_week=1),
-        'options': {
-            'description': 'Clean up notifications older than 30 days'
-        }
-        #
+    },
+    # Daily training reminders
+    'send-daily-training-reminders': {
+        'task': 'cca.tasks.send_training_reminders',
+        # Every day at 5:00 PM for next day's training
+        'schedule': crontab(hour=17, minute=0),
     },
     # Send reminders for upcoming events (CCA Members)
     'send-event-reminders': {
-        'task': 'events.tasks.send_event_reminders',
+        'task': 'event.tasks.send_event_reminders',
         'schedule': crontab(hour=9, minute=0),  # 9 AM daily
     },
     # Send reminders for registration deadlines (CCA Members)
     'send-registration-deadline-reminders': {
-        'task': 'events.tasks.send_registration_deadline_reminders',
+        'task': 'event.tasks.send_registration_deadline_reminders',
         'schedule': crontab(hour=9, minute=0),  # 9 AM daily
     },
     # Reminder for upcoming tournament matches
     'daily-tomorrow-matches-reminder': {
-        'task': 'tournaments.tasks.send_tomorrow_matches_reminder',
+        'task': 'tournament.tasks.send_tomorrow_matches_reminder',
         # Every day at 5:00 PM for next day's matches
         'schedule': crontab(hour=17, minute=0),
+    },
+    # Send lobby reminders 2 hours before start time
+    'send-lobby-reminders': {
+        'task': 'matchmaking.tasks.send_lobby_reminders',
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
     },
 }
 CELERY_TIMEZONE = 'Asia/Singapore'

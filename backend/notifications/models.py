@@ -5,7 +5,7 @@ from django.conf import settings
 class NotificationType(models.TextChoices):
     TRAINING_REMINDER = 'training_reminder', 'Training Reminder'
     EVENT_UPDATE = 'event_update', 'Event Update'
-    MATCH_UPDATE = 'match_update', 'Match Update'
+    MATCHMAKING_UPDATE = 'matchmaking_update', 'Matchmaking Update'
     CCA_ANNOUNCEMENT = 'cca_announcement', 'CCA Announcement'
     TOURNAMENT_UPDATE = 'tournament_update', 'Tournament Update'
     MERCH_UPDATE = 'merch_update', 'Merchandise Update'
@@ -55,7 +55,7 @@ class UserNotificationPreference(models.Model):
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
     event_updates = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
-    match_updates = models.CharField(
+    matchmaking_updates = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.IN_APP)
     cca_announcements = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
@@ -63,9 +63,6 @@ class UserNotificationPreference(models.Model):
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
     merch_updates = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
-
-    # Timing preferences
-    reminder_hours_before = models.IntegerField(default=2)
 
     def __str__(self):
         return f"Preferences for {self.user.get_full_name()}"

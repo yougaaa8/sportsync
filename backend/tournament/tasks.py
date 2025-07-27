@@ -55,7 +55,7 @@ def send_tomorrow_matches_reminder():
             recipient=user,
             title="Tomorrow's Matches",
             message=message,
-            notification_type=NotificationType.MATCH_UPDATE,
+            notification_type=NotificationType.TOURNAMENT_UPDATE,
             related_object_id=None,
             related_object_type='match_reminder'
         )

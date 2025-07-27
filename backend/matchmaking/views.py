@@ -5,6 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from .models import Lobby, LobbyMember
 from .serializers import LobbyListSerializer, LobbyDetailSerializer, LobbyMemberSerializer
+from notifications.services import send_notification
+from notifications.models import NotificationType
+from .tasks import send_lobby_notification
 
 
 class IsLobbyMember(permissions.BasePermission):
@@ -67,7 +70,6 @@ class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         lobby = self.get_object()
-        # Only allow admins to update
         try:
             member = LobbyMember.objects.get(lobby=lobby, user=request.user)
             if member.status != 'admin':
@@ -80,11 +82,20 @@ class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
                 {"error": "You are not a member of this lobby."},
                 status=status.HTTP_403_FORBIDDEN
             )
-        return super().update(request, *args, **kwargs)
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            send_lobby_notification.delay(
+                lobby_id=lobby.id,
+                title=f"Lobby Updated: {lobby.name}",
+                message=f"The {lobby.sport} lobby has been updated",
+                notification_type=NotificationType.MATCHMAKING_UPDATE,
+                exclude_user_id=request.user.id
+            )
+
+        return response
 
     def delete(self, request, *args, **kwargs):
         lobby = self.get_object()
-        # Only allow admins to delete
         try:
             member = LobbyMember.objects.get(lobby=lobby, user=request.user)
             if member.status != 'admin':
@@ -97,6 +108,14 @@ class LobbyDetailView(generics.RetrieveUpdateDestroyAPIView):
                 {"error": "You are not a member of this lobby."},
                 status=status.HTTP_403_FORBIDDEN
             )
+        send_lobby_notification.delay(
+            lobby_id=lobby.id,
+            title=f"Lobby Cancelled: {lobby.name}",
+            message=f"The {lobby.sport} lobby scheduled for {lobby.date} has been cancelled",
+            notification_type=NotificationType.MATCHMAKING_UPDATE,
+            exclude_user_id=request.user.id
+        )
+
         return super().delete(request, *args, **kwargs)
 
 
@@ -147,7 +166,17 @@ class LobbyMembersView(generics.GenericAPIView):
 
         serializer = LobbyMemberSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            new_member = serializer.save()
+
+            send_notification(
+                recipient=new_member.user,
+                title=f"Added to Lobby: {lobby.name}",
+                message=f"You have been added to the {lobby.sport} lobby by an admin",
+                notification_type=NotificationType.MATCHMAKING_UPDATE,
+                related_object_id=lobby.id,
+                related_object_type='lobby'
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -175,7 +204,6 @@ def delete_member(request, lobby_id, user_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Prevent admin from removing themselves
     if int(user_id) == request.user.id:
         return Response(
             {"error": "Admins cannot remove themselves."},
@@ -184,6 +212,14 @@ def delete_member(request, lobby_id, user_id):
 
     member_to_remove = get_object_or_404(
         LobbyMember, lobby=lobby, user_id=user_id)
+    send_notification(
+        recipient=member_to_remove.user,
+        title=f"Removed from Lobby: {lobby.name}",
+        message=f"You have been removed from the {lobby.sport} lobby",
+        notification_type=NotificationType.MATCHMAKING_UPDATE,
+        related_object_id=lobby.id,
+        related_object_type='lobby'
+    )
     member_to_remove.delete()
     return Response({"message": "Member removed successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -195,8 +231,6 @@ def join_lobby(request, id):
     Join a lobby
     """
     lobby = get_object_or_404(Lobby, id=id)
-
-    # Check if already registered
     if LobbyMember.objects.filter(lobby=lobby, user=request.user).exists():
         return Response(
             {"error": "Already a member of this lobby"},
@@ -207,8 +241,32 @@ def join_lobby(request, id):
             {"error": "Lobby is full"},
             status=status.HTTP_400_BAD_REQUEST
         )
-    # Add user to lobby
+    if lobby.password:
+        provided_password = request.data.get('password', '')
+        if not provided_password:
+            return Response(
+                {"error": "Password required", "requires_password": True},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if provided_password != lobby.password:
+            return Response(
+                {"error": "Incorrect password", "requires_password": True},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     LobbyMember.objects.create(lobby=lobby, user=request.user)
+
+    admin_members = LobbyMember.objects.filter(lobby=lobby, status='admin')
+    for admin_member in admin_members:
+        send_notification(
+            recipient=admin_member.user,
+            title=f"New Member: {lobby.name}",
+            message=f"{request.user.get_full_name() or request.user.email} joined your {lobby.sport} lobby",
+            notification_type=NotificationType.MATCHMAKING_UPDATE,
+            related_object_id=lobby.id,
+            related_object_type='lobby'
+        )
     return Response({"message": "Successfully joined lobby"}, status=status.HTTP_201_CREATED)
 
 
@@ -223,6 +281,17 @@ def leave_lobby(request, id):
     try:
         member = LobbyMember.objects.get(
             lobby=lobby, user=request.user)
+        admin_members = LobbyMember.objects.filter(
+            lobby=lobby, status='admin').exclude(user=request.user)
+        for admin_member in admin_members:
+            send_notification(
+                recipient=admin_member.user,
+                title=f"Member Left: {lobby.name}",
+                message=f"{request.user.get_full_name() or request.user.email} left your {lobby.sport} lobby",
+                notification_type=NotificationType.MATCHMAKING_UPDATE,
+                related_object_id=lobby.id,
+                related_object_type='lobby'
+            )
 
         member.delete()
 
