@@ -16,8 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
 from django.http import JsonResponse
 
 
@@ -48,4 +46,5 @@ urlpatterns = [
     path('api/tournament/', include('tournament.urls')),
     path('api/event/', include('event.urls')),
     path('api/merch/', include('merch.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ]

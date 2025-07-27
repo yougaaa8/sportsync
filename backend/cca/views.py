@@ -7,6 +7,8 @@ from django.db import transaction
 from cloudinary.uploader import upload
 from .models import CCA, CCAMember, TrainingSession, Attendance
 from .serializers import CCAListSerializer, CCADetailSerializer, CCAMemberSerializer, TrainingSessionSerializer, AttendanceSerializer, LogoUploadSerializer
+from notifications.services import send_notification
+from notifications.models import NotificationType
 
 
 class IsCCAMember(permissions.BasePermission):
@@ -17,7 +19,7 @@ class IsCCAMember(permissions.BasePermission):
     def has_permission(self, request, view):
         cca_id = view.kwargs.get('cca_id')
         if not cca_id:
-            return False  # No CCA ID provided in URL
+            return False
         try:
             cca = CCA.objects.get(id=cca_id)
             return CCAMember.objects.filter(cca=cca, user=request.user, is_active=True).exists()
@@ -60,7 +62,7 @@ def upload_logo(request, cca_id):
             )
     except CCAMember.DoesNotExist:
         return Response(
-            {"error": "You must be a member of this CCA to can upload logos"},
+            {"error": "You must be a member of this CCA to upload logos"},
             status=status.HTTP_403_FORBIDDEN
         )
     serializer = LogoUploadSerializer(data=request.data)
@@ -69,11 +71,10 @@ def upload_logo(request, cca_id):
         try:
             image_file = serializer.validated_data['logo']
 
-            # Delete old logo if exists
             if cca.logo:
                 cca.delete_old_logo()
             public_id = f"{cca.name.replace(' ', '_')}_logo"
-            # Upload new image to Cloudinary
+
             upload_result = upload(
                 image_file,
                 folder="sportsync/cca_logo/",
@@ -111,7 +112,6 @@ class CCAMembersView(generics.GenericAPIView):
     """
     permission_classes = [permissions.IsAuthenticated, IsCCAMember]
     serializer_class = CCAMemberSerializer
-    # Check if user is a member of this CCA
 
     def get_queryset(self):
         cca = get_object_or_404(CCA, id=self.kwargs['cca_id'])
@@ -135,11 +135,9 @@ class CCAMembersView(generics.GenericAPIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Create new membership
         data = request.data.copy()
         data['cca'] = cca.id
 
-        # Check if user is already a member
         if CCAMember.objects.filter(cca=cca, user_id=data.get('user')).exists():
             return Response(
                 {"error": "User is already a member of this CCA"},
@@ -148,7 +146,7 @@ class CCAMembersView(generics.GenericAPIView):
 
         serializer = CCAMemberSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()  # Fix: Don't pass cca again since it's in data
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -171,7 +169,6 @@ class CCATrainingView(generics.GenericAPIView):
     def get(self, request, cca_id):
         cca = get_object_or_404(CCA, id=cca_id)
 
-        # Get query parameters for filtering
         upcoming_only = request.query_params.get(
             'upcoming', 'false').lower() == 'true'
 
@@ -188,9 +185,6 @@ class CCATrainingView(generics.GenericAPIView):
 
     def post(self, request, cca_id):
         cca = get_object_or_404(CCA, id=cca_id)
-
-        # Check if user is authorized to create training sessions
-        # (must be committee member or above)
         try:
             member = CCAMember.objects.get(cca=cca, user=request.user)
             if member.position == 'member':
@@ -209,12 +203,13 @@ class CCATrainingView(generics.GenericAPIView):
 
         serializer = TrainingSessionSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()  # Fix: Don't pass extra parameters
+            training_session = serializer.save()
+            from .tasks import notify_cca_members_new_training
+            notify_cca_members_new_training.delay(cca.id, training_session.id)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Additional utility views for member and training management
 
 
 @api_view(['POST'])
@@ -228,7 +223,6 @@ def join_training_session(request, cca_id, session_id):
     training_session = get_object_or_404(
         TrainingSession, id=session_id, cca=cca)
 
-    # Check if user is a member of the CCA
     try:
         member = CCAMember.objects.get(
             cca=cca, user=request.user, is_active=True)
@@ -245,16 +239,26 @@ def join_training_session(request, cca_id, session_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Determine registration status based on capacity
     if training_session.is_full:
         attendance_status = 'waitlisted'
+        notification_message = f"You have been waitlisted for the training session on {training_session.date} at {training_session.location}."
     else:
         attendance_status = 'registered'
+        notification_message = f"You have successfully registered for the training session on {training_session.date} at {training_session.location}."
 
     attendance = Attendance.objects.create(
         training_session=training_session,
         member=member,
         status=attendance_status
+    )
+
+    send_notification(
+        recipient=request.user,
+        title=f"Training Registration - {cca.name}",
+        message=notification_message,
+        notification_type=NotificationType.TRAINING_REMINDER,
+        related_object_id=training_session.id,
+        related_object_type='training_session'
     )
 
     serializer = AttendanceSerializer(attendance)
@@ -291,6 +295,14 @@ def leave_training_session(request, cca_id, session_id):
                 waitlisted.status = 'registered'
                 waitlisted.save()
 
+                send_notification(
+                    recipient=waitlisted.member.user,
+                    title=f"Training Session Spot Available - {cca.name}",
+                    message=f"You have been moved from the waitlist to registered for the training session on {training_session.date} at {training_session.start_time} in {training_session.location}.",
+                    notification_type=NotificationType.TRAINING_REMINDER,
+                    related_object_id=training_session.id,
+                    related_object_type='training_session'
+                )
         return Response({"message": "Successfully left training session"})
 
     except CCAMember.DoesNotExist:
@@ -303,3 +315,44 @@ def leave_training_session(request, cca_id, session_id):
             {"error": "You are not registered for this training session"},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsCCAMember])
+def send_cca_announcement_view(request, cca_id):
+    """
+    POST /api/cca/{cca_id}/announcement/
+    Send announcement to all CCA members (async via Celery)
+    """
+    cca = get_object_or_404(CCA, id=cca_id)
+
+    try:
+        member = CCAMember.objects.get(cca=cca, user=request.user)
+        if member.position == 'member':
+            return Response(
+                {"error": "Only committee members can send announcements"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+    except CCAMember.DoesNotExist:
+        return Response(
+            {"error": "You must be a member of this CCA"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    title = request.data.get('title', '')
+    message = request.data.get('message', '')
+
+    if not title or not message:
+        return Response(
+            {"error": "Title and message are required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    from .tasks import send_cca_announcement
+
+    task = send_cca_announcement.delay(cca.id, title, message, request.user.id)
+
+    return Response({
+        "message": "Announcement is being sent to all CCA members",
+        "task_id": task.id
+    }, status=status.HTTP_202_ACCEPTED)

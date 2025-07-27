@@ -8,6 +8,9 @@ from django.db.models import Q
 from cloudinary.uploader import upload, destroy
 from .models import Product, ProductImage, Wishlist, WishlistItem
 from .serializers import ProductSerializer, ProductListSerializer, WishlistSerializer, ProductImageSerializer
+from notifications.services import send_notification
+from notifications.models import NotificationType
+from cca.models import CCA
 
 
 class HasCCAPermission(permissions.BasePermission):
@@ -92,7 +95,11 @@ class ProductCreateView(generics.CreateAPIView):
             raise exceptions.PermissionDenied(
                 "You are not a member of this CCA")
 
-        serializer.save()
+        product = serializer.save()
+
+        # NEW: Send notifications to all CCA members about new product
+        from .tasks import notify_new_product
+        notify_new_product.delay(product.id, cca.id)
 
 
 class ProductUpdateView(generics.RetrieveUpdateDestroyAPIView):
@@ -201,6 +208,7 @@ def clear_wishlist(request):
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
+@permission_classes([permissions.IsAuthenticated, HasCCAPermission])
 def add_product_images(request, product_id):
     """
     POST /api/merch/products/{id}/images/
@@ -209,21 +217,6 @@ def add_product_images(request, product_id):
     """
     product = get_object_or_404(Product, id=product_id)
 
-    # Check permissions
-    try:
-        member = CCAMember.objects.get(user=request.user, cca=product.cca)
-        if member.position != 'committee':
-            return Response(
-                {'error': 'Only committee members can add images'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-    except CCAMember.DoesNotExist:
-        return Response(
-            {'error': 'You are not a member of this CCA'},
-            status=status.HTTP_403_FORBIDDEN
-        )
-
-    # Get all uploaded images
     uploaded_images = request.FILES.getlist('images')
     alt_texts = request.POST.getlist('alt_texts')
 
@@ -238,11 +231,9 @@ def add_product_images(request, product_id):
 
     for i, image_file in enumerate(uploaded_images):
         try:
-            # Get alt text for this image (if provided)
             alt_text = alt_texts[i] if i < len(
                 alt_texts) else f"Product image {i+1}"
 
-            # Validate image file
             serializer = ProductImageSerializer(data={
                 'image': image_file,
                 'alt_text': alt_text
@@ -255,11 +246,9 @@ def add_product_images(request, product_id):
                 })
                 continue
 
-            # Generate unique public_id for Cloudinary
             public_id = f"{product.cca.name}_{product.name}_{alt_text}_{i+1}".replace(
                 ' ', '_').lower()
 
-            # Upload image to Cloudinary
             upload_result = upload(
                 image_file,
                 folder=f"sportsync/merch/{product.cca.name}",
@@ -274,7 +263,6 @@ def add_product_images(request, product_id):
                 resource_type="image"
             )
 
-            # Create ProductImage record
             product_image = ProductImage.objects.create(
                 product=product,
                 image=upload_result['public_id'],
@@ -294,7 +282,6 @@ def add_product_images(request, product_id):
                 'error': str(e)
             })
 
-    # Prepare response
     response_data = {
         'message': f'Successfully uploaded {len(uploaded_results)} images',
         'uploaded_images': uploaded_results
@@ -336,7 +323,6 @@ def manage_product_image(request, product_id, image_id):
 
     elif request.method == 'DELETE':
         """Delete a specific product image (committee members only)"""
-        # Check permissions
         try:
             member = CCAMember.objects.get(user=request.user, cca=product.cca)
             if member.position != 'committee':
@@ -392,3 +378,34 @@ def get_product_images(request, product_id):
             {'error': 'Product not found'},
             status=status.HTTP_404_NOT_FOUND
         )
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, HasCCAPermission])
+def notify_wishlist_users(request, product_id):
+    """
+    POST /api/merch/products/{product_id}/notify-wishlist/
+    Send custom notification to all users who have this product in wishlist
+    (Committee members only)
+    """
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return Response(
+            {'error': 'Product not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    custom_message = request.data.get(
+        'message', f"Update about {product.name}")
+
+    from .tasks import notify_custom_message_to_wishlist
+    task = notify_custom_message_to_wishlist.delay(product_id, custom_message)
+
+    return Response(
+        {
+            'message': 'Notifications are being sent to wishlist users',
+            'task_id': task.id
+        },
+        status=status.HTTP_202_ACCEPTED
+    )

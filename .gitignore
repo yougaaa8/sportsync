@@ -4,5 +4,5 @@ profile_pics
 media
 staticfiles
 .env
-./frontend/node_modules
-node_modules
+**/node_modules/
+celerybeat-schedule

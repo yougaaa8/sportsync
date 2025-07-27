@@ -45,7 +45,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
 class EventSignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventParticipant
-        fields = ['event', 'user']
+        fields = ['event', 'user', 'status']
 
     def validate(self, attrs):
         event = attrs.get('event')

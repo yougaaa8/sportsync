@@ -33,4 +33,6 @@ urlpatterns = [
          views.MatchCreateView.as_view(), name='match-create'),
     path('<int:tournament_id>/<int:sport_id>/matches/<int:match_id>/edit/',
          views.MatchEditView.as_view(), name='match-edit'),
+    path('<int:tournament_id>/announce/',
+         views.send_tournament_announcement_view, name='tournament-announce'),
 ]
