@@ -70,25 +70,7 @@ services:
     volumes:
       - ./frontend-next-js:/app
       - /app/node_modules
-<<<<<<< HEAD
       - /app/.next
-
-  # Old React Frontend (optional - remove if not needed)
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5173:5173"
-  #   environment:
-  #     - HOST=0.0.0.0
-  #     - REACT_APP_API_URL=http://localhost:8000/api
-  #   depends_on:
-  #     - backend
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-=======
     
   celery-worker:
     build:
@@ -120,14 +102,9 @@ services:
       - ./backend:/app
     command: celery -A backend beat --loglevel=info
 
->>>>>>> dcd921e5856d93a494d2b383e20abaaec6c17482
 
 volumes:
   postgres_data:
   static_volume:
-<<<<<<< HEAD
-  media_volume:
-=======
   media_volume:
   redis_data:
->>>>>>> dcd921e5856d93a494d2b383e20abaaec6c17482
