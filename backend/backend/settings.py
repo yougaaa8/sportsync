@@ -126,21 +126,21 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
-    # Daily training reminders
-    'send-daily-training-reminders': {
-        'task': 'cca.tasks.send_training_reminders',
-        # Every day at 8:00 PM for next day's training
-        'schedule': crontab(hour=20, minute=0),
-        'options': {
-            'description': 'Send training reminders for tomorrow\'s sessions'
-        }
-    },
     # Process scheduled notifications
     'process-scheduled-notifications': {
         'task': 'notifications.tasks.process_scheduled_notifications',
         'schedule': crontab(minute='*/5'),  # Every 5 minutes
         'options': {
             'description': 'Process notifications scheduled to be sent'
+        }
+    },
+    # Daily training reminders
+    'send-daily-training-reminders': {
+        'task': 'cca.tasks.send_training_reminders',
+        # Every day at 5:00 PM for next day's training
+        'schedule': crontab(hour=17, minute=0),
+        'options': {
+            'description': 'Send training reminders for tomorrow\'s sessions'
         }
     },
     # Weekly cleanup tasks
@@ -151,7 +151,19 @@ CELERY_BEAT_SCHEDULE = {
         'options': {
             'description': 'Clean up notifications older than 30 days'
         }
+        #
     },
+    # Send reminders for upcoming events (CCA Members)
+    'send-event-reminders': {
+        'task': 'events.tasks.send_event_reminders',
+        'schedule': crontab(hour=9, minute=0),  # 9 AM daily
+    },
+    # Send reminders for registration deadlines (CCA Members)
+    'send-registration-deadline-reminders': {
+        'task': 'events.tasks.send_registration_deadline_reminders',
+        'schedule': crontab(hour=9, minute=0),  # 9 AM daily
+    },
+
 }
 CELERY_TIMEZONE = 'Asia/Singapore'
 
