@@ -4,8 +4,6 @@ profile_pics
 media
 staticfiles
 .env
-./frontend/node_modules
-node_modules
 ./frontend/.env.local
 ./frontend/.env
 ./backend/.env
