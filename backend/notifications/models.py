@@ -59,6 +59,10 @@ class UserNotificationPreference(models.Model):
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.IN_APP)
     cca_announcements = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
+    tournament_updates = models.CharField(
+        max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
+    merch_updates = models.CharField(
+        max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.BOTH)
 
     # Timing preferences
     reminder_hours_before = models.IntegerField(default=2)

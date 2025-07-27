@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from .models import Tournament, TournamentSport, Team, TeamMember, Match
 from .serializers import TournamentSerializer, TournamentSportSerializer, TeamSerializer, TeamMemberSerializer, MatchSerializer
+from .tasks import send_tournament_announcement
 
 
 class IsStaff(permissions.BasePermission):
@@ -18,17 +19,31 @@ class IsStaff(permissions.BasePermission):
 
 
 class TournamentListView(generics.ListAPIView):
+    """
+    GET /api/tournaments/list/
+    Get all tournaments in the system
+    """
     queryset = Tournament.objects.all()
     serializer_class = TournamentSerializer
     permission_classes = []
 
 
 class TournamentCreateView(generics.CreateAPIView):
+    """
+    POST /api/tournaments/create/
+    Create a new tournament (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TournamentSerializer
 
 
 class TournamentEditView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/edit/
+    PUT /api/tournaments/{tournament_id}/edit/
+    DELETE /api/tournaments/{tournament_id}/edit/
+    Retrieve, update, or delete a specific tournament (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TournamentSerializer
     queryset = Tournament.objects.all()
@@ -37,6 +52,10 @@ class TournamentEditView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TournamentSportListView(generics.ListAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/
+    Get all sports for a specific tournament
+    """
     serializer_class = TournamentSportSerializer
     permission_classes = []
 
@@ -55,6 +74,10 @@ class TournamentSportListView(generics.ListAPIView):
 
 
 class TournamentSportCreateView(generics.CreateAPIView):
+    """
+    POST /api/tournaments/{tournament_id}/create/
+    Create a new sport for a specific tournament (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TournamentSportSerializer
 
@@ -65,6 +88,12 @@ class TournamentSportCreateView(generics.CreateAPIView):
 
 
 class TournamentSportEditView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/edit/
+    PUT /api/tournaments/{tournament_id}/{sport_id}/edit/
+    DELETE /api/tournaments/{tournament_id}/{sport_id}/edit/
+    Retrieve, update, or delete a specific tournament sport (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TournamentSportSerializer
     lookup_field = 'id'
@@ -78,6 +107,10 @@ class TournamentSportEditView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TeamListView(generics.ListAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/teams/
+    Get all teams for a specific tournament sport
+    """
     serializer_class = TeamSerializer
     permission_classes = []
 
@@ -96,6 +129,10 @@ class TeamListView(generics.ListAPIView):
 
 
 class TeamCreateView(generics.CreateAPIView):
+    """
+    POST /api/tournaments/{tournament_id}/{sport_id}/teams/create/
+    Create a new team for a specific tournament sport (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TeamSerializer
 
@@ -106,6 +143,12 @@ class TeamCreateView(generics.CreateAPIView):
 
 
 class TeamEditView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/edit/
+    PUT /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/edit/
+    DELETE /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/edit/
+    Retrieve, update, or delete a specific team (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TeamSerializer
     lookup_field = 'id'
@@ -120,6 +163,10 @@ class TeamEditView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TeamMemberListView(generics.ListAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/
+    Get all members for a specific team
+    """
     serializer_class = TeamMemberSerializer
     permission_classes = []
 
@@ -137,6 +184,10 @@ class TeamMemberListView(generics.ListAPIView):
 
 
 class TeamMemberCreateView(generics.CreateAPIView):
+    """
+    POST /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/create/
+    Create a new team member for a specific team (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TeamMemberSerializer
 
@@ -147,6 +198,12 @@ class TeamMemberCreateView(generics.CreateAPIView):
 
 
 class TeamMemberEditView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/{team_member_id}/edit/
+    PUT /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/{team_member_id}/edit/
+    DELETE /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/{team_member_id}/edit/
+    Retrieve, update, or delete a specific team member (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = TeamMemberSerializer
     lookup_field = 'id'
@@ -161,6 +218,10 @@ class TeamMemberEditView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class MatchListView(generics.ListAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/matches/
+    Get all matches for a specific tournament sport
+    """
     serializer_class = MatchSerializer
     permission_classes = []
 
@@ -179,6 +240,10 @@ class MatchListView(generics.ListAPIView):
 
 
 class MatchCreateView(generics.CreateAPIView):
+    """
+    POST /api/tournaments/{tournament_id}/{sport_id}/matches/create/
+    Create a new match for a specific tournament sport (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = MatchSerializer
 
@@ -189,6 +254,12 @@ class MatchCreateView(generics.CreateAPIView):
 
 
 class MatchEditView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/tournaments/{tournament_id}/{sport_id}/matches/{match_id}/edit/
+    PUT /api/tournaments/{tournament_id}/{sport_id}/matches/{match_id}/edit/
+    DELETE /api/tournaments/{tournament_id}/{sport_id}/matches/{match_id}/edit/
+    Retrieve, update, or delete a specific match (staff only)
+    """
     permission_classes = [permissions.IsAuthenticated, IsStaff]
     serializer_class = MatchSerializer
     lookup_field = 'id'
@@ -200,3 +271,28 @@ class MatchEditView(generics.RetrieveUpdateDestroyAPIView):
         queryset = Match.objects.filter(
             tournament_sport=tournament_sport)
         return queryset
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsStaff])
+def send_tournament_announcement_view(request, tournament_id):
+    """
+    POST /api/tournaments/{tournament_id}/announce/
+    Send a custom announcement for a specific tournament to all users
+    """
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+
+    title = request.data.get(
+        'title', f'Tournament Announcement: {tournament.name}')
+    message = request.data.get('message', '')
+
+    if not message:
+        return Response({'error': 'Message is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    task = send_tournament_announcement.delay(tournament_id, title, message)
+
+    return Response({
+        'success': True,
+        'message': 'Tournament announcement sent successfully',
+        'task_id': task.id
+    })

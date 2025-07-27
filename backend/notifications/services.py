@@ -103,9 +103,11 @@ class NotificationService:
         """Get user's preferred channel for this notification type"""
         preference_map = {
             NotificationType.TRAINING_REMINDER: user_prefs.training_reminders,
-            NotificationType.EVENT_REGISTRATION: user_prefs.event_updates,
+            NotificationType.EVENT_UPDATE: user_prefs.event_updates,
             NotificationType.MATCH_UPDATE: user_prefs.match_updates,
             NotificationType.CCA_ANNOUNCEMENT: user_prefs.cca_announcements,
+            NotificationType.TOURNAMENT_UPDATE: user_prefs.tournament_updates,
+            NotificationType.MERCH_UPDATE: user_prefs.merch_updates,
         }
         return preference_map.get(notification_type, NotificationChannel.BOTH)
 

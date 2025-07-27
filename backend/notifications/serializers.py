@@ -18,5 +18,5 @@ class UserNotificationPreferenceSerializer(serializers.ModelSerializer):
         model = UserNotificationPreference
         fields = [
             'training_reminders', 'event_updates', 'match_updates',
-            'cca_announcements', 'reminder_hours_before'
+            'cca_announcements', 'tournament_updates', 'merch_updates', 'reminder_hours_before'
         ]

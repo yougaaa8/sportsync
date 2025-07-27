@@ -163,7 +163,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'events.tasks.send_registration_deadline_reminders',
         'schedule': crontab(hour=9, minute=0),  # 9 AM daily
     },
-
+    # Reminder for upcoming tournament matches
+    'daily-tomorrow-matches-reminder': {
+        'task': 'tournaments.tasks.send_tomorrow_matches_reminder',
+        # Every day at 5:00 PM for next day's matches
+        'schedule': crontab(hour=17, minute=0),
+    },
 }
 CELERY_TIMEZONE = 'Asia/Singapore'
 
