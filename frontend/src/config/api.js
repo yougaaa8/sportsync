@@ -1,6 +1,6 @@
 const API_BASE_URL =
-  import.meta.env.VITE_PRODUCTION === "true"
-    ? import.meta.env.VITE_BACKEND_URL
-    : import.meta.env.VITE_LOCAL;
+  process.env.NEXT_PUBLIC_PRODUCTION === "true"
+    ? process.env.NEXT_PUBLIC_BACKEND_URL
+    : process.env.NEXT_PUBLIC_LOCAL;
 
 export { API_BASE_URL };

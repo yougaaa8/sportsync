@@ -39,21 +39,37 @@ services:
             python manage.py collectstatic --noinput &&
             python manage.py runserver 0.0.0.0:8000"
 
-  # React Frontend
-  frontend:
+  # Next.js Frontend
+  frontend-nextjs:
     build:
-      context: ./frontend
+      context: ./frontend-next-js
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
     environment:
-      - HOST=0.0.0.0
-      - REACT_APP_API_URL=http://localhost:8000/api
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
+      - ./frontend-next-js:/app
       - /app/node_modules
+      - /app/.next
+
+  # Old React Frontend (optional - remove if not needed)
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - REACT_APP_API_URL=http://localhost:8000/api
+  #   depends_on:
+  #     - backend
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
 
 volumes:
   postgres_data:

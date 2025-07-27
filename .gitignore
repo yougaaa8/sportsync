@@ -6,3 +6,6 @@ staticfiles
 .env
 ./frontend/node_modules
 node_modules
+./frontend-next-js/.env.local
+./frontend/.env
+./backend/.env

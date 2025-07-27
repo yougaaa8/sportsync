@@ -1,7 +1,8 @@
 import "../stylesheets/footer.css"
 import { Box, Container, Typography, Link as MuiLink, Stack } from "@mui/material";
 import SportSyncLogo from "../assets/sportsync-logo.png";
-import { Link } from "react-router-dom";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
     return (
@@ -20,27 +21,43 @@ export default function Footer() {
         >
             <Container maxWidth="lg" sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                    <img src={SportSyncLogo} alt="SportSync" style={{ height: 28 }} />
+                    <Image 
+                        src={SportSyncLogo} 
+                        alt="SportSync" 
+                        width={28} 
+                        height={28}
+                        style={{ objectFit: 'contain' }}
+                    />
                     <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
                         2025 SportSync. All rights reserved.
                     </Typography>
                 </Stack>
                 <Stack direction="row" spacing={3} sx={{ mt: { xs: 2, md: 0 } }}>
-                    <MuiLink component={Link} to="/" underline="none" sx={footerLinkStyle}>
-                        Home
-                    </MuiLink>
-                    <MuiLink component={Link} to="/about" underline="none" sx={footerLinkStyle}>
-                        About Us
-                    </MuiLink>
-                    <MuiLink component={Link} to="/contact" underline="none" sx={footerLinkStyle}>
-                        Contact
-                    </MuiLink>
-                    <MuiLink component={Link} to="/login" underline="none" sx={footerLinkStyle}>
-                        Login
-                    </MuiLink>
-                    <MuiLink component={Link} to="/register" underline="none" sx={footerLinkStyle}>
-                        Register
-                    </MuiLink>
+                    <Link href="/" style={{ textDecoration: 'none' }}>
+                        <Typography sx={footerLinkStyle}>
+                            Home
+                        </Typography>
+                    </Link>
+                    <Link href="/about" style={{ textDecoration: 'none' }}>
+                        <Typography sx={footerLinkStyle}>
+                            About Us
+                        </Typography>
+                    </Link>
+                    <Link href="/contact" style={{ textDecoration: 'none' }}>
+                        <Typography sx={footerLinkStyle}>
+                            Contact
+                        </Typography>
+                    </Link>
+                    <Link href="/login" style={{ textDecoration: 'none' }}>
+                        <Typography sx={footerLinkStyle}>
+                            Login
+                        </Typography>
+                    </Link>
+                    <Link href="/register" style={{ textDecoration: 'none' }}>
+                        <Typography sx={footerLinkStyle}>
+                            Register
+                        </Typography>
+                    </Link>
                 </Stack>
             </Container>
         </Box>
