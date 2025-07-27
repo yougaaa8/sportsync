@@ -33,6 +33,11 @@ class Event(models.Model):
         },
         help_text="Upload an event poster"
     )
+    max_participants = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Maximum number of participants (leave blank for unlimited)"
+    )
+
     contact_point = models.TextField(
         max_length=255, blank=True, help_text="Contact point for the event")
 
@@ -47,6 +52,15 @@ class Event(models.Model):
             except Exception as e:
                 print(f"Error deleting old poster: {e}")
 
+    @property
+    def is_full(self):
+        """Check if event is at capacity"""
+        if not self.max_participants:
+            return False
+        registered_count = self.participants.filter(
+            status='registered').count()
+        return registered_count >= self.max_participants
+
 
 class EventParticipant(models.Model):
     event = models.ForeignKey(
@@ -54,6 +68,12 @@ class EventParticipant(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
+    STATUS_CHOICES = [
+        ('registered', 'Registered'),
+        ('waitlisted', 'Waitlisted'),
+    ]
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default='na')
 
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.event.name}"

@@ -12,4 +12,6 @@ urlpatterns = [
     path('<int:pk>/upload-poster/',
          views.upload_poster, name='upload-poster'),
     path('create/', views.EventCreateView.as_view(), name='event-create'),
+    path('<int:pk>/notify-participants/',
+         views.notify_event_participants, name='notify-participants'),
 ]

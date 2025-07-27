@@ -15,7 +15,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import os
 import cloudinary
-import cloudinary.uploader
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -42,25 +42,28 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'cloudinary',
     'cloudinary_storage',
-    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
     "rest_framework_simplejwt.token_blacklist",
     'corsheaders',
+    'channels',
     'users',
     'cca',
     'matchmaking',
     'tournament',
     'event',
-    'merch'
+    'merch',
+    'notifications'
 ]
 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,6 +105,77 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+
+ASGI_APPLICATION = 'backend.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                os.environ.get('REDIS_URL', 'redis://localhost:6379')
+            ],
+        },
+    },
+}
+
+# NEW: Celery Configuration
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULE = {
+    # Process scheduled notifications
+    'process-scheduled-notifications': {
+        'task': 'notifications.tasks.process_scheduled_notifications',
+        'schedule': crontab(minute='*/5'),  # Every 5 minutes
+    },
+    # Weekly cleanup tasks
+    'cleanup-old-notifications': {
+        'task': 'notifications.tasks.cleanup_old_notifications',
+        # Every Monday at 2 AM
+        'schedule': crontab(hour=2, minute=0, day_of_week=1),
+    },
+    # Daily training reminders
+    'send-daily-training-reminders': {
+        'task': 'cca.tasks.send_training_reminders',
+        # Every day at 5:00 PM for next day's training
+        'schedule': crontab(hour=17, minute=0),
+    },
+    # Send reminders for upcoming events (CCA Members)
+    'send-event-reminders': {
+        'task': 'event.tasks.send_event_reminders',
+        'schedule': crontab(hour=9, minute=0),  # 9 AM daily
+    },
+    # Send reminders for registration deadlines (CCA Members)
+    'send-registration-deadline-reminders': {
+        'task': 'event.tasks.send_registration_deadline_reminders',
+        'schedule': crontab(hour=9, minute=0),  # 9 AM daily
+    },
+    # Reminder for upcoming tournament matches
+    'daily-tomorrow-matches-reminder': {
+        'task': 'tournament.tasks.send_tomorrow_matches_reminder',
+        # Every day at 5:00 PM for next day's matches
+        'schedule': crontab(hour=17, minute=0),
+    },
+    # Send lobby reminders 2 hours before start time
+    'send-lobby-reminders': {
+        'task': 'matchmaking.tasks.send_lobby_reminders',
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
+    },
+}
+CELERY_TIMEZONE = 'Asia/Singapore'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'your-email@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get(
+    'EMAIL_HOST_PASSWORD', 'your-app-password')
+DEFAULT_FROM_EMAIL = 'SportsSync <noreply@sportsync.nus.edu>'
 
 # JWT Configuration
 SIMPLE_JWT = {
@@ -167,11 +241,6 @@ CLOUDINARY_STORAGE = {
 
 # Media files storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Static files storage (optional - for production)
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
-
-# Media URL
 MEDIA_URL = '/media/'
 
 # Password validation
@@ -208,7 +277,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
@@ -217,7 +294,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-
-# Testing - Alex -
-MEDIA_URL = "/backend/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'backend')

@@ -6,6 +6,8 @@ staticfiles
 .env
 ./frontend/node_modules
 node_modules
-./frontend-next-js/.env.local
+./frontend/.env.local
 ./frontend/.env
 ./backend/.env
+celerybeat-schedule
+**/node_modules/
