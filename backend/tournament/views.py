@@ -1,9 +1,15 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
+from cloudinary.uploader import upload
 from .models import Tournament, TournamentSport, Team, TeamMember, Match
-from .serializers import TournamentSerializer, TournamentSportSerializer, TeamSerializer, TeamMemberSerializer, MatchSerializer
+from .serializers import (
+    TournamentSerializer, TournamentSportSerializer, TeamSerializer,
+    TeamMemberSerializer, MatchSerializer, TournamentLogoUploadSerializer,
+    TeamLogoUploadSerializer, TeamMemberPhotoUploadSerializer
+)
 from .tasks import send_tournament_announcement
 
 
@@ -49,6 +55,53 @@ class TournamentEditView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tournament.objects.all()
     lookup_field = 'id'
     lookup_url_kwarg = 'tournament_id'
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsStaff])
+@parser_classes([MultiPartParser, FormParser])
+def upload_tournament_logo(request, tournament_id):
+    """Upload/update tournament logo to Cloudinary"""
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+
+    serializer = TournamentLogoUploadSerializer(data=request.data)
+
+    if serializer.is_valid():
+        try:
+            image_file = serializer.validated_data['logo']
+
+            if tournament.logo:
+                tournament.delete_old_logo()
+
+            public_id = f"{tournament.name.replace(' ', '_')}_tournament_logo"
+
+            upload_result = upload(
+                image_file,
+                folder="sportsync/tournament_logo/",
+                public_id=public_id,
+                transformation=[
+                    {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'},
+                    {'quality': 'auto'},
+                    {'fetch_format': 'auto'}
+                ],
+                overwrite=True,
+                resource_type="image"
+            )
+
+            tournament.logo = upload_result['public_id']
+            tournament.save()
+
+            return Response({
+                'message': 'Tournament logo uploaded successfully',
+                'logo_url': upload_result['secure_url'],
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': f'Upload failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TournamentSportListView(generics.ListAPIView):
@@ -162,6 +215,53 @@ class TeamEditView(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsStaff])
+@parser_classes([MultiPartParser, FormParser])
+def upload_team_logo(request, tournament_id, sport_id, team_id):
+    """Upload/update team logo to Cloudinary"""
+    team = get_object_or_404(Team, id=team_id)
+
+    serializer = TeamLogoUploadSerializer(data=request.data)
+
+    if serializer.is_valid():
+        try:
+            image_file = serializer.validated_data['logo']
+
+            if team.logo:
+                team.delete_old_logo()
+
+            public_id = f"{team.name.replace(' ', '_')}_team_logo"
+
+            upload_result = upload(
+                image_file,
+                folder="sportsync/team_logo/",
+                public_id=public_id,
+                transformation=[
+                    {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'},
+                    {'quality': 'auto'},
+                    {'fetch_format': 'auto'}
+                ],
+                overwrite=True,
+                resource_type="image"
+            )
+
+            team.logo = upload_result['public_id']
+            team.save()
+
+            return Response({
+                'message': 'Team logo uploaded successfully',
+                'logo_url': upload_result['secure_url'],
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': f'Upload failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class TeamMemberListView(generics.ListAPIView):
     """
     GET /api/tournaments/{tournament_id}/{sport_id}/teams/{team_id}/
@@ -215,6 +315,53 @@ class TeamMemberEditView(generics.RetrieveUpdateDestroyAPIView):
         queryset = TeamMember.objects.filter(
             team=team)
         return queryset
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsStaff])
+@parser_classes([MultiPartParser, FormParser])
+def upload_team_member_photo(request, tournament_id, sport_id, team_id, team_member_id):
+    """Upload/update team member photo to Cloudinary"""
+    team_member = get_object_or_404(TeamMember, id=team_member_id)
+
+    serializer = TeamMemberPhotoUploadSerializer(data=request.data)
+
+    if serializer.is_valid():
+        try:
+            image_file = serializer.validated_data['photo']
+
+            if team_member.photo:
+                team_member.delete_old_photo()
+
+            public_id = f"{team_member.jersey_name.replace(' ', '_')}_{team_member.jersey_number}_photo"
+
+            upload_result = upload(
+                image_file,
+                folder="sportsync/team_member_photo/",
+                public_id=public_id,
+                transformation=[
+                    {'width': 400, 'height': 400, 'crop': 'fill', 'gravity': 'face'},
+                    {'quality': 'auto'},
+                    {'fetch_format': 'auto'}
+                ],
+                overwrite=True,
+                resource_type="image"
+            )
+
+            team_member.photo = upload_result['public_id']
+            team_member.save()
+
+            return Response({
+                'message': 'Team member photo uploaded successfully',
+                'photo_url': upload_result['secure_url'],
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': f'Upload failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MatchListView(generics.ListAPIView):
