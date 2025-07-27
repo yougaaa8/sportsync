@@ -14,9 +14,13 @@ export default function ClientLayout({children, withNavbarAndFooter}: {
         <>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                {withNavbarAndFooter && <Navbar />}
-                {children}
-                {withNavbarAndFooter && <Footer />}
+                <div className="min-h-screen flex flex-col">
+                    {withNavbarAndFooter && <Navbar />}
+                    <div className="flex-1">
+                        {children}
+                    </div>
+                    {withNavbarAndFooter && <Footer />}
+                </div>
             </ThemeProvider>
         </>
     );

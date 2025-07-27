@@ -9,9 +9,9 @@ export default async function pullWishlist() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }), // Only add if token exists
+        Authorization: `Bearer ${token}`,
       },
-      credentials: "include", // This includes cookies for session auth
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -20,7 +20,7 @@ export default async function pullWishlist() {
       console.log("response okay");
       const data = await response.json();
       console.log("This is the retrieved wishlist: ", data);
-      return data.items;
+      return data;
     }
   } catch (error) {
     console.log("Failed to retrieve wishlist for user ", error);

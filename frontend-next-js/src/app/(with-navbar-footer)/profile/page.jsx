@@ -6,7 +6,6 @@ import BlankProfilePicture from "../../../assets/blank-user-profile.jpg"
 import { 
   Paper, 
   Container, 
-  Grid, 
   Avatar, 
   Button, 
   TextField, 
@@ -28,10 +27,12 @@ import {
   BookOnline, 
   ShoppingBag, 
   Edit,
-  Save
+  Save,
+  Delete
 } from "@mui/icons-material"
 import updateProfile from "../../../api-calls/profile/updateProfile.js"
 import { pullUserProfile } from "../../../api-calls/profile/pullUserProfile.js"
+import deleteProfilePicture from "../../../api-calls/profile/deleteProfilePicture"
 
 export default function Profile() {
     const [email, setEmail] = useState("");
@@ -39,6 +40,7 @@ export default function Profile() {
     const [lastName, setLastName] = useState("")
     const [status, setStatus] = useState("student")
     const [emergencyContact, setEmergencyContact] = useState("")
+    const [bio, setBio] = useState("")
     const [message, setMessage] = useState("")
     const router = useRouter(); 
 
@@ -53,10 +55,11 @@ export default function Profile() {
               .then(res => res.json())
               .then(data => {
                     console.log(data)
-                    setFirstName(data.first_name)
-                    setLastName(data.last_name)
-                    setStatus(data.status)
-                    setEmergencyContact(data.emergency_contact)
+                    setFirstName(data.first_name || "")
+                    setLastName(data.last_name || "")
+                    setStatus(data.status || "student")
+                    setEmergencyContact(data.emergency_contact || "")
+                    setBio(data.bio || "")
                     // get existing profile picture if available
                     if (data.profile_picture_url) { 
                         setProfilePicPreview(data.profile_picture_url)
@@ -76,23 +79,28 @@ export default function Profile() {
         }
     }
 
-    // 3) On form submit, PATCH the update endpoint to update the database
-    async function handleSubmit(e) {
-        e.preventDefault()
-        // setMessage("")
+    // Function to handle profile picture deletion
+    function handleDeleteProfilePicture() {
+        deleteProfilePicture()
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
 
-        const token = localStorage.getItem("authToken");
-        // Create a FormData to send in the upcoming PATCH request
-        const formData = new FormData();
-        formData.append("email", email)
-        formData.append("first_name", firstName)
-        formData.append("last_name", lastName)
-        formData.append("status", status)
-        formData.append("emergency_contact", emergencyContact)
-        if (profilePicFile) {
-            formData.append("profile_picture", profilePicFile)
+    // 3) Form action for React 19
+    async function handleSubmit(formData) {
+        try {
+            // If there's a profile picture file, append it to formData
+            if (profilePicFile) {
+                formData.append('profile_picture', profilePicFile)
+            }
+            
+            const result = await updateProfile(formData)
+            setMessage("Profile updated successfully!")
+        } catch (error) {
+            console.error('Error updating profile:', error)
+            setMessage("Error updating profile. Please try again.")
         }
-        updateProfile(formData)
     }
 
     const menuItems = [
@@ -110,9 +118,9 @@ export default function Profile() {
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Grid container spacing={4}>
+            <div className="flex flex-col lg:flex-row gap-6">
                 {/* Left Sidebar */}
-                <Grid item xs={12} md={4}>
+                <div className="w-full lg:w-1/3">
                     <Card sx={{ mb: 3 }}>
                         <CardContent sx={{ textAlign: 'center', p: 4 }}>
                             <Box sx={{ position: 'relative', display: 'inline-block', mb: 3 }}>
@@ -140,6 +148,23 @@ export default function Profile() {
                                 >
                                     <Edit fontSize="small" />
                                 </IconButton>
+                                {/* Delete Profile Picture Button - Only show if there's a profile picture */}
+                                {(profilePicPreview && profilePicPreview !== BlankProfilePicture) && (
+                                    <IconButton
+                                        sx={{ 
+                                            position: 'absolute', 
+                                            bottom: -8, 
+                                            left: -8,
+                                            bgcolor: 'error.main',
+                                            color: 'white',
+                                            '&:hover': { bgcolor: 'error.dark' },
+                                            boxShadow: 2
+                                        }}
+                                        onClick={handleDeleteProfilePicture}
+                                    >
+                                        <Delete fontSize="small" />
+                                    </IconButton>
+                                )}
                                 <input 
                                     type="file"
                                     accept="image/*"
@@ -206,71 +231,125 @@ export default function Profile() {
                             ))}
                         </List>
                     </Card>
-                </Grid>
+                </div>
 
                 {/* Right Content */}
-                <Grid item xs={12} md={8}>
+                <div className="w-full lg:w-2/3">
                     <Card>
                         <CardContent sx={{ p: 4 }}>
                             <Typography variant="h5" gutterBottom sx={{ mb: 4, fontWeight: 600 }}>
                                 Profile Information
                             </Typography>
                             
+                            {message && (
+                                <Typography 
+                                    variant="body2" 
+                                    sx={{ 
+                                        mb: 2, 
+                                        p: 1, 
+                                        bgcolor: message.includes('Error') ? 'error.50' : 'success.50',
+                                        color: message.includes('Error') ? 'error.main' : 'success.main',
+                                        borderRadius: 1
+                                    }}
+                                >
+                                    {message}
+                                </Typography>
+                            )}
+                            
                             <Box 
                                 component="form" 
-                                onSubmit={handleSubmit}
+                                action={handleSubmit}
                                 encType="multipart/form-data"
                             >
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="First Name"
-                                            value={firstName}
-                                            onChange={e => setFirstName(e.target.value)}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <TextField
+                                        fullWidth
+                                        label="First Name"
+                                        name="first_name"
+                                        key={`first_name_${firstName}`} // Force re-render when firstName changes
+                                        defaultValue={firstName}
+                                        variant="outlined"
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: Boolean(firstName), // Shrink label if there's a value
+                                            },
+                                        }}
+                                    />
                                     
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Last Name"
-                                            value={lastName}
-                                            onChange={e => setLastName(e.target.value)}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
+                                    <TextField
+                                        fullWidth
+                                        label="Last Name"
+                                        name="last_name"
+                                        key={`last_name_${lastName}`} // Force re-render when lastName changes
+                                        defaultValue={lastName}
+                                        variant="outlined"
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: Boolean(lastName), // Shrink label if there's a value
+                                            },
+                                        }}
+                                    />
                                     
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            select
-                                            label="Status"
-                                            value={status}
-                                            onChange={(e) => setStatus(e.target.value)}
-                                            variant="outlined"
-                                        >
-                                            {statusOptions.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))}
-                                        </TextField>
-                                    </Grid>
+                                    <TextField
+                                        fullWidth
+                                        select
+                                        label="Status"
+                                        name="status"
+                                        key={`status_${status}`} // Force re-render when status changes
+                                        defaultValue={status}
+                                        variant="outlined"
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: Boolean(status), // Shrink label if there's a value
+                                            },
+                                        }}
+                                    >
+                                        {statusOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
                                     
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Emergency Contact"
-                                            value={emergencyContact}
-                                            onChange={e => setEmergencyContact(e.target.value)}
-                                            variant="outlined"
-                                        />
-                                    </Grid>
-                                </Grid>
+                                    <TextField
+                                        fullWidth
+                                        label="Emergency Contact"
+                                        name="emergency_contact"
+                                        key={`emergency_contact_${emergencyContact}`} // Force re-render when emergencyContact changes
+                                        defaultValue={emergencyContact}
+                                        variant="outlined"
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: Boolean(emergencyContact), // Shrink label if there's a value
+                                            },
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="mb-6">
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        label="Bio"
+                                        name="bio"
+                                        key={`bio_${bio}`} // Force re-render when bio changes
+                                        defaultValue={bio}
+                                        variant="outlined"
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: Boolean(bio), // Shrink label if there's a value
+                                            },
+                                        }}
+                                        sx={{
+                                            '& .MuiInputBase-root': {
+                                                minHeight: '120px'
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 
-                                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     <Button 
                                         type="submit" 
                                         variant="contained" 
@@ -287,8 +366,8 @@ export default function Profile() {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </div>
+            </div>
         </Container>
     )
 }

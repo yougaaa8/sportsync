@@ -1,7 +1,6 @@
-import "../stylesheets/cca-dashboard-layout.css"
 import CCAMembersTable from "./CCAMembersTable.jsx"
 import CCATrainingTable from "./CCATrainingTable.jsx"
-import CCAMemberManagement from "../pages/CCAMemberManagementLayout.jsx"
+import CCAMemberManagement from "../../app/(with-navbar-footer)/cca/dashboard/[ccaId]/member-management/page.tsx"
 import { TableRow, TableCell, Typography } from "@mui/material"
 
 export default function CCADashboardLayout(props) {
@@ -48,7 +47,7 @@ export default function CCADashboardLayout(props) {
             <div>
                 <Typography variant="h1">Member Management</Typography>
                 <button onClick={membersTableClick}>
-                    <a href={`/cca-member-management/${props.ccaId}`}>Manage members</a>
+                    <a href={`/cca/dashboard/${props.ccaId}/member-management`}>Manage members</a>
                 </button>
             </div>
             <br />
@@ -62,7 +61,7 @@ export default function CCADashboardLayout(props) {
             <div>
                 <Typography variant="h1">Training Session Management</Typography>
                 <button>
-                    <a href={`/cca-training-management/${props.ccaId}`}>Manage training sessions</a>
+                    <a href={`/cca/dashboard/${props.ccaId}/training-management`}>Manage training sessions</a>
                 </button>
             </div>
             <br />

@@ -17,7 +17,7 @@ import {
     VisibilityOutlined,
     CheckCircleOutlined
 } from "@mui/icons-material"
-import { Link } from "react-router-dom"
+import Link from "next/link" // Change this import
 
 export default function WishlistItem(props) {
     const { entry } = props
@@ -44,18 +44,25 @@ export default function WishlistItem(props) {
             }}
         >
             {/* Product Image */}
-            <Box sx={{ position: 'relative', bgcolor: '#f5f5f5', height: 200 }}>
+            <Box sx={{ 
+                position: 'relative', 
+                bgcolor: '#f5f5f5', 
+                height: 200,
+                flexShrink: 0,
+                overflow: 'hidden'
+            }}>
                 {entry.first_image ? (
                     <CardMedia
                         component="img"
-                        height="200"
-                        image={entry.first_image}
-                        alt={entry.name}
                         sx={{ 
+                            width: '100%',
+                            height: '100%',
                             objectFit: 'cover',
                             transition: 'transform 0.3s ease',
                             '&:hover': { transform: 'scale(1.05)' }
                         }}
+                        image={entry.first_image}
+                        alt={entry.name}
                     />
                 ) : (
                     <Box 
@@ -64,6 +71,7 @@ export default function WishlistItem(props) {
                             alignItems: 'center', 
                             justifyContent: 'center',
                             height: '100%',
+                            width: '100%',
                             backgroundColor: '#f8f9fa'
                         }}
                     >
@@ -101,7 +109,13 @@ export default function WishlistItem(props) {
             </Box>
 
             {/* Product Details */}
-            <CardContent sx={{ flexGrow: 1, p: 2 }}>
+            <CardContent sx={{ 
+                flexGrow: 1, 
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 0
+            }}>
                 <Typography 
                     variant="h6" 
                     component="h3"
@@ -114,7 +128,8 @@ export default function WishlistItem(props) {
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        textOverflow: 'ellipsis',
+                        lineHeight: 1.3
                     }}
                 >
                     {entry.name}
@@ -137,7 +152,8 @@ export default function WishlistItem(props) {
                     sx={{ 
                         color: '#f4a261',
                         fontWeight: 700,
-                        fontSize: '1.25rem'
+                        fontSize: '1.25rem',
+                        mt: 'auto'
                     }}
                 >
                     {formattedPrice}
@@ -145,26 +161,31 @@ export default function WishlistItem(props) {
             </CardContent>
 
             {/* Action Buttons */}
-            <CardActions sx={{ p: 2, pt: 0 }}>
+            <CardActions sx={{ 
+                p: 2, 
+                pt: 0,
+                flexShrink: 0
+            }}>
                 <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                    <Button
-                        component={Link}
-                        to={`/product-detail/${entry.id}`}
-                        variant="outlined"
-                        size="small"
-                        startIcon={<VisibilityOutlined />}
-                        sx={{
-                            flex: 1,
-                            borderColor: '#6fa8dc',
-                            color: '#6fa8dc',
-                            '&:hover': {
-                                borderColor: '#5a91c7',
-                                backgroundColor: 'rgba(111, 168, 220, 0.1)'
-                            }
-                        }}
-                    >
-                        View
-                    </Button>
+                    <Link href={`/merchandise-shop/${entry.id}`} passHref>
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<VisibilityOutlined />}
+                            sx={{
+                                flex: 1,
+                                borderColor: '#6fa8dc',
+                                color: '#6fa8dc',
+                                textTransform: 'none',
+                                '&:hover': {
+                                    borderColor: '#5a91c7',
+                                    backgroundColor: 'rgba(111, 168, 220, 0.1)'
+                                }
+                            }}
+                        >
+                            View
+                        </Button>
+                    </Link>
                     
                     <Button
                         variant="contained"
@@ -174,6 +195,7 @@ export default function WishlistItem(props) {
                         sx={{
                             flex: 1,
                             backgroundColor: '#6fa8dc',
+                            textTransform: 'none',
                             '&:hover': {
                                 backgroundColor: '#5a91c7'
                             },

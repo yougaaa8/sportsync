@@ -5,6 +5,8 @@ import TournamentSportsItem from "../../../../components/tournament/TournamentSp
 import { pullTournamentData } from "../../../../api-calls/tournament/pullTournamentData.js"
 import { pullTournamentSportsData } from "../../../../api-calls/tournament/pullTournamentSportsData.js";
 import { TournamentSport, Tournament } from "../../../../types/TournamentTypes"
+import { Button, Box, TextField, Typography, MenuItem } from "@mui/material"
+import createTournamentSport from "../../../../api-calls/tournament/createTournamentSport"
 
 export default function TournamentSportsPage({params}: {
     params: Promise<{
@@ -16,6 +18,7 @@ export default function TournamentSportsPage({params}: {
     const [tournamentSports, setTournamentSports] = useState<TournamentSport[] | null>(null);
     const [tournamentData, setTournamentData] = useState<Tournament[] | null>(null);
     const [tournamentIdState, setTournamentIdState] = useState<number | null>(null)
+    const [isShowForm, setIsShowForm] = useState(false)
 
     // Resolve the params
     useEffect(() => {
@@ -63,8 +66,87 @@ export default function TournamentSportsPage({params}: {
     // Resolve the name of the tournament from the extracted tournament data
     const name = tournamentData?.find(tournament => tournament.id === tournamentIdState)?.name
 
+    // Define functions
+    function createTournamentSportClick(formData: FormData) {
+        createTournamentSport(tournamentIdState, formData)
+    }
+
     return (
         <>
+            <Button onClick={() => setIsShowForm(prev => !prev)}>
+                {isShowForm ? "Close Form" : "Add Tournament Sport"}
+            </Button>
+            {isShowForm && (
+  <Box
+    component="form"
+    action={createTournamentSportClick}
+    sx={{
+      p: 4,
+      mb: 4,
+      borderRadius: 2,
+      boxShadow: 2,
+      backgroundColor: "#fff",
+      maxWidth: 400,
+      mx: "auto",
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+    }}
+  >
+    <Typography variant="h6" sx={{ mb: 2, color: "primary.main", fontWeight: 700 }}>
+      Add Tournament Sport
+    </Typography>
+
+    <TextField
+      label="Sport"
+      name="sport"
+      variant="outlined"
+      fullWidth
+      required
+    />
+
+    <TextField
+      select
+      label="Gender"
+      name="gender"
+      variant="outlined"
+      fullWidth
+      defaultValue="male"
+      required
+    >
+      <MenuItem value="male">Male</MenuItem>
+      <MenuItem value="female">Female</MenuItem>
+      <MenuItem value="co-ed">Co-Ed</MenuItem>
+    </TextField>
+
+    <TextField
+      label="Description"
+      name="description"
+      variant="outlined"
+      fullWidth
+      multiline
+      rows={2}
+    />
+
+    <Button
+      type="submit"
+      variant="contained"
+      color="primary"
+      sx={{ mt: 2, fontWeight: 600 }}
+    >
+      Submit
+    </Button>
+  </Box>
+)}
+
+    <Button onClick={setIsShowManageTournamentForm(prev => !prev)}>
+        Manage Tournament Details
+    </Button>
+    <form action={manageTournamentClick}>
+        <label></label>
+        <input></input>
+    </form>
+
             { tournamentData && tournamentIdState && <h1 className="page-title">{name}</h1>}
             { tournamentSports ? tournamentSportsElements : <h1 className="page-title">Loading...</h1>}
         </>

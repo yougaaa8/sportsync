@@ -17,7 +17,7 @@ export default async function pullCCAMembersList(ccaId) {
     }
 
     const membersData = await response.json();
-    console.log("CCA Members Data retrieved successfully");
+    console.log("CCA Members Data retrieved successfully: ", membersData);
     return membersData;
   } catch (err) {
     console.error("Error fetching CCA members:", err);

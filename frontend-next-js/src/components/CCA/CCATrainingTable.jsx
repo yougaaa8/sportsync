@@ -10,52 +10,69 @@ import {
 
 export default function CCATrainingTable(props) {
     return (
-        <>
-            <TableContainer
-    sx={{
-        maxHeight: "500px", // adjust as needed for your layout
-        borderRadius: 3,
-        boxShadow: "0 4px 16px 0 rgba(245,158,11,0.07)",
-        overflowY: "auto",
-        overflowX: "auto",
-        background: "#fff",
-        scrollbarWidth: "thin",
-        "&::-webkit-scrollbar": {
-            width: "8px",
-            background: "transparent"
-        },
-        "&:hover::-webkit-scrollbar-thumb": {
-            background: "#f5b041"
-        }
-    }}
-    component={Paper}
->
-    <Table stickyHeader>
-        <TableHead sx={{
-            "& .MuiTableCell-head": {
-                backgroundColor: '#f59e0b',
-                color: 'white',
-                fontWeight: 'bold',
-                fontSize: '1rem',
-                textAlign: "center",
-                border: 0
-            }
-        }}>
-            <TableRow>
-                <TableCell align="center">ID</TableCell>
-                <TableCell align="center">Date</TableCell>
-                <TableCell align="center">Start Time</TableCell>
-                <TableCell align="center">End Time</TableCell>
-                <TableCell align="center">Location</TableCell>
-                <TableCell align="center">Notes</TableCell>
-                <TableCell align="center">Actions</TableCell>
-            </TableRow>
-        </TableHead>
-        <TableBody>
-            {props.trainingList}
-        </TableBody>
-    </Table>
-</TableContainer>
-        </>
+        <TableContainer
+            component={Paper}
+            sx={{
+                maxHeight: "600px",
+                borderRadius: 3,
+                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
+                border: "1px solid #F0F0F0",
+                overflowY: "hidden",
+                overflowX: "auto",
+                transition: "all 0.3s ease-in-out",
+                "&:hover": {
+                    overflowY: "auto",
+                    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.12)"
+                },
+                // Custom scrollbar styling
+                "& *::-webkit-scrollbar": {
+                    width: "8px",
+                    height: "8px"
+                },
+                "& *::-webkit-scrollbar-track": {
+                    background: "transparent"
+                },
+                "& *::-webkit-scrollbar-thumb": {
+                    background: "#E0E0E0",
+                    borderRadius: "4px",
+                    "&:hover": {
+                        background: "#BDBDBD"
+                    }
+                },
+                scrollbarWidth: "thin",
+                scrollbarColor: "#E0E0E0 transparent"
+            }}
+        >
+            <Table stickyHeader>
+                <TableHead>
+                    <TableRow>
+                        {["ID", "Date", "Start Time", "End Time", "Location", "Notes", "Actions"].map((header) => (
+                            <TableCell 
+                                key={header}
+                                align="center"
+                                sx={{
+                                    backgroundColor: "#FF6B35",
+                                    color: "#FFFFFF",
+                                    fontWeight: 700,
+                                    fontSize: "0.875rem",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.5px",
+                                    py: 2,
+                                    borderBottom: "none",
+                                    position: "sticky",
+                                    top: 0,
+                                    zIndex: 10
+                                }}
+                            >
+                                {header}
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {props.trainingList}
+                </TableBody>
+            </Table>
+        </TableContainer>
     )
 }

@@ -9,14 +9,20 @@ import {
     Skeleton,
     Fade,
     Paper,
-    Stack
+    Stack,
+    Button,
+    TextField,
+    MenuItem
 } from "@mui/material";
 import TournamentItem from "../../../components/tournament/TournamentItem";
 import { Tournament } from "../../../types/TournamentTypes"
+import createTournament from "../../../api-calls/tournament/createTournament"
 
 export default function TournamentPage() {
+    // Set states
     const [tournamentData, setTournamentData] = useState<Tournament[] | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isShowForm, setIsShowForm] = useState(false)
     
     // Pull tournaments data
     useEffect(() => {
@@ -33,6 +39,12 @@ export default function TournamentPage() {
         fetchData();
     }, []);
 
+    // Define functions
+    function createTournamentClick(formData: FormData) {
+        createTournament(formData)
+    }
+
+    // Define components
     const tournamentList = tournamentData ? tournamentData.map((tournament, index) => (
         <Fade in={true} timeout={300 + (index * 100)} key={index}>
             <div>
@@ -101,6 +113,101 @@ export default function TournamentPage() {
                         Join the excitement and showcase your sporting prowess
                     </Typography>
                 </Box>
+
+                <Button onClick={() => setIsShowForm(prev => !prev)}>
+                    {isShowForm ? "Close Form" : "Create New Tournament"}
+                </Button>
+                {isShowForm && (
+                <Box
+                    component="form"
+                    action={createTournamentClick}
+                    sx={{
+                    p: 4,
+                    mb: 4,
+                    borderRadius: 2,
+                    boxShadow: 2,
+                    backgroundColor: "#fff",
+                    maxWidth: 500,
+                    mx: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    }}
+                >
+                    <Typography variant="h6" sx={{ mb: 2, color: "primary.main", fontWeight: 700 }}>
+                    Create New Tournament
+                    </Typography>
+
+                    <TextField
+                    label="Tournament Name"
+                    name="name"
+                    variant="outlined"
+                    fullWidth
+                    required
+                    />
+
+                    <TextField
+                    label="Description"
+                    name="description"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={3}
+                    />
+
+                    <TextField
+                    label="Start Date"
+                    name="start_date"
+                    type="date"
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    required
+                    />
+
+                    <TextField
+                    label="End Date"
+                    name="end_date"
+                    type="date"
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    required
+                    />
+
+                    <Button
+                    variant="outlined"
+                    component="label"
+                    sx={{ alignSelf: "flex-start" }}
+                    >
+                    Upload Logo
+                    <input type="file" name="logo" hidden />
+                    </Button>
+
+                    <TextField
+                    select
+                    label="Status"
+                    name="status"
+                    variant="outlined"
+                    fullWidth
+                    defaultValue="Ongoing"
+                    required
+                    >
+                    <MenuItem value="ongoing">Ongoing</MenuItem>
+                    <MenuItem value="upcoming">Upcoming</MenuItem>
+                    <MenuItem value="completed">Completed</MenuItem>
+                    </TextField>
+
+                    <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2, fontWeight: 600 }}
+                    >
+                    Submit
+                    </Button>
+                </Box>
+                )}
 
                 <Stack spacing={3}>
                     {loading 
