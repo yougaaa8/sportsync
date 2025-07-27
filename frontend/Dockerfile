@@ -1,18 +1,29 @@
-# Frontend Dockerfile (Dev Only)
+# Simple Next.js Dockerfile that should work
 FROM node:18-alpine
+
+# Install libc6-compat for compatibility
+RUN apk add --no-cache libc6-compat
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install all deps
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
-# Copy the rest of the app
+# Install dependencies
+RUN npm ci
+
+# Copy source code
 COPY . .
 
-# Expose Vite dev server port (default is 5173)
-EXPOSE 5173
+# Disable telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Start dev server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Build the application
+RUN npm run build
+
+# Expose port
+EXPOSE 3000
+
+# Start the application on port 5173
+CMD ["npx", "next", "start", "-p", "5173"]
