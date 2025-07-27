@@ -13,4 +13,6 @@ urlpatterns = [
          views.join_training_session, name='join-training-session'),
     path('<int:cca_id>/training/<int:session_id>/leave/',
          views.leave_training_session, name='leave-training-session'),
+    path('<int:cca_id>/announcement/',
+         views.send_cca_announcement_view, name='send-announcement'),
 ]
