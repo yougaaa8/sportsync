@@ -32,23 +32,23 @@ class TournamentSerializer(serializers.ModelSerializer):
 
 
 class TournamentSportSerializer(serializers.ModelSerializer):
-    tournament = TournamentSerializer()
+    tournament = TournamentSerializer(read_only=True)
 
     class Meta:
         model = TournamentSport
         fields = ['id', 'tournament', 'sport', 'gender', 'description']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'tournament']
 
 
 class TeamSerializer(serializers.ModelSerializer):
     logo_url = serializers.SerializerMethodField()
-    tournament_sport = TournamentSportSerializer()
+    tournament_sport = TournamentSportSerializer(read_only=True)
 
     class Meta:
         model = Team
         fields = ['id', 'name', 'tournament_sport',
                   'logo', 'logo_url', 'description']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'tournament_sport']
 
     def get_logo_url(self, obj):
         if obj.logo:
@@ -70,14 +70,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class TeamMemberSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
-    team = TeamSerializer()
-    user = UserProfileSerializer()
+    team = TeamSerializer(read_only=True)
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = TeamMember
         fields = ['id', 'team', 'user', 'jersey_name', 'jersey_number',
                   'role', 'photo', 'photo_url']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'team', 'user']
 
     def get_photo_url(self, obj):
         if obj.photo:
@@ -98,16 +98,16 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
 
 class MatchSerializer(serializers.ModelSerializer):
-    tournament_sport = TournamentSportSerializer()
-    team1 = TeamSerializer()
-    team2 = TeamSerializer()
-    winner = TeamSerializer()
+    tournament_sport = TournamentSportSerializer(read_only=True)
+    team1 = TeamSerializer(read_only=True)
+    team2 = TeamSerializer(read_only=True)
 
     class Meta:
         model = Match
         fields = ['id', 'tournament_sport', 'team1', 'team2', 'round', 'date',
                   'venue', 'score_team1', 'score_team2', 'winner', 'match_notes']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'tournament_sport',
+                            'team1', 'team2']
 
 
 # Upload serializers for file validation
