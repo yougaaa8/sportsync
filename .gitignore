@@ -9,3 +9,5 @@ staticfiles
 ./backend/.env
 celerybeat-schedule
 **/node_modules/
+./frontend-next-js/
+.DS_Store
