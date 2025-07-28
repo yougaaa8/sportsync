@@ -14,7 +14,10 @@ export default async function logout(refresh) {
     if (response.ok) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("email");
+      localStorage.setItem("isLoggedIn", "false")
       const data = response.json();
+      console.log("isLoggedIn: ", localStorage.getItem("isLoggedIn"))
+      setTimeout(() => {}, 5000)
       return data;
     } else {
       console.error("Logout failed with status: ", response.status);

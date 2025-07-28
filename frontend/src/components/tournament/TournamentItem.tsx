@@ -1,4 +1,16 @@
-import { Typography, Paper, Box, Chip, Divider, Button, TextField, MenuItem } from "@mui/material";
+import { 
+    Typography, 
+    Box, 
+    Chip, 
+    Divider, 
+    Button, 
+    TextField, 
+    MenuItem,
+    Card,
+    CardContent,
+    Stack,
+    Fade
+} from "@mui/material";
 import Link from "next/link";
 import { Tournament } from "../../types/TournamentTypes"
 import { useState } from "react"
@@ -23,178 +35,419 @@ export default function TournamentItem(props: {
     console.log("These are the props for the tournament item: ", props);
     console.log("This is the tournament start date: ", props.entry.start_date)
 
+    // Status color mapping
+    const getStatusColor = (status: string) => {
+        switch (status.toLowerCase()) {
+            case 'upcoming':
+                return { 
+                    bgcolor: '#fff7ed', 
+                    color: '#ea580c',
+                    borderColor: '#fed7aa'
+                };
+            case 'ongoing':
+                return { 
+                    bgcolor: '#f0fdf4', 
+                    color: '#16a34a',
+                    borderColor: '#bbf7d0'
+                };
+            case 'completed':
+                return { 
+                    bgcolor: '#f8fafc', 
+                    color: '#64748b',
+                    borderColor: '#e2e8f0'
+                };
+            default:
+                return { 
+                    bgcolor: '#f8fafc', 
+                    color: '#64748b',
+                    borderColor: '#e2e8f0'
+                };
+        }
+    };
+
+    const statusStyle = getStatusColor(props.entry.status);
+
     return (
-        <>
-        {!isShowForm && <Link href={`/tournament/${props.entry.id}`}>
-            <Paper
-                elevation={3}
-                sx={{
-                    my: 3,
-                    px: { xs: 2, md: 4 },
-                    py: 3,
-                    maxWidth: 700,
-                    mx: "auto",
-                    borderRadius: 4,
-                    boxShadow: "0 4px 24px 0 rgba(245, 158, 11, 0.08)",
-                    border: "1px solid #ffe5b4",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    bgcolor: "#fffdfa",
-                }}
+        <Box sx={{ mb: 3 }}>
+            {/* Tournament Card */}
+            {!isShowForm && (
+                <Link href={`/tournament/${props.entry.id}`} style={{ textDecoration: 'none' }}>
+                    <Card
+                        elevation={0}
+                        sx={{
+                            border: '1px solid #e5e7eb',
+                            borderRadius: 4,
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            background: 'linear-gradient(135deg, #ffffff 0%, #fefefe 100%)',
+                            '&:hover': {
+                                transform: 'translateY(-4px)',
+                                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.1)',
+                                borderColor: '#ff6b35'
+                            }
+                        }}
+                    >
+                        <CardContent sx={{ p: 4 }}>
+                            <Box sx={{ textAlign: 'center' }}>
+                                {/* Logo placeholder */}
+                                {props.entry.logo && (
+                                    <Box sx={{ mb: 3 }}>
+                                        <Box
+                                            sx={{
+                                                width: 80,
+                                                height: 80,
+                                                mx: 'auto',
+                                                borderRadius: 3,
+                                                backgroundColor: '#f8fafc',
+                                                border: '2px solid #e2e8f0',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            {/* Logo would go here */}
+                                        </Box>
+                                    </Box>
+                                )}
+
+                                {/* Tournament Name */}
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: '#1f2937',
+                                        mb: 2,
+                                        letterSpacing: '-0.025em'
+                                    }}
+                                >
+                                    {props.entry.name}
+                                </Typography>
+
+                                {/* Status Chip */}
+                                <Chip
+                                    label={props.entry.status.charAt(0).toUpperCase() + props.entry.status.slice(1)}
+                                    size="small"
+                                    sx={{
+                                        ...statusStyle,
+                                        border: `1px solid ${statusStyle.borderColor}`,
+                                        fontWeight: 600,
+                                        fontSize: '0.75rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        mb: 3
+                                    }}
+                                />
+
+                                <Divider sx={{ mb: 3, borderColor: '#f1f5f9' }} />
+
+                                {/* Date Information */}
+                                <Stack 
+                                    direction={{ xs: 'column', sm: 'row' }} 
+                                    spacing={3} 
+                                    justifyContent="center"
+                                    sx={{ mb: 3 }}
+                                >
+                                    <Box sx={{ textAlign: 'center' }}>
+                                        <Typography 
+                                            variant="caption" 
+                                            sx={{ 
+                                                color: '#6b7280',
+                                                fontWeight: 600,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em'
+                                            }}
+                                        >
+                                            Start Date
+                                        </Typography>
+                                        <Typography 
+                                            variant="body2" 
+                                            sx={{ 
+                                                color: '#1f2937',
+                                                fontWeight: 600,
+                                                mt: 0.5
+                                            }}
+                                        >
+                                            {props.entry.start_date}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box sx={{ textAlign: 'center' }}>
+                                        <Typography 
+                                            variant="caption" 
+                                            sx={{ 
+                                                color: '#6b7280',
+                                                fontWeight: 600,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em'
+                                            }}
+                                        >
+                                            End Date
+                                        </Typography>
+                                        <Typography 
+                                            variant="body2" 
+                                            sx={{ 
+                                                color: '#1f2937',
+                                                fontWeight: 600,
+                                                mt: 0.5
+                                            }}
+                                        >
+                                            {props.entry.end_date}
+                                        </Typography>
+                                    </Box>
+                                </Stack>
+
+                                {/* Description */}
+                                <Typography 
+                                    variant="body2" 
+                                    sx={{ 
+                                        color: '#6b7280',
+                                        lineHeight: 1.6,
+                                        fontStyle: props.entry.description ? 'normal' : 'italic'
+                                    }}
+                                >
+                                    {props.entry.description || 'No description provided'}
+                                </Typography>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Link>
+            )}
+
+            {/* Action Buttons */}
+            <Stack 
+                direction={{ xs: 'column', sm: 'row' }} 
+                spacing={2} 
+                sx={{ mt: 2 }}
+                justifyContent="center"
             >
-                {props.entry.logo && (
-                    <Box sx={{ mb: 2 }}>
-                        {/* <Image
-                width={200}
-                height={200}
-                src={props.entry.logo}
-                alt={`${props.entry.name} logo`}
-                style={{
-                    width: 70,
-                    height: 70,
-                    objectFit: "contain",
-                    borderRadius: "12px",
-                    background: "#fff",
-                    boxShadow: "0 2px 8px rgba(245,158,11,0.07)"
-                }}
-                onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-            /> */}
-                    </Box>
-                )}
-                <Typography
-                    variant="h5"
+                <Button 
+                    onClick={() => setIsShowForm(prev => !prev)}
+                    variant="outlined"
                     sx={{
-                        fontWeight: 700,
-                        color: "#f59e0b",
-                        mb: 1,
-                        textAlign: "center",
-                        letterSpacing: 0.2
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        borderColor: '#d1d5db',
+                        color: '#6b7280',
+                        py: 1,
+                        px: 3,
+                        '&:hover': {
+                            borderColor: '#ff6b35',
+                            backgroundColor: 'rgba(255, 107, 53, 0.04)',
+                            color: '#ff6b35'
+                        }
                     }}
                 >
-                    {props.entry.name}
-                </Typography>
-                <Chip
-                    label={props.entry.status}
-                    color={props.entry.status === "upcoming" ? "warning" : "default"}
-                    sx={{
-                        mb: 1,
-                        fontWeight: 500,
-                        fontSize: 14,
-                        letterSpacing: 0.5,
-                        bgcolor: "#fff7e6",
-                        color: "#d97706"
-                    }}
-                    size="small" />
-                <Divider sx={{ width: "100%", my: 1 }} />
-                <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
-                    <Typography sx={{ fontSize: 15, color: "#444" }}>
-                        <b>Start:</b> {props.entry.start_date}
-                    </Typography>
-                    <Typography sx={{ fontSize: 15, color: "#444" }}>
-                        <b>End:</b> {props.entry.end_date}
-                    </Typography>
-                </Box>
-                <Typography sx={{ color: "#666", textAlign: "center", lineHeight: 1.6 }}>
-                    {props.entry.description}
-                </Typography>
-            </Paper>
-        </Link>}
-        <Button onClick={() => setIsShowForm(prev => !prev)}>
-                {isShowForm ? "Close Tournament Update Form" : "Manage Tournament Details"}
-        </Button>
-        {isShowForm && (
-            <Box
-                component="form"
-                action={manageTournamentClick}
-                sx={{
-                    p: 4,
-                    mb: 4,
-                    borderRadius: 2,
-                    boxShadow: 2,
-                    backgroundColor: "#fff",
-                    maxWidth: 400,
-                    mx: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                }}
-            >
-                <Typography variant="h6" sx={{ mb: 2, color: "primary.main", fontWeight: 700 }}>
-                    Update Tournament Details
-                </Typography>
-
-                <TextField
-                    label="Name"
-                    name="name"
-                    variant="outlined"
-                    fullWidth
-                    defaultValue={props.entry.name}
-                    required
-                />
-
-                <TextField
-                    select
-                    label="Status"
-                    name="status"
-                    variant="outlined"
-                    fullWidth
-                    defaultValue={props.entry.status}
-                    required
-                >
-                    <MenuItem value="upcoming">Upcoming</MenuItem>
-                    <MenuItem value="ongoing">Ongoing</MenuItem>
-                    <MenuItem value="completed">Completed</MenuItem>
-                </TextField>
-
-                <TextField
-                    label="Start Date"
-                    name="start_date"
-                    type="date"
-                    variant="outlined"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    defaultValue={props.entry.start_date}
-                    required
-                />
-
-                <TextField
-                    label="End Date"
-                    name="end_date"
-                    type="date"
-                    variant="outlined"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    defaultValue={props.entry.end_date}
-                    required
-                />
-
-                <TextField
-                    label="Description"
-                    name="description"
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    rows={2}
-                    defaultValue={props.entry.description}
-                />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    sx={{ mt: 2, fontWeight: 600 }}
-                >
-                    Update Tournament Details
+                    {isShowForm ? "Cancel Edit" : "Manage Tournament"}
                 </Button>
-            </Box>
-        )}
 
-        <Button onClick={deleteTournamentClick}>
-            Delete Tournament
-        </Button>
+                <Button 
+                    onClick={deleteTournamentClick}
+                    variant="outlined"
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        borderColor: '#fecaca',
+                        color: '#dc2626',
+                        py: 1,
+                        px: 3,
+                        '&:hover': {
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.04)'
+                        }
+                    }}
+                >
+                    Delete Tournament
+                </Button>
+            </Stack>
 
+            {/* Edit Form */}
+            {isShowForm && (
+                <Fade in={true} timeout={300}>
+                    <Card 
+                        elevation={0}
+                        sx={{ 
+                            mt: 3,
+                            border: '1px solid #e5e7eb',
+                            borderRadius: 4,
+                            maxWidth: 500,
+                            mx: 'auto'
+                        }}
+                    >
+                        <CardContent sx={{ p: 4 }}>
+                            <Box
+                                component="form"
+                                action={manageTournamentClick}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 3,
+                                }}
+                            >
+                                <Box sx={{ textAlign: 'center', mb: 2 }}>
+                                    <Typography 
+                                        variant="h6" 
+                                        sx={{ 
+                                            fontWeight: 700,
+                                            color: 'primary.main',
+                                            mb: 1
+                                        }}
+                                    >
+                                        Update Tournament Details
+                                    </Typography>
+                                    <Typography 
+                                        variant="body2" 
+                                        sx={{ color: 'text.secondary' }}
+                                    >
+                                        Make changes to the tournament information
+                                    </Typography>
+                                </Box>
 
-    </>
-    )
+                                <Divider />
+
+                                <TextField
+                                    label="Tournament Name"
+                                    name="name"
+                                    variant="outlined"
+                                    fullWidth
+                                    defaultValue={props.entry.name}
+                                    required
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#f5f5f5'
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff'
+                                            }
+                                        }
+                                    }}
+                                />
+
+                                <TextField
+                                    select
+                                    label="Status"
+                                    name="status"
+                                    variant="outlined"
+                                    fullWidth
+                                    defaultValue={props.entry.status}
+                                    required
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#f5f5f5'
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff'
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value="upcoming">Upcoming</MenuItem>
+                                    <MenuItem value="ongoing">Ongoing</MenuItem>
+                                    <MenuItem value="completed">Completed</MenuItem>
+                                </TextField>
+
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <TextField
+                                        label="Start Date"
+                                        name="start_date"
+                                        type="date"
+                                        variant="outlined"
+                                        fullWidth
+                                        InputLabelProps={{ shrink: true }}
+                                        defaultValue={props.entry.start_date}
+                                        required
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                backgroundColor: '#fafafa',
+                                                '&:hover': {
+                                                    backgroundColor: '#f5f5f5'
+                                                },
+                                                '&.Mui-focused': {
+                                                    backgroundColor: '#ffffff'
+                                                }
+                                            }
+                                        }}
+                                    />
+
+                                    <TextField
+                                        label="End Date"
+                                        name="end_date"
+                                        type="date"
+                                        variant="outlined"
+                                        fullWidth
+                                        InputLabelProps={{ shrink: true }}
+                                        defaultValue={props.entry.end_date}
+                                        required
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                backgroundColor: '#fafafa',
+                                                '&:hover': {
+                                                    backgroundColor: '#f5f5f5'
+                                                },
+                                                '&.Mui-focused': {
+                                                    backgroundColor: '#ffffff'
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </Box>
+
+                                <TextField
+                                    label="Description"
+                                    name="description"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    defaultValue={props.entry.description}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#f5f5f5'
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff'
+                                            }
+                                        }
+                                    }}
+                                />
+
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    size="large"
+                                    sx={{ 
+                                        mt: 2,
+                                        py: 1.5,
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                        fontWeight: 600,
+                                        boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+                                        '&:hover': {
+                                            boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                            transform: 'translateY(-1px)'
+                                        }
+                                    }}
+                                >
+                                    Update Tournament
+                                </Button>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Fade>
+            )}
+        </Box>
+    );
 }

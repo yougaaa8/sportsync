@@ -29,7 +29,8 @@ import {
     ListItem,
     Badge,
     Alert,
-    Snackbar
+    Snackbar,
+    Button
 } from "@mui/material";
 import {
     MenuRounded,
@@ -47,7 +48,8 @@ import {
     NotificationsRounded,
     SearchRounded,
     MarkEmailReadRounded,
-    ClearAllRounded
+    ClearAllRounded,
+    OpenInNewRounded
 } from "@mui/icons-material";
 
 export default function Navbar() {
@@ -180,6 +182,11 @@ export default function Navbar() {
     const handleNavigation = (path) => {
         router.push(path);
         handleMenuClose();
+    };
+
+    const handleViewAllNotifications = () => {
+        handleNotificationClose();
+        router.push('/notifications'); 
     };
 
     const markNotificationAsRead = (notificationId) => {
@@ -573,6 +580,25 @@ export default function Navbar() {
                                     {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
                                 </Typography>
                             )}
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                onClick={handleViewAllNotifications}
+                                endIcon={<OpenInNewRounded />}
+                                sx={{
+                                    mt: 1,
+                                    borderColor: '#f4a261',
+                                    color: '#f4a261',
+                                    '&:hover': {
+                                        borderColor: '#e76f51',
+                                        backgroundColor: 'rgba(244, 162, 97, 0.05)',
+                                        color: '#e76f51'
+                                    }
+                                }}
+                            >
+                                View All Notifications
+                            </Button>
                         </Box>
                         
                         <List sx={{ p: 0, maxHeight: 300, overflow: 'auto' }}>

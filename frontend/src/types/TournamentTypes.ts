@@ -33,3 +33,17 @@ export interface TournamentSportTeamMember {
     role: string,
     photo: string,
 }
+
+export interface TournamentSportMatch {
+    id: number
+    tournament_sport: number
+    team1: number
+    team2: number
+    round: number
+    date: string,
+    venue: string
+    score_team1: number
+    score_team2: number
+    winner: number | null
+    match_notes: string
+}
