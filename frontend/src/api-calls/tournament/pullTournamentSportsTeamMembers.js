@@ -8,7 +8,7 @@ export default async function pullTournamentSportsTeamMembers(
   const token = localStorage.getItem("authToken");
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/tournament/${tournamentId}/${sportId}/${teamId}/`,
+      `${API_BASE_URL}/api/tournament/${tournamentId}/${sportId}/teams/${teamId}/`,
       {
         method: "GET",
         headers: {

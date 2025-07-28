@@ -36,6 +36,7 @@ export default function Login() {
                     localStorage.setItem("email", data.user.email);
                     localStorage.setItem("userId", data.user.id)
                     localStorage.setItem("fullName", data.user.full_name);
+                    localStorage.setItem("isLoggedIn", "true")
                 }
 
                 // Get the cca id list from the user's email

@@ -12,7 +12,10 @@ import {
     Stack,
     Button,
     TextField,
-    MenuItem
+    MenuItem,
+    Card,
+    CardContent,
+    Divider
 } from "@mui/material";
 import TournamentItem from "../../../components/tournament/TournamentItem";
 import { Tournament } from "../../../types/TournamentTypes"
@@ -108,105 +111,240 @@ export default function TournamentPage() {
                     </Typography>
                     <Typography 
                         variant="body1" 
-                        className="text-gray-600"
+                        className="text-gray-600 mb-6"
                     >
                         Join the excitement and showcase your sporting prowess
                     </Typography>
                 </Box>
 
-                <Button onClick={() => setIsShowForm(prev => !prev)}>
-                    {isShowForm ? "Close Form" : "Create New Tournament"}
-                </Button>
-                {isShowForm && (
-                <Box
-                    component="form"
-                    action={createTournamentClick}
-                    sx={{
-                    p: 4,
-                    mb: 4,
-                    borderRadius: 2,
-                    boxShadow: 2,
-                    backgroundColor: "#fff",
-                    maxWidth: 500,
-                    mx: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    }}
-                >
-                    <Typography variant="h6" sx={{ mb: 2, color: "primary.main", fontWeight: 700 }}>
-                    Create New Tournament
-                    </Typography>
-
-                    <TextField
-                    label="Tournament Name"
-                    name="name"
-                    variant="outlined"
-                    fullWidth
-                    required
-                    />
-
-                    <TextField
-                    label="Description"
-                    name="description"
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    rows={3}
-                    />
-
-                    <TextField
-                    label="Start Date"
-                    name="start_date"
-                    type="date"
-                    variant="outlined"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    required
-                    />
-
-                    <TextField
-                    label="End Date"
-                    name="end_date"
-                    type="date"
-                    variant="outlined"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    required
-                    />
-
-                    <Button
-                    variant="outlined"
-                    component="label"
-                    sx={{ alignSelf: "flex-start" }}
+                {/* Create Tournament Button */}
+                <Box className="mb-8 flex justify-center">
+                    <Button 
+                        onClick={() => setIsShowForm(prev => !prev)}
+                        variant="contained"
+                        size="large"
+                        sx={{
+                            py: 1.5,
+                            px: 4,
+                            borderRadius: 3,
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+                            '&:hover': {
+                                boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                transform: 'translateY(-2px)'
+                            }
+                        }}
                     >
-                    Upload Logo
-                    <input type="file" name="logo" hidden />
-                    </Button>
-
-                    <TextField
-                    select
-                    label="Status"
-                    name="status"
-                    variant="outlined"
-                    fullWidth
-                    defaultValue="Ongoing"
-                    required
-                    >
-                    <MenuItem value="ongoing">Ongoing</MenuItem>
-                    <MenuItem value="upcoming">Upcoming</MenuItem>
-                    <MenuItem value="completed">Completed</MenuItem>
-                    </TextField>
-
-                    <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    sx={{ mt: 2, fontWeight: 600 }}
-                    >
-                    Submit
+                        {isShowForm ? "Cancel" : "Create New Tournament"}
                     </Button>
                 </Box>
+
+                {/* Create Tournament Form */}
+                {isShowForm && (
+                    <Fade in={true} timeout={300}>
+                        <Card 
+                            elevation={0}
+                            sx={{ 
+                                mb: 6, 
+                                maxWidth: 600, 
+                                mx: 'auto',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: 4,
+                                overflow: 'visible'
+                            }}
+                        >
+                            <CardContent sx={{ p: 4 }}>
+                                <Box
+                                    component="form"
+                                    action={createTournamentClick}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 3,
+                                    }}
+                                >
+                                    <Box className="text-center mb-2">
+                                        <Typography 
+                                            variant="h5" 
+                                            sx={{ 
+                                                fontWeight: 700,
+                                                color: 'primary.main',
+                                                mb: 1
+                                            }}
+                                        >
+                                            Create New Tournament
+                                        </Typography>
+                                        <Typography 
+                                            variant="body2" 
+                                            sx={{ color: 'text.secondary' }}
+                                        >
+                                            Fill in the details below to create your tournament
+                                        </Typography>
+                                    </Box>
+
+                                    <Divider sx={{ my: 1 }} />
+
+                                    <TextField
+                                        label="Tournament Name"
+                                        name="name"
+                                        variant="outlined"
+                                        fullWidth
+                                        required
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                backgroundColor: '#fafafa',
+                                                '&:hover': {
+                                                    backgroundColor: '#f5f5f5'
+                                                },
+                                                '&.Mui-focused': {
+                                                    backgroundColor: '#ffffff'
+                                                }
+                                            }
+                                        }}
+                                    />
+
+                                    <TextField
+                                        label="Description"
+                                        name="description"
+                                        variant="outlined"
+                                        fullWidth
+                                        multiline
+                                        rows={3}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 2,
+                                                backgroundColor: '#fafafa',
+                                                '&:hover': {
+                                                    backgroundColor: '#f5f5f5'
+                                                },
+                                                '&.Mui-focused': {
+                                                    backgroundColor: '#ffffff'
+                                                }
+                                            }
+                                        }}
+                                    />
+
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <TextField
+                                            label="Start Date"
+                                            name="start_date"
+                                            type="date"
+                                            variant="outlined"
+                                            fullWidth
+                                            InputLabelProps={{ shrink: true }}
+                                            required
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    backgroundColor: '#fafafa',
+                                                    '&:hover': {
+                                                        backgroundColor: '#f5f5f5'
+                                                    },
+                                                    '&.Mui-focused': {
+                                                        backgroundColor: '#ffffff'
+                                                    }
+                                                }
+                                            }}
+                                        />
+
+                                        <TextField
+                                            label="End Date"
+                                            name="end_date"
+                                            type="date"
+                                            variant="outlined"
+                                            fullWidth
+                                            InputLabelProps={{ shrink: true }}
+                                            required
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    backgroundColor: '#fafafa',
+                                                    '&:hover': {
+                                                        backgroundColor: '#f5f5f5'
+                                                    },
+                                                    '&.Mui-focused': {
+                                                        backgroundColor: '#ffffff'
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                                        <Button
+                                            variant="outlined"
+                                            component="label"
+                                            sx={{ 
+                                                flex: 1,
+                                                py: 1.5,
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                borderColor: '#d1d5db',
+                                                color: '#6b7280',
+                                                '&:hover': {
+                                                    borderColor: 'primary.main',
+                                                    backgroundColor: 'rgba(255, 107, 53, 0.04)'
+                                                }
+                                            }}
+                                        >
+                                            Upload Logo
+                                            <input type="file" name="logo" hidden />
+                                        </Button>
+
+                                        <TextField
+                                            select
+                                            label="Status"
+                                            name="status"
+                                            variant="outlined"
+                                            sx={{ 
+                                                flex: 1,
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: 2,
+                                                    backgroundColor: '#fafafa',
+                                                    '&:hover': {
+                                                        backgroundColor: '#f5f5f5'
+                                                    },
+                                                    '&.Mui-focused': {
+                                                        backgroundColor: '#ffffff'
+                                                    }
+                                                }
+                                            }}
+                                            defaultValue="ongoing"
+                                            required
+                                        >
+                                            <MenuItem value="ongoing">Ongoing</MenuItem>
+                                            <MenuItem value="upcoming">Upcoming</MenuItem>
+                                            <MenuItem value="completed">Completed</MenuItem>
+                                        </TextField>
+                                    </Box>
+
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        size="large"
+                                        sx={{ 
+                                            mt: 2, 
+                                            py: 1.5,
+                                            borderRadius: 2,
+                                            textTransform: 'none',
+                                            fontSize: '1rem',
+                                            fontWeight: 600,
+                                            boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+                                            '&:hover': {
+                                                boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                                transform: 'translateY(-1px)'
+                                            }
+                                        }}
+                                    >
+                                        Create Tournament
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Fade>
                 )}
 
                 <Stack spacing={3}>

@@ -5,7 +5,7 @@ import TournamentSportsItem from "../../../../components/tournament/TournamentSp
 import { pullTournamentData } from "../../../../api-calls/tournament/pullTournamentData.js"
 import { pullTournamentSportsData } from "../../../../api-calls/tournament/pullTournamentSportsData.js";
 import { TournamentSport, Tournament } from "../../../../types/TournamentTypes"
-import { Button, Box, TextField, Typography, MenuItem } from "@mui/material"
+import { Button, Box, TextField, Typography, MenuItem, Container, Fade, Card } from "@mui/material"
 import createTournamentSport from "../../../../api-calls/tournament/createTournamentSport"
 
 export default function TournamentSportsPage({params}: {
@@ -19,6 +19,7 @@ export default function TournamentSportsPage({params}: {
     const [tournamentData, setTournamentData] = useState<Tournament[] | null>(null);
     const [tournamentIdState, setTournamentIdState] = useState<number | null>(null)
     const [isShowForm, setIsShowForm] = useState(false)
+    const [token, setToken] = useState<string | null>(null);
 
     // Resolve the params
     useEffect(() => {
@@ -30,7 +31,11 @@ export default function TournamentSportsPage({params}: {
         resolveParams()
     }, [params])
 
-    const token = localStorage.getItem("authToken");
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setToken(localStorage.getItem("authToken"));
+        }
+    }, []);
 
     // Fetch the tournament sports list
     useEffect(() => {
@@ -72,75 +77,221 @@ export default function TournamentSportsPage({params}: {
     }
 
     return (
-        <>
-            <Button onClick={() => setIsShowForm(prev => !prev)}>
-                {isShowForm ? "Close Form" : "Add Tournament Sport"}
-            </Button>
-            {isShowForm && (
-  <Box
-    component="form"
-    action={createTournamentSportClick}
-    sx={{
-      p: 4,
-      mb: 4,
-      borderRadius: 2,
-      boxShadow: 2,
-      backgroundColor: "#fff",
-      maxWidth: 400,
-      mx: "auto",
-      display: "flex",
-      flexDirection: "column",
-      gap: 2,
-    }}
-  >
-    <Typography variant="h6" sx={{ mb: 2, color: "primary.main", fontWeight: 700 }}>
-      Add Tournament Sport
-    </Typography>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            {/* Header Section */}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+                {tournamentData && tournamentIdState && (
+                    <Typography 
+                        variant="h3" 
+                        sx={{ 
+                            mb: 2,
+                            fontWeight: 700,
+                            background: 'linear-gradient(135deg, #FF6B35 0%, #E65100 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text'
+                        }}
+                    >
+                        {name}
+                    </Typography>
+                )}
+                
+                <Button 
+                    onClick={() => setIsShowForm(prev => !prev)}
+                    variant="contained"
+                    size="large"
+                    sx={{
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 3,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        background: 'linear-gradient(135deg, #FF6B35 0%, #E65100 100%)',
+                        boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+                        '&:hover': {
+                            background: 'linear-gradient(135deg, #FF8A65 0%, #FF6B35 100%)',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                        }
+                    }}
+                >
+                    {isShowForm ? "Cancel" : "Add Tournament Sport"}
+                </Button>
+            </Box>
 
-    <TextField
-      label="Sport"
-      name="sport"
-      variant="outlined"
-      fullWidth
-      required
-    />
+            {/* Form Section */}
+            <Fade in={isShowForm}>
+                <Box sx={{ mb: 4 }}>
+                    {isShowForm && (
+                        <Card
+                            elevation={0}
+                            sx={{
+                                maxWidth: 500,
+                                mx: 'auto',
+                                p: 4,
+                                borderRadius: 3,
+                                border: '1px solid #f0f0f0',
+                                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.08)',
+                                background: 'linear-gradient(135deg, #ffffff 0%, #fafafa 100%)'
+                            }}
+                        >
+                            <Box
+                                component="form"
+                                action={createTournamentSportClick}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: 3,
+                                }}
+                            >
+                                <Typography 
+                                    variant="h5" 
+                                    sx={{ 
+                                        mb: 1,
+                                        fontWeight: 700,
+                                        color: '#FF6B35',
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    Add Tournament Sport
+                                </Typography>
 
-    <TextField
-      select
-      label="Gender"
-      name="gender"
-      variant="outlined"
-      fullWidth
-      defaultValue="male"
-      required
-    >
-      <MenuItem value="male">Male</MenuItem>
-      <MenuItem value="female">Female</MenuItem>
-      <MenuItem value="co-ed">Co-Ed</MenuItem>
-    </TextField>
+                                <TextField
+                                    label="Sport Name"
+                                    name="sport"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#ffffff',
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff',
+                                            }
+                                        }
+                                    }}
+                                />
 
-    <TextField
-      label="Description"
-      name="description"
-      variant="outlined"
-      fullWidth
-      multiline
-      rows={2}
-    />
+                                <TextField
+                                    select
+                                    label="Gender Category"
+                                    name="gender"
+                                    variant="outlined"
+                                    fullWidth
+                                    defaultValue="male"
+                                    required
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#ffffff',
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff',
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value="male">Male</MenuItem>
+                                    <MenuItem value="female">Female</MenuItem>
+                                    <MenuItem value="co-ed">Co-Ed</MenuItem>
+                                </TextField>
 
-    <Button
-      type="submit"
-      variant="contained"
-      color="primary"
-      sx={{ mt: 2, fontWeight: 600 }}
-    >
-      Submit
-    </Button>
-  </Box>
-)}
+                                <TextField
+                                    label="Description (Optional)"
+                                    name="description"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 2,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                backgroundColor: '#ffffff',
+                                            },
+                                            '&.Mui-focused': {
+                                                backgroundColor: '#ffffff',
+                                            }
+                                        }
+                                    }}
+                                />
 
-            { tournamentData && tournamentIdState && <h1 className="page-title">{name}</h1>}
-            { tournamentSports ? tournamentSportsElements : <h1 className="page-title">Loading...</h1>}
-        </>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    sx={{
+                                        py: 1.5,
+                                        mt: 2,
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        fontSize: '1rem',
+                                        background: 'linear-gradient(135deg, #FF6B35 0%, #E65100 100%)',
+                                        boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #FF8A65 0%, #FF6B35 100%)',
+                                            boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                        }
+                                    }}
+                                >
+                                    Create Sport
+                                </Button>
+                            </Box>
+                        </Card>
+                    )}
+                </Box>
+            </Fade>
+
+            {/* Sports List Section */}
+            <Box>
+                {tournamentSports ? (
+                    tournamentSports.length > 0 ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            {tournamentSportsElements}
+                        </Box>
+                    ) : (
+                        <Card 
+                            sx={{ 
+                                p: 6, 
+                                textAlign: 'center',
+                                borderRadius: 3,
+                                border: '1px solid #f0f0f0',
+                                backgroundColor: '#fafafa'
+                            }}
+                        >
+                            <Typography variant="h6" color="text.secondary">
+                                No sports added yet
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                Start by adding your first tournament sport above
+                            </Typography>
+                        </Card>
+                    )
+                ) : (
+                    <Card 
+                        sx={{ 
+                            p: 6, 
+                            textAlign: 'center',
+                            borderRadius: 3,
+                            border: '1px solid #f0f0f0'
+                        }}
+                    >
+                        <Typography variant="h6" color="text.secondary">
+                            Loading tournament sports...
+                        </Typography>
+                    </Card>
+                )}
+            </Box>
+        </Container>
     )
 }
