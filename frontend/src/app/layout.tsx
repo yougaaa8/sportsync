@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SportSync",
   description: "Discover premium quality merchandise from CCAs around NUS",
+  icons: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      url: '/favicon.ico',
+    },
+  ],
 };
 
 export default function RootLayout({

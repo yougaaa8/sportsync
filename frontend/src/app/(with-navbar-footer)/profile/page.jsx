@@ -96,19 +96,13 @@ export default function Profile() {
             }
             
             const result = await updateProfile(formData)
+            localStorage.setItem("role", formData.get("status"))
             setMessage("Profile updated successfully!")
         } catch (error) {
             console.error('Error updating profile:', error)
             setMessage("Error updating profile. Please try again.")
         }
     }
-
-    const menuItems = [
-        { text: 'Profile', icon: <Person />, active: true },
-        { text: 'Events', icon: <Event /> },
-        { text: 'Bookings', icon: <BookOnline /> },
-        { text: 'Orders', icon: <ShoppingBag /> },
-    ];
 
     const statusOptions = [
         { value: 'student', label: 'Student' },
@@ -195,42 +189,6 @@ export default function Profile() {
                         </CardContent>
                     </Card>
 
-                    {/* Navigation Menu */}
-                    <Card>
-                        <List disablePadding>
-                            {menuItems.map((item, index) => (
-                                <ListItem key={item.text} disablePadding>
-                                    <ListItemButton 
-                                        selected={item.active}
-                                        sx={{
-                                            py: 2,
-                                            '&.Mui-selected': {
-                                                bgcolor: 'primary.50',
-                                                borderRight: '3px solid',
-                                                borderRightColor: 'primary.main',
-                                                '&:hover': {
-                                                    bgcolor: 'primary.100',
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        <ListItemIcon sx={{ color: item.active ? 'primary.main' : 'text.secondary' }}>
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText 
-                                            primary={item.text}
-                                            sx={{ 
-                                                '& .MuiListItemText-primary': { 
-                                                    fontWeight: item.active ? 600 : 400,
-                                                    color: item.active ? 'primary.main' : 'text.primary'
-                                                }
-                                            }}
-                                        />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Card>
                 </div>
 
                 {/* Right Content */}

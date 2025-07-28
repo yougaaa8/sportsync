@@ -2,6 +2,7 @@ import { API_BASE_URL } from "../../config/api";
 
 export default async function createTournamentSport(tournamentId, formData) {
   const token = localStorage.getItem("authToken");
+  formData.append("tournament", tournamentId);
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/tournament/${tournamentId}/create/`,

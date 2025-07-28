@@ -26,7 +26,8 @@ export default function TournamentPage() {
     const [tournamentData, setTournamentData] = useState<Tournament[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [isShowForm, setIsShowForm] = useState(false)
-    
+    const [role, setRole] = useState<string | null>(null);
+
     // Pull tournaments data
     useEffect(() => {
         async function fetchData() {
@@ -42,9 +43,16 @@ export default function TournamentPage() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        setRole(localStorage.getItem("role"));
+    }, []);
+
     // Define functions
     function createTournamentClick(formData: FormData) {
         createTournament(formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     // Define components
@@ -118,31 +126,33 @@ export default function TournamentPage() {
                 </Box>
 
                 {/* Create Tournament Button */}
-                <Box className="mb-8 flex justify-center">
-                    <Button 
-                        onClick={() => setIsShowForm(prev => !prev)}
-                        variant="contained"
-                        size="large"
-                        sx={{
-                            py: 1.5,
-                            px: 4,
-                            borderRadius: 3,
-                            textTransform: 'none',
-                            fontSize: '1rem',
-                            fontWeight: 600,
-                            boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
-                            '&:hover': {
-                                boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
-                                transform: 'translateY(-2px)'
-                            }
-                        }}
-                    >
-                        {isShowForm ? "Cancel" : "Create New Tournament"}
-                    </Button>
-                </Box>
+                {role === "staff" && (
+                    <Box className="mb-8 flex justify-center">
+                        <Button 
+                            onClick={() => setIsShowForm(prev => !prev)}
+                            variant="contained"
+                            size="large"
+                            sx={{
+                                py: 1.5,
+                                px: 4,
+                                borderRadius: 3,
+                                textTransform: 'none',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+                                '&:hover': {
+                                    boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                    transform: 'translateY(-2px)'
+                                }
+                            }}
+                        >
+                            {isShowForm ? "Cancel" : "Create New Tournament"}
+                        </Button>
+                    </Box>
+                )}
 
                 {/* Create Tournament Form */}
-                {isShowForm && (
+                {isShowForm && role === "staff" && (
                     <Fade in={true} timeout={300}>
                         <Card 
                             elevation={0}

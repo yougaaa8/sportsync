@@ -22,6 +22,10 @@ export default function TournamentSportTeamMembers({ params }: {
     } | null>(null)
     const [isShowAddNewMemberForm, setIsShowAddNewMemberForm] = useState(false)
 
+    // Set static values
+    const role = localStorage.getItem("role")
+    const isStaff = role === "staff"
+
     // Resolve params
     useEffect(() => {
         const resolveParams = async () => {
@@ -81,7 +85,7 @@ export default function TournamentSportTeamMembers({ params }: {
                     Team Members
                 </Typography>
                 
-                <Button 
+                {isStaff && <Button 
                     variant={isShowAddNewMemberForm ? "outlined" : "contained"}
                     color="primary"
                     onClick={() => setIsShowAddNewMemberForm(prev => !prev)}
@@ -95,7 +99,7 @@ export default function TournamentSportTeamMembers({ params }: {
                     }}
                 >
                     {isShowAddNewMemberForm ? "Close Form" : "Add New Team Member"}
-                </Button>
+                </Button>}
 
                 {isShowAddNewMemberForm && (
                     <Paper 
