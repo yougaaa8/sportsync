@@ -71,13 +71,12 @@ class TeamSerializer(serializers.ModelSerializer):
 class TeamMemberSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
     team = TeamSerializer(read_only=True)
-    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = TeamMember
         fields = ['id', 'team', 'user', 'jersey_name', 'jersey_number',
                   'role', 'photo', 'photo_url']
-        read_only_fields = ['id', 'team', 'user']
+        read_only_fields = ['id', 'team']
 
     def get_photo_url(self, obj):
         if obj.photo:
