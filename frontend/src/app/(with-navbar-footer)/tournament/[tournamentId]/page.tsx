@@ -21,6 +21,9 @@ export default function TournamentSportsPage({params}: {
     const [isShowForm, setIsShowForm] = useState(false)
     const [token, setToken] = useState<string | null>(null);
 
+    // Set static values
+    const role = localStorage.getItem("role")
+
     // Resolve the params
     useEffect(() => {
         const resolveParams = async () => {
@@ -71,9 +74,19 @@ export default function TournamentSportsPage({params}: {
     // Resolve the name of the tournament from the extracted tournament data
     const name = tournamentData?.find(tournament => tournament.id === tournamentIdState)?.name
 
+    // Find the tournament object for this sportId
+    const tournament = tournamentData?.find(tournament => tournament.id === tournamentIdState)
+
     // Define functions
     function createTournamentSportClick(formData: FormData) {
+        console.log("tournament: ", tournament)
+        if (tournamentIdState !== null) {
+            formData.append("tournament", tournamentIdState.toString())
+        }
         createTournamentSport(tournamentIdState, formData)
+        // setTimeout(() => {
+        //     window.location.reload()
+        // }, 1000)
     }
 
     return (
@@ -96,7 +109,7 @@ export default function TournamentSportsPage({params}: {
                     </Typography>
                 )}
                 
-                <Button 
+                {role === "staff" && <Button 
                     onClick={() => setIsShowForm(prev => !prev)}
                     variant="contained"
                     size="large"
@@ -117,7 +130,7 @@ export default function TournamentSportsPage({params}: {
                     }}
                 >
                     {isShowForm ? "Cancel" : "Add Tournament Sport"}
-                </Button>
+                </Button>}
             </Box>
 
             {/* Form Section */}

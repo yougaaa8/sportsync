@@ -13,13 +13,21 @@ export default function TeamMemberItem(props: {
     // Set states
     const [isShowForm, setIsShowForm] = useState(false)
 
+    // Set static values
+    const role = localStorage.getItem("role")
+    const isStaff = role === "staff"
+
     // Set functions
     async function manageTeamMemberClick(formData: FormData) {
         const userProfile = await pullUserProfileFromEmail(formData.get("email"))
+        console.log("userProfile: ", userProfile)
         const user = userProfile.user_id
         formData.append("user", user)
         formData.delete("email")
-        editTournamentSportTeamMember(props.tournament, props.tournamentSport, props.tournamentSportTeam, props.member.id, formData)
+        await editTournamentSportTeamMember(props.tournament, props.tournamentSport, props.tournamentSportTeam, props.member.id, formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     return (
@@ -90,7 +98,7 @@ export default function TeamMemberItem(props: {
                         </Box>
                     </Box>
                     
-                    <Button 
+                    {isStaff && <Button 
                         variant={isShowForm ? "contained" : "outlined"}
                         color="secondary"
                         onClick={() => setIsShowForm(prev => !prev)}
@@ -103,7 +111,7 @@ export default function TeamMemberItem(props: {
                         }}
                     >
                         {isShowForm ? "Cancel" : "Manage"}
-                    </Button>
+                    </Button>}
                 </Box>
             </Box>
 
@@ -129,6 +137,7 @@ export default function TeamMemberItem(props: {
                                 type="email"
                                 fullWidth
                                 size="small"
+                                required
                                 sx={{ 
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,

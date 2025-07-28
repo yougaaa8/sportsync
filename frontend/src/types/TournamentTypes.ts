@@ -3,7 +3,7 @@ export interface TournamentSport {
     sport: string,
     gender: string,
     description: string,
-    tournament: number
+    tournament: Tournament
 }
 
 export interface Tournament {
@@ -11,6 +11,7 @@ export interface Tournament {
     end_date: string,
     id: number,
     logo: string,
+    logo_url: string,
     name: string,
     start_date: string,
     status: string
@@ -19,8 +20,9 @@ export interface Tournament {
 export interface TournamentSportTeam {
     id: number,
     name: string,
-    tournament_sport: number,
+    tournament_sport: TournamentSport,
     logo: string,
+    logo_url: string,
     description: string
 }
 
@@ -37,10 +39,10 @@ export interface TournamentSportTeamMember {
 export interface TournamentSportMatch {
     id: number
     tournament_sport: number
-    team1: number
-    team2: number
+    team1: TournamentSportTeam
+    team2: TournamentSportTeam
     round: number
-    date: string,
+    date: string, 
     venue: string
     score_team1: number
     score_team2: number

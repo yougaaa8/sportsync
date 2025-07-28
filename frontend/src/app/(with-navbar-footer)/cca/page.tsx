@@ -139,19 +139,6 @@ export default function CCAHome() {
                                 ),
                             }}
                         />
-                        <IconButton 
-                            sx={{ 
-                                bgcolor: 'white',
-                                border: '1px solid #E0E0E0',
-                                borderRadius: 2,
-                                '&:hover': {
-                                    bgcolor: '#F5F5F5',
-                                    borderColor: '#FF6B35'
-                                }
-                            }}
-                        >
-                            <TuneIcon sx={{ color: '#757575', fontSize: 20 }} />
-                        </IconButton>
                     </Box>
                 </Box>
 

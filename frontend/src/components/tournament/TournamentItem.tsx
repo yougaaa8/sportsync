@@ -23,13 +23,22 @@ export default function TournamentItem(props: {
     // Set states
     const [isShowForm, setIsShowForm] = useState(false)
 
+    // Set static values
+    const role = localStorage.getItem("role")
+
     // Define functions
     function manageTournamentClick(formData: FormData) {
         editTournament(props.entry.id, formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     function deleteTournamentClick() {
         deleteTournament(props.entry.id)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     console.log("These are the props for the tournament item: ", props);
@@ -214,7 +223,7 @@ export default function TournamentItem(props: {
             )}
 
             {/* Action Buttons */}
-            <Stack 
+            {role === "staff" && <Stack 
                 direction={{ xs: 'column', sm: 'row' }} 
                 spacing={2} 
                 sx={{ mt: 2 }}
@@ -260,7 +269,7 @@ export default function TournamentItem(props: {
                 >
                     Delete Tournament
                 </Button>
-            </Stack>
+            </Stack>}
 
             {/* Edit Form */}
             {isShowForm && (

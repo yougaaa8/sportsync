@@ -27,7 +27,7 @@ export default function Login() {
             if (response) {
                 // Login successful
                 const data = response
-                console.log("Login successful:", data);
+                console.log("Login successful from page:", data);
                 
                 // Store token and username if provided  
                 if (data.tokens && data.tokens.access) {
@@ -36,6 +36,8 @@ export default function Login() {
                     localStorage.setItem("email", data.user.email);
                     localStorage.setItem("userId", data.user.id)
                     localStorage.setItem("fullName", data.user.full_name);
+                    localStorage.setItem("profilePicture", data.user.profile_picture_url)
+                    localStorage.setItem("role", data.user.status)
                     localStorage.setItem("isLoggedIn", "true")
                 }
 

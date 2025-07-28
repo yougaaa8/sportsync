@@ -15,6 +15,11 @@ export default function TournamentSportMatchItem(props: {
         editTournamentSportMatch(props.tournamentId, props.match.tournament_sport, props.match.id, formData)
     }
 
+    // Determine the name of the winning team
+    const winner = props.match.team1.id === props.match.winner
+    ? props.match.team1.name
+    : props.match.team2.name
+
     console.log("match: ", props.match)
     
     return (
@@ -43,13 +48,13 @@ export default function TournamentSportMatchItem(props: {
                         textAlign: 'center'
                     }}
                 >
-                    {props.match.team1} VS {props.match.team2}
+                    {props.match.team1.name} VS {props.match.team2.name}
                 </Typography>
                 
                 {props.match.winner && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                         <Chip 
-                            label={`Winner: ${props.match.winner}`}
+                            label={`Winner: ${winner}`}
                             color="primary"
                             sx={{ 
                                 fontWeight: 600,
@@ -76,7 +81,22 @@ export default function TournamentSportMatchItem(props: {
                             Date & Time
                         </Typography>
                         <Typography variant="body1" color="text.primary">
-                            {props.match.date || "Not scheduled"}
+                            {props.match.date
+                                ? (() => {
+                                    const dateObj = new Date(props.match.date);
+                                    const dateStr = dateObj.toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    });
+                                    const timeStr = dateObj.toLocaleTimeString('en-US', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    });
+                                    return `${dateStr}\n${timeStr}`;
+                                })()
+                                : "Not scheduled"}
                         </Typography>
                     </Box>
 
@@ -107,13 +127,13 @@ export default function TournamentSportMatchItem(props: {
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Typography variant="h5" color="text.primary" sx={{ fontWeight: 600 }}>
-                                {props.match.score_team1 || 0}
+                                {props.match.team1.name + " " + props.match.score_team1 || 0}
                             </Typography>
                             <Typography variant="body1" color="text.secondary">
                                 -
                             </Typography>
                             <Typography variant="h5" color="text.primary" sx={{ fontWeight: 600 }}>
-                                {props.match.score_team2 || 0}
+                                {props.match.score_team2 + " " + props.match.team2.name || 0}
                             </Typography>
                         </Box>
                     </Box>

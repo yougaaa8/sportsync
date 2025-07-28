@@ -22,6 +22,8 @@ export default function TournamentSportTeams({ params }: {
 
     // Set static values
     const pathname = usePathname()
+    const role = localStorage.getItem("role")
+    const isStaff = role === "staff"
     
     // Resolve the params
     useEffect(() => {
@@ -56,8 +58,11 @@ export default function TournamentSportTeams({ params }: {
     })
 
     // Define functions
-    function createNewTeamClick(formData: FormData) {
-        addNewTeam(resolvedParams?.tournamentId, resolvedParams?.sportId, formData)
+    async function createNewTeamClick(formData: FormData) {
+        await addNewTeam(resolvedParams?.tournamentId, resolvedParams?.sportId, formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     return (
@@ -78,7 +83,7 @@ export default function TournamentSportTeams({ params }: {
                     Sports Teams
                 </Typography>
                 
-                <Box className="flex justify-center mb-6">
+                {isStaff && <Box className="flex justify-center mb-6">
                     <Button 
                         variant="contained"
                         color="primary"
@@ -88,7 +93,7 @@ export default function TournamentSportTeams({ params }: {
                     >
                         {isShowCreateTeamForm ? "Close Form": "Add New Team"}
                     </Button>
-                </Box>
+                </Box>}
 
                 {isShowCreateTeamForm && (
                     <Paper 

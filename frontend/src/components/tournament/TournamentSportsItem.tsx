@@ -7,23 +7,25 @@ import editTournamentSport from "../../api-calls/tournament/editTournamentSport"
 import deleteTournamentSport from "../../api-calls/tournament/deleteTournamentSport"
 
 export default function TournamentSportsItem(props: TournamentSport) {
+    console.log("Tournament Sports Item Props: ", props)
     // Set states
     const [isShowForm, setIsShowForm] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     
     // Set constant values
     const pathname = usePathname()
+    const role = localStorage.getItem("role")
 
     // Define functions
     async function manageSportClick(formData: FormData) {
-        await editTournamentSport(props.tournament, props.id, formData)
+        await editTournamentSport(props.tournament.id, props.id, formData)
         setTimeout(() => {
             window.location.reload()
         }, 500)
     }
 
     async function deleteSportClick() {
-        await deleteTournamentSport(props.tournament, props.id)
+        await deleteTournamentSport(props.tournament.id, props.id)
         setTimeout(() => {
             window.location.reload()
         }, 500)
@@ -127,7 +129,7 @@ export default function TournamentSportsItem(props: TournamentSport) {
             )}
 
             {/* Action Buttons */}
-            <Box sx={{ 
+            {role === "staff" && <Box sx={{ 
                 px: 3, 
                 pb: 3, 
                 display: 'flex', 
@@ -189,7 +191,7 @@ export default function TournamentSportsItem(props: TournamentSport) {
                         Delete Sport
                     </Button>
                 )}
-            </Box>
+            </Box>}
 
             {/* Edit Form */}
             <Fade in={isShowForm}>

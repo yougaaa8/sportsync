@@ -46,7 +46,6 @@ import {
     LogoutRounded,
     FavoriteRounded,
     NotificationsRounded,
-    SearchRounded,
     MarkEmailReadRounded,
     ClearAllRounded,
     OpenInNewRounded
@@ -66,11 +65,21 @@ export default function Navbar() {
     const [wsConnected, setWsConnected] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
+    const [role, setRole] = useState("")
+    const [profilePictureUrl, setProfilePictureUrl] = useState("")
     
     const dropdownRef = useRef(null);
     const wsRef = useRef(null);
     const isMenuOpen = Boolean(anchorEl);
     const isNotificationOpen = Boolean(notificationAnchorEl);
+
+    // Extract role and profile picture URL from local storage
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setRole(localStorage.getItem("role"))
+            setProfilePictureUrl(localStorage.getItem("profilePicture"))
+        }
+    }, [])
 
     // Initialize WebSocket connection
     useEffect(() => {
@@ -156,7 +165,6 @@ export default function Navbar() {
         { label: "Events", path: "/events", icon: <EventRounded /> },
         { label: "Tournaments", path: "/tournament", icon: <EmojiEventsRounded /> },
         { label: "Merchandise", path: "/merchandise-shop", icon: <StoreRounded /> },
-        { label: "Facilities", path: "/facility-list", icon: <BusinessRounded /> },
         { label: "CCA Dashboard", path: "/cca/dashboard/", icon: <DashboardRounded /> },
     ];
 
@@ -338,18 +346,6 @@ export default function Navbar() {
                         {/* Quick Actions (Desktop) */}
                         {!isMobile && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
-                                <IconButton 
-                                    size="medium"
-                                    sx={{ 
-                                        color: '#6c757d',
-                                        '&:hover': { 
-                                            backgroundColor: 'rgba(244, 162, 97, 0.1)',
-                                            color: '#f4a261' 
-                                        }
-                                    }}
-                                >
-                                    <SearchRounded />
-                                </IconButton>
                                 
                                 <IconButton 
                                     size="medium"
@@ -401,7 +397,7 @@ export default function Navbar() {
                                         {userEmail.split('@')[0]}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: '#6c757d' }}>
-                                        Student {wsConnected && '🟢'}
+                                        {role} {wsConnected && '🟢'}
                                     </Typography>
                                 </Box>
                             )}
@@ -417,18 +413,18 @@ export default function Navbar() {
                                     }
                                 }}
                             >
-                                <Avatar
-                                    sx={{
-                                        width: { xs: 36, sm: 40 },
-                                        height: { xs: 36, sm: 40 },
-                                        background: 'linear-gradient(45deg, #6fa8dc, #4a90e2)',
-                                        color: 'white',
-                                        fontWeight: 600,
-                                        fontSize: '0.9rem',
-                                        boxShadow: '0 2px 8px rgba(111, 168, 220, 0.3)'
-                                    }}
-                                >
-                                    {userInitials}
+                                <Avatar>
+                                    {profilePictureUrl ? (
+                                        <Image
+                                            src={profilePictureUrl}
+                                            alt={"profile picture"}
+                                            width={40}
+                                            height={40}
+                                        />
+                                    ) : (
+                                        // fallback: initials or default avatar
+                                        <span>{userInitials}</span>
+                                    )}
                                 </Avatar>
                             </IconButton>
                         </Box>

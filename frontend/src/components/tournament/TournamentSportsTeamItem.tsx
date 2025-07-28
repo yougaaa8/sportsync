@@ -1,4 +1,4 @@
-import { TournamentSportTeam } from "@/types/TournamentTypes";
+import { TournamentSportTeam, Tournament } from "@/types/TournamentTypes";
 import { Paper, Button, TextField, Typography, Box, Avatar, Chip } from "@mui/material" 
 import Link from "next/link"
 import { usePathname } from "next/navigation";
@@ -10,19 +10,28 @@ export default function TournamentSportsTeamItem(props: {
     team: TournamentSportTeam
     tournament: number
 }) {
+    console.log("Tournament Sports Team Item Props: ", props)
     // Set states
     const [isShowForm, setIsShowForm] = useState(false)
 
-    // Get current path
+    // Set static values
     const pathname = usePathname()
+    const role = localStorage.getItem("role")
+    const isStaff = role === "staff"
 
     // Define functions 
-    function manageTeamDetailsClick(formData: FormData) {
-        editTournamentSportTeam(props.tournament, props.team.tournament_sport, props.team.id, formData)
+    async function manageTeamDetailsClick(formData: FormData) {
+        await editTournamentSportTeam(props.tournament, props.team.tournament_sport.id, props.team.id, formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
-    function deleteTeamClick() {
-        deleteTournamentSportTeam(props.tournament, props.team.tournament_sport, props.team.id)
+    async function deleteTeamClick() {
+        await deleteTournamentSportTeam(props.tournament, props.team.tournament_sport.id, props.team.id)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
     
     return (
@@ -86,7 +95,7 @@ export default function TournamentSportsTeamItem(props: {
                     </Box>
                 </Link>
                 
-                <Box className="px-6 pb-4 border-t border-gray-100">
+                {isStaff && <Box className="px-6 pb-4 border-t border-gray-100">
                     <Box className="flex items-center space-x-3 pt-4">
                         <Button 
                             variant="outlined" 
@@ -108,7 +117,7 @@ export default function TournamentSportsTeamItem(props: {
                             Delete Team
                         </Button>
                     </Box>
-                </Box>
+                </Box>}
             </Paper>
 
             {isShowForm && (
