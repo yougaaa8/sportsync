@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from cloudinary.models import CloudinaryField
+from cloudinary.uploader import destroy
 
 
 class Tournament(models.Model):
@@ -11,11 +13,31 @@ class Tournament(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='tournament_logos', blank=True,
-                             null=True, help_text="Upload a logo for the tournament")
+    logo = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+        folder='sportsync/tournament_logo/',
+        transformation={
+            'width': 300,
+            'height': 300,
+            'crop': 'fill',
+            'gravity': 'face',
+            'quality': 'auto',
+            'fetch_format': 'auto'
+        },
+        help_text="Upload a tournament logo"
+    )
 
     def __str__(self):
         return f"{self.name}"
+
+    def delete_old_logo(self):
+        if self.logo:
+            try:
+                destroy(self.logo.public_id)
+            except Exception as e:
+                print(f"Error deleting old tournament logo: {e}")
 
 
 class TournamentSport(models.Model):
@@ -33,12 +55,32 @@ class Team(models.Model):
     name = models.TextField(max_length=100)
     tournament_sport = models.ForeignKey(
         TournamentSport, on_delete=models.CASCADE)
-    logo = models.ImageField(upload_to='team_logos', blank=True,
-                             null=True, help_text="Upload a logo for the team")
+    logo = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+        folder='sportsync/team_logo/',
+        transformation={
+            'width': 300,
+            'height': 300,
+            'crop': 'fill',
+            'gravity': 'face',
+            'quality': 'auto',
+            'fetch_format': 'auto'
+        },
+        help_text="Upload a team logo"
+    )
     description = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.name} {self.tournament_sport.sport + ' ' + self.tournament_sport.gender[0].capitalize()} team - {self.tournament_sport.tournament.name}"
+
+    def delete_old_logo(self):
+        if self.logo:
+            try:
+                destroy(self.logo.public_id)
+            except Exception as e:
+                print(f"Error deleting old team logo: {e}")
 
 
 class TeamMember(models.Model):
@@ -48,11 +90,31 @@ class TeamMember(models.Model):
     jersey_name = models.CharField(max_length=100)
     jersey_number = models.PositiveIntegerField()
     role = models.TextField(max_length=100)
-    photo = models.ImageField(upload_to='team_members', blank=True,
-                              null=True, help_text="Upload a photo for the team member")
+    photo = CloudinaryField(
+        'image',
+        blank=True,
+        null=True,
+        folder='sportsync/team_member_photo/',
+        transformation={
+            'width': 400,
+            'height': 400,
+            'crop': 'fill',
+            'gravity': 'face',
+            'quality': 'auto',
+            'fetch_format': 'auto'
+        },
+        help_text="Upload a team member photo"
+    )
 
     def __str__(self):
         return f"{self.jersey_name} {self.jersey_number} - {self.team.name}"
+
+    def delete_old_photo(self):
+        if self.photo:
+            try:
+                destroy(self.photo.public_id)
+            except Exception as e:
+                print(f"Error deleting old team member photo: {e}")
 
 
 class Match(models.Model):

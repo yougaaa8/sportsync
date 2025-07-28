@@ -56,8 +56,8 @@ services:
             python manage.py collectstatic --noinput --clear &&
             uvicorn backend.asgi:application --host 0.0.0.0 --port 8000 --reload"
 
-  # Next.js Frontend
-  frontend-nextjs:
+  # Frontend
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
