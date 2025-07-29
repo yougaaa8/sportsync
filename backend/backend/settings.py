@@ -119,7 +119,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-# NEW: Celery Configuration
 CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['json']
@@ -130,12 +129,14 @@ CELERY_BEAT_SCHEDULE = {
     'process-scheduled-notifications': {
         'task': 'notifications.tasks.process_scheduled_notifications',
         'schedule': crontab(minute='*/5'),  # Every 5 minutes
+        'options': {'queue': 'notifications'}
     },
     # Weekly cleanup tasks
     'cleanup-old-notifications': {
         'task': 'notifications.tasks.cleanup_old_notifications',
         # Every Monday at 2 AM
         'schedule': crontab(hour=2, minute=0, day_of_week=1),
+        'options': {'queue': 'cleanup'}
     },
     # Daily training reminders
     'send-daily-training-reminders': {

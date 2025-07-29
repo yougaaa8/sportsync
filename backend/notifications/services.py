@@ -3,6 +3,7 @@ from django.utils import timezone
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import Notification, NotificationType, NotificationChannel
+import gc
 
 
 class NotificationService:
@@ -11,18 +12,19 @@ class NotificationService:
 
     def create_notification(self, recipient, title, message, notification_type,
                             related_object_id=None, related_object_type=None,
-                            scheduled_for=None):
-        """Create and send a notification"""
+                            scheduled_for=None, send_immediately=True):
+        """Create and optionally send a notification"""
 
-        # Get user preferences
-        user_prefs = getattr(recipient, 'notification_preferences', None)
-        if not user_prefs:
+        try:
+            user_prefs = getattr(recipient, 'notification_preferences', None)
+            if not user_prefs:
+                channel = NotificationChannel.BOTH
+            else:
+                channel = self._get_channel_preference(
+                    user_prefs, notification_type)
+        except Exception as e:
             channel = NotificationChannel.BOTH
-        else:
-            channel = self._get_channel_preference(
-                user_prefs, notification_type)
 
-        # Create notification
         notification = Notification.objects.create(
             recipient=recipient,
             title=title,
@@ -34,9 +36,12 @@ class NotificationService:
             scheduled_for=scheduled_for or timezone.now()
         )
 
-        # Send immediately if not scheduled for later
-        if not scheduled_for or scheduled_for <= timezone.now():
-            self.send_notification(notification)
+        if send_immediately and (not scheduled_for or scheduled_for <= timezone.now()):
+            try:
+                self.send_notification(notification)
+            except Exception as e:
+                from .tasks import send_single_notification
+                send_single_notification.delay(notification.id)
 
         return notification
 
@@ -51,10 +56,12 @@ class NotificationService:
 
             notification.is_sent = True
             notification.sent_at = timezone.now()
-            notification.save()
+            notification.save(update_fields=['is_sent', 'sent_at'])
 
         except Exception as e:
-            print(f"Error sending notification {notification.id}: {e}")
+            raise
+        finally:
+            gc.collect()
 
     def _send_in_app_notification(self, notification):
         """Send real-time notification via WebSocket"""
@@ -79,14 +86,6 @@ class NotificationService:
     def _send_email_notification(self, notification):
         """Send email notification"""
         try:
-            context = {
-                'user': notification.recipient,
-                'title': notification.title,
-                'message': notification.message,
-                'notification_type': notification.notification_type
-            }
-
-            # Simple text email for now
             send_mail(
                 subject=f"SportsSync: {notification.title}",
                 message=notification.message,

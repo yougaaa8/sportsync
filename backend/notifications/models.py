@@ -19,11 +19,11 @@ class NotificationChannel(models.TextChoices):
 
 class Notification(models.Model):
     recipient = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications', db_index=True)
     title = models.CharField(max_length=200)
     message = models.TextField()
     notification_type = models.CharField(
-        max_length=50, choices=NotificationType.choices)
+        max_length=50, choices=NotificationType.choices, db_index=True)
     channel = models.CharField(
         max_length=20, choices=NotificationChannel.choices, default=NotificationChannel.IN_APP)
 
@@ -32,15 +32,20 @@ class Notification(models.Model):
     related_object_type = models.CharField(
         max_length=50, null=True, blank=True)
 
-    is_read = models.BooleanField(default=False)
-    is_sent = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False, db_index=True)
+    is_sent = models.BooleanField(default=False, db_index=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    scheduled_for = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    scheduled_for = models.DateTimeField(null=True, blank=True, db_index=True)
     sent_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['is_sent', 'scheduled_for']),
+            models.Index(fields=['created_at', 'is_read']),
+        ]
 
     def __str__(self):
         return f"{self.title} - {self.recipient.get_full_name()}"
