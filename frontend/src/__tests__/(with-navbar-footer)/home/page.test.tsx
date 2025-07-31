@@ -2,22 +2,22 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import Home from '../../../app/(with-navbar-footer)/(require-logged-in)/home/page';
+import Home from '../../../app/(with-navbar-footer)/home/page';
 
 // Mock the imported components
-jest.mock('../tournament/page', () => {
+jest.mock('../../../app/(with-navbar-footer)/tournament/page.tsx', () => {
   return function MockTournaments() {
     return <div data-testid="tournaments">Tournaments Component</div>;
   };
 });
 
-jest.mock('../events/page', () => {
+jest.mock('../../../app/(with-navbar-footer)/events/page.tsx', () => {
   return function MockEvents() {
     return <div data-testid="events">Events Component</div>;
   };
 });
 
-jest.mock('../matchmaking/page', () => {
+jest.mock('../../../app/(with-navbar-footer)/matchmaking/page.tsx', () => {
   return function MockMatches() {
     return <div data-testid="matches">Matches Component</div>;
   };

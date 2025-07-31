@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Home Component Snapshot matches snapshot 1`] = `
+<div
+  class="min-h-screen MuiBox-root css-1o66yg1"
+>
+  <div
+    class="MuiBox-root css-ta3v3f"
+  >
+    <div
+      class="MuiContainer-root MuiContainer-maxWidthLg text-center css-5c1adp-MuiContainer-root"
+    >
+      <h1
+        class="MuiTypography-root MuiTypography-h1 text-white mb-4 font-bold css-ob9ty5-MuiTypography-root"
+      >
+        NUS SportSync
+      </h1>
+      <h5
+        class="MuiTypography-root MuiTypography-h5 text-white opacity-90 css-tc7fe8-MuiTypography-root"
+      >
+        Compete, Connect, and Celebrate Excellence
+      </h5>
+    </div>
+  </div>
+  <div
+    class="MuiContainer-root MuiContainer-maxWidthLg py-12 css-5c1adp-MuiContainer-root"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-16 MuiBox-root css-0"
+    >
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root css-1ngjr67-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: none;"
+      >
+        <div
+          class="MuiBox-root css-bcdpye"
+        >
+          <h5
+            class="MuiTypography-root MuiTypography-h5 text-white font-semibold flex items-center css-16xl4zq-MuiTypography-root"
+          >
+            <span
+              class="w-6 h-6 mr-3 rounded-full bg-white bg-opacity-20 flex items-center justify-center MuiBox-root css-0"
+            >
+              <span
+                class="w-3 h-3 rounded-full bg-white MuiBox-root css-0"
+              />
+            </span>
+            Tournaments
+          </h5>
+        </div>
+        <div
+          class="MuiCardContent-root css-1mxbbus-MuiCardContent-root"
+        >
+          <div
+            data-testid="tournaments"
+          >
+            Tournaments Component
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root css-1ngjr67-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: none;"
+      >
+        <div
+          class="MuiBox-root css-dgr1ud"
+        >
+          <h5
+            class="MuiTypography-root MuiTypography-h5 text-white font-semibold flex items-center css-16xl4zq-MuiTypography-root"
+          >
+            <span
+              class="w-6 h-6 mr-3 rounded-full bg-white bg-opacity-20 flex items-center justify-center MuiBox-root css-0"
+            >
+              <span
+                class="w-3 h-3 rounded-full bg-white MuiBox-root css-0"
+              />
+            </span>
+            Events
+          </h5>
+        </div>
+        <div
+          class="MuiCardContent-root css-1mxbbus-MuiCardContent-root"
+        >
+          <div
+            data-testid="events"
+          >
+            Events Component
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root lg:col-span-2 xl:col-span-1 css-1ngjr67-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: none;"
+      >
+        <div
+          class="MuiBox-root css-1cg3wde"
+        >
+          <h5
+            class="MuiTypography-root MuiTypography-h5 text-white font-semibold flex items-center css-16xl4zq-MuiTypography-root"
+          >
+            <span
+              class="w-6 h-6 mr-3 rounded-full bg-white bg-opacity-20 flex items-center justify-center MuiBox-root css-0"
+            >
+              <span
+                class="w-3 h-3 rounded-full bg-white MuiBox-root css-0"
+              />
+            </span>
+            Matchmaking
+          </h5>
+        </div>
+        <div
+          class="MuiCardContent-root css-1mxbbus-MuiCardContent-root"
+        >
+          <div
+            data-testid="matches"
+          >
+            Matches Component
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 MuiBox-root css-0"
+    >
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-rpkmbx-MuiPaper-root"
+        style="--Paper-shadow: none;"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h2 css-k6kb8v-MuiTypography-root"
+        >
+          2
+        </h2>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1lv9f2d-MuiTypography-root"
+        >
+          Active Tournaments
+        </p>
+      </div>
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-rpkmbx-MuiPaper-root"
+        style="--Paper-shadow: none;"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h2 css-10gm9ol-MuiTypography-root"
+        >
+          10
+        </h2>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1lv9f2d-MuiTypography-root"
+        >
+          Upcoming Events
+        </p>
+      </div>
+      <div
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 css-rpkmbx-MuiPaper-root"
+        style="--Paper-shadow: none;"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h2 css-2mmnnb-MuiTypography-root"
+        >
+          14
+        </h2>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-1lv9f2d-MuiTypography-root"
+        >
+          Open Matches
+        </p>
+      </div>
+    </div>
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root css-5atxpq-MuiPaper-root-MuiCard-root"
+      style="--Paper-shadow: none;"
+    >
+      <h3
+        class="MuiTypography-root MuiTypography-h3 font-bold mb-4 css-1azsde0-MuiTypography-root"
+      >
+        Ready to Join the Action?
+      </h3>
+      <h6
+        class="MuiTypography-root MuiTypography-h6 mb-8 opacity-90 css-188vfk9-MuiTypography-root"
+      >
+        Discover tournaments, events, and matches happening at NUS
+      </h6>
+      <div
+        class="flex flex-col sm:flex-row gap-4 justify-center MuiBox-root css-0"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary css-1qfm1gg-MuiButtonBase-root-MuiButton-root"
+          tabindex="0"
+          type="button"
+        >
+          <a
+            data-testid="link-/tournament"
+            href="/tournament"
+          >
+            Browse Tournaments
+          </a>
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary css-1agzz2j-MuiButtonBase-root-MuiButton-root"
+          tabindex="0"
+          type="button"
+        >
+          <a
+            data-testid="link-/events"
+            href="/events"
+          >
+            View All Events
+          </a>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
