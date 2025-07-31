@@ -155,7 +155,7 @@ export default function MerchandiseShop() {
 
     const router = useRouter()
     function listNewProduct() {
-        router.push("/new-product-form")
+        router.push("/merchandise-shop/new-product-form")
     }
 
     return (

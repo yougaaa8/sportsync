@@ -8,6 +8,7 @@ import { Box, Container, Typography, Divider, Paper, Avatar, Button, Link } from
 import { Email, PhotoCamera, Language, Facebook, Instagram } from "@mui/icons-material"
 import { CCADetail } from "@/types/CCATypes"
 import uploadCCALogo from "../../../../api-calls/cca/uploadCCALogo"
+import BackButton from "@/components/BackButton"
 
 export default function CCALayout() {
     // Set states
@@ -47,20 +48,20 @@ export default function CCALayout() {
     console.log("CCA Logo URL: ", ccaDetails?.logo_url)
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Paper 
-                elevation={0} 
-                sx={{ 
-                    p: { xs: 3, md: 5 }, 
+        <><BackButton /><Container maxWidth="lg" sx={{ py: 4 }}>
+            <Paper
+                elevation={0}
+                sx={{
+                    p: { xs: 3, md: 5 },
                     borderRadius: 3,
                     border: '1px solid #F0F0F0',
                     backgroundColor: '#FFFFFF'
                 }}
             >
                 {/* Header Section */}
-                <Box 
-                    sx={{ 
-                        display: 'flex', 
+                <Box
+                    sx={{
+                        display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
                         alignItems: { xs: 'center', sm: 'flex-start' },
                         gap: 3,
@@ -80,17 +81,16 @@ export default function CCALayout() {
                                 position: 'relative' // Enable absolute positioning for children
                             }}
                         >
-                            <Image 
-                                alt="CCA logo" 
+                            <Image
+                                alt="CCA logo"
                                 src={ccaDetails.logo_url}
                                 width={150}
                                 height={150}
-                                style={{ 
-                                    width: '100%', 
-                                    height: '100%', 
-                                    objectFit: 'cover' 
-                                }}
-                            />
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                }} />
                             <Button
                                 className="shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 active:scale-95 backdrop-blur-sm"
                                 sx={{
@@ -114,12 +114,12 @@ export default function CCALayout() {
                                 <PhotoCamera fontSize="small" />
                             </Button>
                             {/* Hidden file input */}
-                            <input 
+                            <input
                                 type="file"
                                 accept="image/*"
                                 ref={fileInputRef}
                                 style={{ display: "none" }}
-                                onChange={imageUpload}/>
+                                onChange={imageUpload} />
                         </Box>
                     ) : (
                         <Avatar
@@ -137,10 +137,10 @@ export default function CCALayout() {
 
                     {/* Title and Basic Info */}
                     <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
-                        <Typography 
-                            variant="h3" 
+                        <Typography
+                            variant="h3"
                             component="h1"
-                            sx={{ 
+                            sx={{
                                 fontWeight: 700,
                                 color: '#212121',
                                 mb: 1,
@@ -157,10 +157,10 @@ export default function CCALayout() {
                 {/* Description Section */}
                 {ccaDetails?.description && (
                     <Box sx={{ mb: 4 }}>
-                        <Typography 
-                            variant="h5" 
+                        <Typography
+                            variant="h5"
                             component="h2"
-                            sx={{ 
+                            sx={{
                                 fontWeight: 600,
                                 color: '#212121',
                                 mb: 2
@@ -168,9 +168,9 @@ export default function CCALayout() {
                         >
                             About Us
                         </Typography>
-                        <Typography 
+                        <Typography
                             variant="body1"
-                            sx={{ 
+                            sx={{
                                 lineHeight: 1.7,
                                 color: '#424242',
                                 fontSize: '1rem'
@@ -185,10 +185,10 @@ export default function CCALayout() {
 
                 {/* Links and Social Media Section */}
                 <Box sx={{ mb: 4 }}>
-                    <Typography 
-                        variant="h5" 
+                    <Typography
+                        variant="h5"
                         component="h2"
-                        sx={{ 
+                        sx={{
                             fontWeight: 600,
                             color: '#212121',
                             mb: 2
@@ -198,9 +198,9 @@ export default function CCALayout() {
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {/* Website Link */}
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
+                        <Box
+                            sx={{
+                                display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.5,
                                 p: 2,
@@ -214,7 +214,7 @@ export default function CCALayout() {
                                 href={ccaDetails?.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                sx={{ 
+                                sx={{
                                     color: '#424242',
                                     fontWeight: 500,
                                     textDecoration: 'none',
@@ -229,9 +229,9 @@ export default function CCALayout() {
                         </Box>
 
                         {/* Facebook Link */}
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
+                        <Box
+                            sx={{
+                                display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.5,
                                 p: 2,
@@ -245,7 +245,7 @@ export default function CCALayout() {
                                 href={ccaDetails?.facebook}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                sx={{ 
+                                sx={{
                                     color: '#424242',
                                     fontWeight: 500,
                                     textDecoration: 'none',
@@ -260,9 +260,9 @@ export default function CCALayout() {
                         </Box>
 
                         {/* Instagram Link */}
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
+                        <Box
+                            sx={{
+                                display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.5,
                                 p: 2,
@@ -276,7 +276,7 @@ export default function CCALayout() {
                                 href={ccaDetails?.instagram}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                sx={{ 
+                                sx={{
                                     color: '#424242',
                                     fontWeight: 500,
                                     textDecoration: 'none',
@@ -297,10 +297,10 @@ export default function CCALayout() {
                 {/* Contact Section */}
                 {ccaDetails?.contact_email && (
                     <Box>
-                        <Typography 
-                            variant="h5" 
+                        <Typography
+                            variant="h5"
                             component="h2"
-                            sx={{ 
+                            sx={{
                                 fontWeight: 600,
                                 color: '#212121',
                                 mb: 2
@@ -308,9 +308,9 @@ export default function CCALayout() {
                         >
                             Contact Information
                         </Typography>
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
+                        <Box
+                            sx={{
+                                display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.5,
                                 p: 2,
@@ -320,9 +320,9 @@ export default function CCALayout() {
                             }}
                         >
                             <Email sx={{ color: '#FF6B35', fontSize: '1.25rem' }} />
-                            <Typography 
+                            <Typography
                                 variant="body1"
-                                sx={{ 
+                                sx={{
                                     color: '#424242',
                                     fontWeight: 500
                                 }}
@@ -333,6 +333,6 @@ export default function CCALayout() {
                     </Box>
                 )}
             </Paper>
-        </Container>
+        </Container></>
     )
 }

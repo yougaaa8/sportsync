@@ -11,6 +11,7 @@ import {
 import Tournaments from "../tournament/page";
 import Events from "../events/page";
 import Matches from "../matchmaking/page";
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -314,7 +315,9 @@ export default function Home() {
                 }
               }}
             >
-              Browse Tournaments
+              <Link href="/tournament">
+                Browse Tournaments
+              </Link>
             </Button>
             <Button
               variant="contained"
@@ -335,7 +338,9 @@ export default function Home() {
                 }
               }}
             >
-              View All Events
+              <Link href="/events">
+                View All Events
+              </Link>
             </Button>
           </Box>
         </Card>
