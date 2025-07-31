@@ -414,7 +414,7 @@ export default function Navbar() {
                                 }}
                             >
                                 <Avatar>
-                                    {profilePictureUrl ? (
+                                    {profilePictureUrl && typeof profilePictureUrl === "string" && profilePictureUrl.trim() !== "" && profilePictureUrl !== "null" && profilePictureUrl !== "undefined" ? (
                                         <Image
                                             src={profilePictureUrl}
                                             alt={"profile picture"}
@@ -422,7 +422,6 @@ export default function Navbar() {
                                             height={40}
                                         />
                                     ) : (
-                                        // fallback: initials or default avatar
                                         <span>{userInitials}</span>
                                     )}
                                 </Avatar>

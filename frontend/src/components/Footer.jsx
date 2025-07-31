@@ -43,7 +43,7 @@ export default function Footer() {
                             About Us
                         </Typography>
                     </Link>
-                    <Link href="/contact" style={{ textDecoration: 'none' }}>
+                    <Link href="/contact-us" style={{ textDecoration: 'none' }}>
                         <Typography sx={footerLinkStyle}>
                             Contact
                         </Typography>

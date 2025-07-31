@@ -15,6 +15,7 @@ import {
     InputLabel,
     Stack
 } from '@mui/material';
+import BackButton from "@/components/BackButton";
 
 export default function OpenMatchmaking() {
     // Set states
@@ -34,11 +35,11 @@ export default function OpenMatchmaking() {
     }
 
     return (
-        <Container maxWidth="md" sx={{ py: 6 }}>
+        <><BackButton /><Container maxWidth="md" sx={{ py: 6 }}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography 
-                    variant="h2" 
-                    sx={{ 
+                <Typography
+                    variant="h2"
+                    sx={{
                         color: '#FF6B35',
                         fontWeight: 600,
                         mb: 1
@@ -47,10 +48,10 @@ export default function OpenMatchmaking() {
                     Create a new matchmaking lobby
                 </Typography>
             </Box>
-            
-            <Paper 
+
+            <Paper
                 elevation={0}
-                sx={{ 
+                sx={{
                     p: 4,
                     borderRadius: 3,
                     border: '1px solid #F0F0F0',
@@ -69,8 +70,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <TextField
                             name="description"
@@ -83,8 +83,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <TextField
                             name="sport"
@@ -96,8 +95,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <Box sx={{ display: 'flex', gap: 2 }}>
                             <TextField
@@ -113,8 +111,7 @@ export default function OpenMatchmaking() {
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,
                                     },
-                                }}
-                            />
+                                }} />
                         </Box>
 
                         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -131,8 +128,7 @@ export default function OpenMatchmaking() {
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,
                                     },
-                                }}
-                            />
+                                }} />
 
                             <TextField
                                 name="endTime"
@@ -147,8 +143,7 @@ export default function OpenMatchmaking() {
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,
                                     },
-                                }}
-                            />
+                                }} />
                         </Box>
 
                         <TextField
@@ -160,8 +155,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <FormControl fullWidth>
                             <InputLabel>Open Lobby</InputLabel>
@@ -191,8 +185,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <TextField
                             name="maxCapacity"
@@ -205,8 +198,7 @@ export default function OpenMatchmaking() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <Button
                             type="submit"
@@ -234,6 +226,6 @@ export default function OpenMatchmaking() {
                     </Stack>
                 </form>
             </Paper>
-        </Container>
+        </Container></>
     );
 }

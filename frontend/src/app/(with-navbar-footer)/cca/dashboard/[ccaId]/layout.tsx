@@ -1,5 +1,6 @@
 "use client"
 
+import BackButton from "@/components/BackButton"
 import { Button } from "@mui/material"
 import { useRouter } from "next/navigation"
 
@@ -15,7 +16,7 @@ export default function CCADashboardLayout({ children }: {
     }
     return (
         <>
-            <Button onClick={backClick}>Back</Button>
+            <BackButton />
             {children}
         </>
     )

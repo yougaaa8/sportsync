@@ -10,6 +10,7 @@ import {
     Typography,
     Container
 } from '@mui/material';
+import BackButton from '@/components/BackButton';
 
 export default function EventForm() {
     const router = useRouter()
@@ -22,21 +23,21 @@ export default function EventForm() {
     }   
 
     return (
-        <Container maxWidth="md" className="py-8">
+        <><BackButton /><Container maxWidth="md" className="py-8">
             <Box className="mb-8">
-                <Typography 
-                    variant="h3" 
-                    component="h1" 
+                <Typography
+                    variant="h3"
+                    component="h1"
                     className="text-center font-bold text-gray-800 mb-2"
                 >
                     Create a new event
                 </Typography>
             </Box>
-            
-            <Paper 
-                elevation={2} 
+
+            <Paper
+                elevation={2}
                 className="p-8 max-w-2xl mx-auto"
-                sx={{ 
+                sx={{
                     borderRadius: 3,
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
                 }}
@@ -55,8 +56,7 @@ export default function EventForm() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                             <TextField
@@ -73,8 +73,7 @@ export default function EventForm() {
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,
                                     },
-                                }}
-                            />
+                                }} />
 
                             <TextField
                                 name="registrationDeadline"
@@ -90,8 +89,7 @@ export default function EventForm() {
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: 2,
                                     },
-                                }}
-                            />
+                                }} />
                         </Box>
 
                         <TextField
@@ -106,8 +104,7 @@ export default function EventForm() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <TextField
                             name="description"
@@ -123,8 +120,7 @@ export default function EventForm() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <TextField
                             name="registrationFee"
@@ -142,8 +138,7 @@ export default function EventForm() {
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: 2,
                                 },
-                            }}
-                        />
+                            }} />
 
                         <Box sx={{ pt: 2 }}>
                             <Button
@@ -173,6 +168,6 @@ export default function EventForm() {
                     </Box>
                 </form>
             </Paper>
-        </Container>
+        </Container></>
     )
 }
