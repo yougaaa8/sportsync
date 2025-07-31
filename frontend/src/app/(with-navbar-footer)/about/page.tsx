@@ -12,7 +12,7 @@ import {
 import Image from 'next/image';
 import SportSyncLogo from "../../../assets/sportsync-logo.png"
 
-export default function CCADetailLayout() {
+export default function About() {
   return (
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', py: 4 }}>
       <Container maxWidth="lg">

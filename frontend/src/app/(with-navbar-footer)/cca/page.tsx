@@ -7,10 +7,8 @@ import {
   TextField, 
   InputAdornment, 
   Container,
-  IconButton
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import TuneIcon from '@mui/icons-material/Tune';
 import CCAHomeItem from "../../../components/CCA/CCAHomeItem.jsx";
 import pullCCAList from "../../../api-calls/cca/pullCCAList.js";
 import { CCASummary } from "@/types/CCATypes.js";

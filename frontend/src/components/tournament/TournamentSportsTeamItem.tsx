@@ -1,4 +1,4 @@
-import { TournamentSportTeam, Tournament } from "@/types/TournamentTypes";
+import { TournamentSportTeam } from "@/types/TournamentTypes";
 import { Paper, Button, TextField, Typography, Box, Avatar, Chip } from "@mui/material" 
 import Link from "next/link"
 import { usePathname } from "next/navigation";

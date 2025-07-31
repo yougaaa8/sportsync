@@ -5,7 +5,6 @@ import { Paper, Typography, Box, Button } from "@mui/material"
 import { useState, useEffect } from "react"
 import { useRouter } from 'next/navigation'
 import { CCADetail } from "@/types/CCATypes"
-import BackButton from "@/components/BackButton"
 
 export default function CCADashboardWelcome() {
     // State that will represent the list of CCA objects
