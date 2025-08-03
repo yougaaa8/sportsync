@@ -17,7 +17,6 @@ import {
     Skeleton,
     Fade,
     styled,
-    IconButton,
     Breadcrumbs,
     Link
 } from "@mui/material"
@@ -165,19 +164,6 @@ const StatusChip = styled(Chip, {
         color: '#F44336',
         border: 'none',
     })
-}))
-
-const BackButton = styled(IconButton)(({ theme }) => ({
-    backgroundColor: 'transparent',
-    border: '1px solid #E0E0E0',
-    color: '#757575',
-    width: '40px',
-    height: '40px',
-    '&:hover': {
-        backgroundColor: '#F5F5F5',
-        borderColor: theme.palette.primary.main,
-        color: theme.palette.primary.main,
-    }
 }))
 
 const LoadingSkeleton = () => (
