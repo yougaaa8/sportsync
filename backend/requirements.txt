@@ -12,6 +12,7 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1.2
 click-repl==0.3.0
 cloudinary==1.44.1
+daphne==4.1.2
 dj-database-url==3.0.1
 Django==5.2.3
 django-cloudinary-storage==0.3.0
