@@ -7,6 +7,7 @@ import { pullTournamentSportsData } from "../../../../api-calls/tournament/pullT
 import { TournamentSport, Tournament } from "../../../../types/TournamentTypes"
 import { Button, Box, TextField, Typography, MenuItem, Container, Fade, Card } from "@mui/material"
 import createTournamentSport from "../../../../api-calls/tournament/createTournamentSport"
+import sendTournamentAnnouncement from "../../../../api-calls/tournament/sendTournamentAnnouncement";
 
 export default function TournamentSportsPage({params}: {
     params: Promise<{
@@ -89,6 +90,10 @@ export default function TournamentSportsPage({params}: {
         // }, 1000)
     }
 
+    function handleAnnouncement(formData: FormData) {
+        sendTournamentAnnouncement(formData, tournamentIdState)
+    }
+
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             {/* Header Section */}
@@ -132,6 +137,110 @@ export default function TournamentSportsPage({params}: {
                     {isShowForm ? "Cancel" : "Add Tournament Sport"}
                 </Button>}
             </Box>
+
+            {/* Announcement Form Section */}
+            {role === "staff" && (
+                <Card
+                    elevation={0}
+                    sx={{
+                        maxWidth: 500,
+                        mx: 'auto',
+                        mb: 4,
+                        p: 4,
+                        borderRadius: 3,
+                        border: '1px solid #f0f0f0',
+                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.08)',
+                        background: 'linear-gradient(135deg, #ffffff 0%, #fafafa 100%)'
+                    }}
+                >
+                    <Box
+                        component="form"
+                        action={handleAnnouncement}
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                        }}
+                    >
+                        <Typography 
+                            variant="h5" 
+                            sx={{ 
+                                mb: 1,
+                                fontWeight: 700,
+                                color: '#FF6B35',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Send Announcement
+                        </Typography>
+
+                        <TextField
+                            label="Title"
+                            name="title"
+                            variant="outlined"
+                            fullWidth
+                            required
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                    backgroundColor: '#fafafa',
+                                    '&:hover': {
+                                        backgroundColor: '#ffffff',
+                                    },
+                                    '&.Mui-focused': {
+                                        backgroundColor: '#ffffff',
+                                    }
+                                }
+                            }}
+                        />
+
+                        <TextField
+                            label="Message"
+                            name="message"
+                            variant="outlined"
+                            fullWidth
+                            required
+                            multiline
+                            rows={4}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                    backgroundColor: '#fafafa',
+                                    '&:hover': {
+                                        backgroundColor: '#ffffff',
+                                    },
+                                    '&.Mui-focused': {
+                                        backgroundColor: '#ffffff',
+                                    }
+                                }
+                            }}
+                        />
+
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            size="large"
+                            fullWidth
+                            sx={{
+                                py: 1.5,
+                                mt: 2,
+                                borderRadius: 2,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                background: 'linear-gradient(135deg, #FF6B35 0%, #E65100 100%)',
+                                boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #FF8A65 0%, #FF6B35 100%)',
+                                    boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                                }
+                            }}
+                        >
+                            Send Announcement
+                        </Button>
+                    </Box>
+                </Card>
+            )}
 
             {/* Form Section */}
             <Fade in={isShowForm}>

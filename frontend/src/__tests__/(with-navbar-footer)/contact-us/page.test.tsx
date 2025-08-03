@@ -136,8 +136,8 @@ describe('ContactUs Component', () => {
   });
 
   describe('Form Submission', () => {
-    // Replace `any` with a proper type for userEvent
-    const fillCompleteForm = async (user: ReturnType<typeof import('@testing-library/user-event').default>) => {
+    // Use the correct type for userEvent instance returned by userEvent.setup()
+    const fillCompleteForm = async (user: ReturnType<typeof userEvent.setup>) => {
       await user.type(screen.getByLabelText(/Name/), 'John Doe');
       await user.type(screen.getByLabelText(/Email/), 'john.doe@u.nus.edu');
       const subjectField = screen.getByRole('combobox');
