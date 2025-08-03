@@ -67,6 +67,7 @@ export default function Navbar() {
     const [alertMessage, setAlertMessage] = useState("");
     const [role, setRole] = useState("")
     const [profilePictureUrl, setProfilePictureUrl] = useState("")
+    const [fullName, setFullName] = useState("")
     
     const dropdownRef = useRef(null);
     const wsRef = useRef(null);
@@ -78,6 +79,7 @@ export default function Navbar() {
         if (typeof window !== "undefined") {
             setRole(localStorage.getItem("role"))
             setProfilePictureUrl(localStorage.getItem("profilePicture"))
+            setFullName(localStorage.getItem("fullName"))
         }
     }, [])
 
@@ -394,7 +396,7 @@ export default function Navbar() {
                             {!isMobile && (
                                 <Box sx={{ textAlign: 'right', mr: 1 }}>
                                     <Typography variant="body2" sx={{ color: '#495057', fontWeight: 500 }}>
-                                        {userEmail.split('@')[0]}
+                                        {fullName}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: '#6c757d' }}>
                                         {role} {wsConnected && '🟢'}
@@ -466,7 +468,7 @@ export default function Navbar() {
                         {/* User Info Header */}
                         <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#2c3e50' }}>
-                                {userEmail.split('@')[0]}
+                                {fullName}
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#6c757d' }}>
                                 {userEmail}

@@ -137,7 +137,7 @@ export default function NewProductForm() {
                         {/* Images Upload */}
                         <Box>
                             <Typography variant="body2" sx={{ mb: 1, color: '#757575', fontWeight: 500 }}>
-                                Images*
+                                Images* (Multiple files allowed)
                             </Typography>
                             <Box
                                 sx={{
@@ -157,6 +157,7 @@ export default function NewProductForm() {
                                     type="file"
                                     name="uploaded_images"
                                     accept="image/*"
+                                    multiple
                                     style={{
                                         width: '100%',
                                         padding: '12px',
@@ -166,7 +167,7 @@ export default function NewProductForm() {
                                     }}
                                 />
                                 <Typography variant="body2" sx={{ color: '#757575', mt: 1 }}>
-                                    Choose file or drag and drop
+                                    Choose files or drag and drop (Multiple files supported)
                                 </Typography>
                             </Box>
                         </Box>

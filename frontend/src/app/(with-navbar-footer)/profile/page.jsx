@@ -104,12 +104,6 @@ export default function Profile() {
         }
     }
 
-    const statusOptions = [
-        { value: 'student', label: 'Student' },
-        { value: 'staff', label: 'Staff' },
-        { value: 'others', label: 'Others' },
-    ];
-
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             <div className="flex flex-col lg:flex-row gap-6">
@@ -250,23 +244,18 @@ export default function Profile() {
                                     
                                     <TextField
                                         fullWidth
-                                        select
                                         label="Status"
                                         name="status"
                                         key={`status_${status}`} // Force re-render when status changes
-                                        defaultValue={status}
+                                        defaultValue={status.charAt(0).toUpperCase() + status.slice(1)}
                                         variant="outlined"
+                                        inputProps={{ readOnly: true }}
                                         slotProps={{
                                             inputLabel: {
                                                 shrink: Boolean(status), // Shrink label if there's a value
                                             },
                                         }}
                                     >
-                                        {statusOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
                                     </TextField>
                                     
                                     <TextField
