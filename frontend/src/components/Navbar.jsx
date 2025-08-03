@@ -71,6 +71,7 @@ export default function Navbar() {
     
     const dropdownRef = useRef(null);
     const wsRef = useRef(null);
+    const reconnectTimeoutRef = useRef(null);
     const isMenuOpen = Boolean(anchorEl);
     const isNotificationOpen = Boolean(notificationAnchorEl);
 
@@ -83,6 +84,36 @@ export default function Navbar() {
         }
     }, [])
 
+    // Helper function to get WebSocket URL
+    const getWebSocketUrl = () => {
+        if (!API_BASE_URL) {
+            console.error('API_BASE_URL is not defined');
+            return null;
+        }
+        
+        // Convert HTTP/HTTPS URL to WebSocket URL
+        let wsUrl = API_BASE_URL.replace('http://', 'ws://').replace('https://', 'wss://');
+        
+        // Remove any trailing slashes and add the WebSocket path
+        wsUrl = wsUrl.replace(/\/$/, '');
+        wsUrl += '/ws/notifications/';
+        
+        console.log('WebSocket URL:', wsUrl);
+        return wsUrl;
+    };
+
+    // Function to test if WebSocket endpoint exists
+    const testWebSocketEndpoint = async (url) => {
+        try {
+            const httpUrl = url.replace('ws://', 'http://').replace('wss://', 'https://');
+            const response = await fetch(httpUrl, { method: 'HEAD' });
+            return response.status !== 404;
+        } catch (error) {
+            console.warn('Could not test WebSocket endpoint:', error);
+            return true; // Assume it exists if we can't test
+        }
+    };
+
     // Initialize WebSocket connection
     useEffect(() => {
         const email = localStorage.getItem("email");
@@ -90,29 +121,78 @@ export default function Navbar() {
             setUserEmail(email);
         }
 
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const baseReconnectDelay = 1000; // Start with 1 second
+
         // Initialize WebSocket connection
-        const connectWebSocket = () => {
+        const connectWebSocket = async () => {
+            // Clear any existing timeout
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
+                reconnectTimeoutRef.current = null;
+            }
+
+            // Close existing connection if any
+            if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
+                wsRef.current.close();
+            }
+
+            const wsUrl = getWebSocketUrl();
+            if (!wsUrl) {
+                console.error('Cannot establish WebSocket connection: Invalid URL');
+                return;
+            }
+
+            // Test if the endpoint exists (optional)
+            const endpointExists = await testWebSocketEndpoint(wsUrl);
+            if (!endpointExists) {
+                console.warn('WebSocket endpoint may not exist. Continuing anyway...');
+            }
+
             try {
-                // Replace with your actual WebSocket URL
-                wsRef.current = new WebSocket(`${API_BASE_URL}/ws/notifications/`);
+                console.log(`Attempting WebSocket connection (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+                wsRef.current = new WebSocket(wsUrl);
+                
+                // Set a connection timeout
+                const connectionTimeout = setTimeout(() => {
+                    if (wsRef.current && wsRef.current.readyState === WebSocket.CONNECTING) {
+                        console.log('WebSocket connection timeout');
+                        wsRef.current.close();
+                    }
+                }, 10000); // 10 second timeout
                 
                 wsRef.current.onopen = () => {
-                    console.log('WebSocket connected');
+                    console.log('WebSocket connected successfully');
+                    clearTimeout(connectionTimeout);
                     setWsConnected(true);
-                    // Send connection confirmation if needed
-                    wsRef.current.send(JSON.stringify({ type: 'connection_established' }));
+                    reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+                    
+                    // Send connection confirmation with user info if needed
+                    const userInfo = {
+                        type: 'connection_established',
+                        email: email,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    try {
+                        wsRef.current.send(JSON.stringify(userInfo));
+                    } catch (sendError) {
+                        console.warn('Failed to send connection confirmation:', sendError);
+                    }
                 };
 
                 wsRef.current.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
+                        console.log('WebSocket message received:', data);
                         
                         if (data.type === 'notification') {
                             const newNotification = {
-                                id: Date.now(),
+                                id: data.id || Date.now(),
                                 title: data.title || 'New Notification',
                                 message: data.message || 'You have a new notification',
-                                timestamp: new Date(),
+                                timestamp: new Date(data.timestamp || Date.now()),
                                 read: false
                             };
 
@@ -128,30 +208,82 @@ export default function Navbar() {
                     }
                 };
 
-                wsRef.current.onclose = () => {
-                    console.log('WebSocket disconnected');
+                wsRef.current.onclose = (event) => {
+                    clearTimeout(connectionTimeout);
+                    console.log(`WebSocket disconnected: Code ${event.code}, Reason: ${event.reason || 'No reason provided'}`);
                     setWsConnected(false);
-                    // Attempt to reconnect after 3 seconds
-                    setTimeout(connectWebSocket, 3000);
+                    
+                    // Handle different close codes
+                    let shouldReconnect = false;
+                    switch (event.code) {
+                        case 1000: // Normal closure
+                            console.log('WebSocket closed normally');
+                            break;
+                        case 1001: // Going away
+                        case 1006: // Abnormal closure (connection lost)
+                            shouldReconnect = reconnectAttempts < maxReconnectAttempts;
+                            break;
+                        case 1002: // Protocol error
+                        case 1003: // Unsupported data
+                        case 1007: // Invalid data
+                        case 1008: // Policy violation
+                        case 1009: // Message too big
+                        case 1010: // Missing extension
+                        case 1011: // Internal error
+                            console.error(`WebSocket closed due to error: ${event.code}`);
+                            shouldReconnect = false;
+                            break;
+                        default:
+                            shouldReconnect = reconnectAttempts < maxReconnectAttempts;
+                    }
+                    
+                    if (shouldReconnect) {
+                        const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
+                        console.log(`Reconnecting in ${delay}ms...`);
+                        
+                        reconnectTimeoutRef.current = setTimeout(() => {
+                            reconnectAttempts++;
+                            connectWebSocket();
+                        }, delay);
+                    } else if (reconnectAttempts >= maxReconnectAttempts) {
+                        console.error('Max reconnection attempts reached. WebSocket notifications are disabled.');
+                        // You could show a user notification here if needed
+                    }
                 };
 
                 wsRef.current.onerror = (error) => {
+                    clearTimeout(connectionTimeout);
                     console.error('WebSocket error:', error);
                     setWsConnected(false);
                 };
+
             } catch (error) {
-                console.error('Failed to connect WebSocket:', error);
-                // Retry connection after 5 seconds
-                setTimeout(connectWebSocket, 5000);
+                console.error('Failed to create WebSocket connection:', error);
+                setWsConnected(false);
+                
+                // Retry connection if we haven't exceeded max attempts
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
+                    reconnectTimeoutRef.current = setTimeout(() => {
+                        reconnectAttempts++;
+                        connectWebSocket();
+                    }, delay);
+                }
             }
         };
 
-        connectWebSocket();
+        // Only connect if we have the necessary configuration
+        if (typeof window !== 'undefined' && API_BASE_URL) {
+            connectWebSocket();
+        }
 
         // Cleanup on unmount
         return () => {
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
+            }
             if (wsRef.current) {
-                wsRef.current.close();
+                wsRef.current.close(1000, 'Component unmounting'); // Normal closure
             }
         };
     }, []);
@@ -209,12 +341,16 @@ export default function Navbar() {
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
         
-        // Send mark_read message to WebSocket if needed
+        // Send mark_read message to WebSocket if connected
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ 
-                type: 'mark_read', 
-                notification_id: notificationId 
-            }));
+            try {
+                wsRef.current.send(JSON.stringify({ 
+                    type: 'mark_read', 
+                    notification_id: notificationId 
+                }));
+            } catch (error) {
+                console.error('Failed to send mark_read message:', error);
+            }
         }
     };
 
@@ -224,9 +360,13 @@ export default function Navbar() {
         );
         setUnreadCount(0);
         
-        // Send mark all read message to WebSocket if needed
+        // Send mark all read message to WebSocket if connected
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: 'mark_all_read' }));
+            try {
+                wsRef.current.send(JSON.stringify({ type: 'mark_all_read' }));
+            } catch (error) {
+                console.error('Failed to send mark_all_read message:', error);
+            }
         }
     };
 
@@ -236,6 +376,11 @@ export default function Navbar() {
     };
 
     async function handleLogout() {
+        // Close WebSocket connection before logout
+        if (wsRef.current) {
+            wsRef.current.close(1000, 'User logging out');
+        }
+        
         const refresh = localStorage.getItem("refreshToken");
         if (refresh) {
             logout(refresh);
@@ -399,7 +544,7 @@ export default function Navbar() {
                                         {fullName}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: '#6c757d' }}>
-                                        {role} {wsConnected && '🟢'}
+                                        {role} {wsConnected ? '🟢' : '🔴'}
                                     </Typography>
                                 </Box>
                             )}
