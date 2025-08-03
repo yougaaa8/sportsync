@@ -1,0 +1,98 @@
+# About SportSync
+
+## Revolutionizing Sports Participation at NUS
+
+SportSync is an innovative all-in-one platform designed to transform the sports landscape at the National University of Singapore (NUS). Born from the recognition that sports play a pivotal role in student life, we're committed to fostering community engagement, promoting health, and enhancing the overall university experience through technology.
+
+## Our Mission
+
+We aim to **increase sports participation and community engagement at NUS** by creating a centralized platform that makes sports activities more accessible, organized, and connected than ever before.
+
+## The Challenge We're Solving
+
+Despite NUS's vibrant sports culture, we identified several key challenges:
+
+- **Fragmented Communication**: Information about sports events, tournaments, and activities is scattered across multiple platforms, leaving many students unaware of opportunities
+- **Limited Visibility**: Smaller sports CCAs struggle to reach potential members beyond occasional fairs
+- **Administrative Burden**: Manual processes for attendance tracking and event management consume valuable time that could be spent on actual sports activities
+- **Disconnected Community**: Students miss out on supporting their halls and faculties due to lack of accessible information about tournament progress
+
+## Our Solution
+
+SportSync brings together six core features under one unified platform:
+
+### 🔐 **User Authentication & Profile Management**
+Secure access with NUS email authentication and personalized user profiles with emergency contacts and custom profile pictures.
+
+### 🏆 **Open Matchmaking System**
+Connect with fellow students for spontaneous games through our lobby-based system. Create, join, and manage sports sessions with real-time capacity tracking and automated notifications.
+
+### 🏅 **CCA Dashboard**
+A comprehensive management hub for sports CCAs featuring member management, training session coordination, and automated communication systems.
+
+### 🎯 **Tournament Information System**
+Enhanced visibility for major tournaments like IHG and IFG with live updates, team management, match tracking, and historical results database.
+
+### 📅 **Event Creation & Management**
+Streamlined organization of special sports events with registration systems, waitlist management, and automated participant communication.
+
+### 🛍️ **Merchandise Shop**
+Centralized marketplace for CCA merchandise with integrated wishlist functionality and notification systems for new products.
+
+## Built by Students, for Students
+
+SportSync was developed as part of **NUS Orbital 2025 (Apollo 11)** by:
+
+- **Made Yoga Chantiswara**
+- **Alexander Gerald**
+
+As NUS students ourselves, we understand the unique challenges and opportunities within our university's sports ecosystem. Our firsthand experience drives our commitment to creating solutions that truly serve our community.
+
+## Our Technology
+
+SportSync is built on modern, scalable technology:
+
+**Frontend**: React with responsive design  
+**Backend**: Django REST Framework  
+**Database**: PostgreSQL with Redis caching  
+**Deployment**: Vercel (Frontend), Render (Backend)  
+**Storage**: Cloudinary for optimized media management  
+**Development**: Fully containerized with Docker for consistency
+
+## Our Commitment to Quality
+
+We believe in building robust, reliable software:
+
+- **160+ comprehensive test cases** covering all major functionality
+- **Continuous Integration/Continuous Deployment** through GitHub Actions
+- **SOLID principles** and clean architecture patterns
+- **Security-first approach** with JWT authentication and role-based access control
+
+## The Impact We're Making
+
+SportSync addresses real needs in the NUS sports community:
+
+✅ **Increased Participation**: Students can easily discover and join sports activities  
+✅ **Enhanced Visibility**: CCAs have dedicated platforms to showcase their activities  
+✅ **Streamlined Administration**: Automated processes free up time for actual sports engagement  
+✅ **Connected Community**: Real-time updates keep everyone informed about tournaments and events  
+✅ **Centralized Resources**: One-stop platform for all sports-related activities and merchandise
+
+## Join the SportSync Community
+
+Whether you're a casual player looking for pickup games, a CCA committee member managing events, or a sports enthusiast wanting to stay updated on tournaments, SportSync is designed for you.
+
+**Ready to get started?** Visit [SportSync](https://sportsync-seven.vercel.app/home) and join the growing community of NUS sports enthusiasts who are making sports more accessible, organized, and engaging for everyone.
+
+---
+
+*SportSync - Where Sports and Community Connect*
+
+### Contact Us
+
+Have questions, feedback, or want to get involved? We'd love to hear from you!
+
+**Platform**: [sportsync-seven.vercel.app](https://sportsync-seven.vercel.app/home)  
+**API**: [sportsync-backend-8gbr.onrender.com](https://sportsync-backend-8gbr.onrender.com)
+
+*Built with ❤️ for the NUS Sports Community*

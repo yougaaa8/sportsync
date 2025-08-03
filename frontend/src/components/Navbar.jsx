@@ -94,7 +94,7 @@ export default function Navbar() {
         const connectWebSocket = () => {
             try {
                 // Replace with your actual WebSocket URL
-                wsRef.current = new WebSocket(`${API_BASE_URL}ws/notifications/`);
+                wsRef.current = new WebSocket(`${API_BASE_URL}/ws/notifications/`);
                 
                 wsRef.current.onopen = () => {
                     console.log('WebSocket connected');
