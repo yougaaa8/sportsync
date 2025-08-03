@@ -10,6 +10,7 @@ export default function ClientLayout({children, withNavbarAndFooter}: {
     children: React.ReactNode, 
     withNavbarAndFooter: boolean
 }) {
+
     return (
         <>
             <ThemeProvider theme={theme}>

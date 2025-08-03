@@ -17,7 +17,6 @@ import {
     Skeleton,
     Fade,
     styled,
-    IconButton,
     Breadcrumbs,
     Link
 } from "@mui/material"
@@ -28,8 +27,10 @@ import {
     CheckCircle, 
     Cancel,
     Home,
-    NavigateNext
+    NavigateNext,
+    ChevronRight
 } from "@mui/icons-material"
+import Image from "next/image"
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     paddingTop: theme.spacing(3),
@@ -53,6 +54,42 @@ const ProductImageContainer = styled(Box)(({  }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    flex: '1 1 60%',
+}))
+
+const ImageWrapper = styled(Box)(({  }) => ({
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+}))
+
+const NextImageButton = styled(Button)(({ theme }) => ({
+    position: 'absolute',
+    bottom: '16px',
+    right: '16px',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    color: theme.palette.primary.main,
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: '8px',
+    padding: theme.spacing(1, 2),
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    minHeight: '36px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    backdropFilter: 'blur(8px)',
+    transition: 'all 0.2s ease-in-out',
+    '&:hover': {
+        backgroundColor: theme.palette.primary.main,
+        color: 'white',
+        transform: 'translateY(-1px)',
+        boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+    },
+    '&:active': {
+        transform: 'translateY(0)',
+    }
 }))
 
 const ProductInfo = styled(Box)(({ theme }) => ({
@@ -129,19 +166,6 @@ const StatusChip = styled(Chip, {
     })
 }))
 
-const BackButton = styled(IconButton)(({ theme }) => ({
-    backgroundColor: 'transparent',
-    border: '1px solid #E0E0E0',
-    color: '#757575',
-    width: '40px',
-    height: '40px',
-    '&:hover': {
-        backgroundColor: '#F5F5F5',
-        borderColor: theme.palette.primary.main,
-        color: theme.palette.primary.main,
-    }
-}))
-
 const LoadingSkeleton = () => (
     <StyledContainer>
         <Box sx={{ mb: 4 }}>
@@ -166,6 +190,7 @@ const LoadingSkeleton = () => (
 export default function ProductDetailLayout() {
     const [productData, setProductData] = useState<ProductDetail | null>(null)
     const [loading, setLoading] = useState(true)
+    const [imageIndex, setImageIndex] = useState(0)
     const params = useParams()
     const router = useRouter()
     const productId = params.productId
@@ -196,6 +221,11 @@ export default function ProductDetailLayout() {
         router.push('/merchandise-shop')
     }
 
+    function nextImageClick() {
+        console.log("setting next image")
+        setImageIndex(prev => ((prev + 1) % ((productData?.images?.length ?? 1))))
+    }
+
     if (loading) {
         return <LoadingSkeleton />
     }
@@ -222,15 +252,14 @@ export default function ProductDetailLayout() {
         )
     }
 
+    console.log("The current image index: ", imageIndex)
+
     return (
         <StyledContainer>
             <Fade in={true} timeout={500}>
                 <Box>
                     {/* Navigation */}
                     <Box sx={{ mb: 4 }}>
-                        <BackButton onClick={handleBackToShop} sx={{ mb: 2 }}>
-                            <ArrowBack />
-                        </BackButton>
                         <Breadcrumbs 
                             separator={<NavigateNext fontSize="small" />}
                             sx={{ color: '#757575', fontSize: '0.875rem' }}
@@ -258,20 +287,29 @@ export default function ProductDetailLayout() {
                     <ProductCard>
                         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                             {/* Product Image */}
-                            <Box sx={{ flex: '1 1 60%' }}>
-                                <ProductImageContainer>
-                                    <Box sx={{ textAlign: 'center' }}>
-                                        <Store sx={{ 
-                                            fontSize: 80, 
-                                            color: '#BDBDBD', 
-                                            mb: 2 
-                                        }} />
-                                        <Typography variant="body2" sx={{ color: '#9E9E9E' }}>
-                                            Product Image
-                                        </Typography>
-                                    </Box>
-                                </ProductImageContainer>
-                            </Box>
+                            <ProductImageContainer>
+                                <ImageWrapper>
+                                    <Image 
+                                        src={productData.images[imageIndex].image_url} 
+                                        alt={productData.name}
+                                        width={500} 
+                                        height={400}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                    {productData.images && productData.images.length > 1 && (
+                                        <NextImageButton 
+                                            onClick={nextImageClick}
+                                            endIcon={<ChevronRight sx={{ fontSize: '18px' }} />}
+                                        >
+                                            Next Image
+                                        </NextImageButton>
+                                    )}
+                                </ImageWrapper>
+                            </ProductImageContainer>
                             
                             {/* Product Info */}
                             <Box sx={{ flex: '1 1 40%' }}>

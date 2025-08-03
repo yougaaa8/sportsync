@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "../../config/api";
 
-export default async function joinLobby(lobbyId) {
+export default async function joinLobby(lobbyId, password) {
   const token = localStorage.getItem("authToken");
   try {
     const response = await fetch(
@@ -11,6 +11,9 @@ export default async function joinLobby(lobbyId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          password: password,
+        }),
       }
     );
     if (!response.ok) {

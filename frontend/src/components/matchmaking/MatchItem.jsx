@@ -2,8 +2,51 @@ import { Paper, Typography, Box, Chip } from "@mui/material";
 import JoinLobbyButton from "./JoinLobbyButton";
 import Link from "next/link";
 import LeaveLobbyButton from "./LeaveLobbyButton";
+import ViewLobbyButton from "./ViewLobbyButton.jsx"
+import pullMatchMembers from "@/api-calls/matchmaking/pullMatchMembers";
+import { useState, useEffect } from "react"
 
 export default function MatchItem(props) {
+    // Set states
+    const [userId, setUserId] = useState(0)
+    const [matchMembers, setMatchMembers] = useState([])
+
+    // Get the user id from local storage
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const retrievedUserId = localStorage.getItem("userId")
+            if (retrievedUserId) {
+                setUserId(retrievedUserId)
+            }
+        }
+    })
+
+    // Use the match ID to get a list of the match members
+    const matchId = props.entry.id
+    useEffect(() => {
+        const fetchMatchMembers = async () => {
+            setMatchMembers(await pullMatchMembers(matchId))
+        }
+        fetchMatchMembers()
+    }, [])
+
+    // Find the current logged in user's ID in the list of match members
+    const isMemberOfLobby = matchMembers?.find(member => {
+        console.log("This is the member id: ", member.user)
+        return (member.user === parseInt(userId))
+    })
+    ? true
+    : false
+
+    console.log("These are the match members: ", matchMembers)
+    console.log("The user is a member of this lobby: ", isMemberOfLobby)
+    console.log("The user id is: ", userId)
+    console.log("The type of user id is: ", typeof(userId))
+
+    // If user is part of the match members, then it will say "View Lobby"
+        // which will redirect the user to the lobby details page
+    // Otherwise, it will say "Join lobby", which will also redirect the users to the lobby details page
+
     return (
         <Paper
             elevation={0}
@@ -13,12 +56,14 @@ export default function MatchItem(props) {
                 bgcolor: "#FFFFFF",
                 borderRadius: 3,
                 border: "1px solid #E0E0E0",
+                bgcolor: "#FFFFFF",
                 display: "flex",
                 flexDirection: "column",
                 transition: "all 0.2s ease-in-out",
                 cursor: "pointer",
                 overflow: "hidden",
                 mx: 'auto', // Center the card horizontally
+                position: 'relative',
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
@@ -26,6 +71,30 @@ export default function MatchItem(props) {
                 }
             }}
         >
+            {/* Member status tag */}
+            {isMemberOfLobby && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 12,
+                        left: 12,
+                        bgcolor: '#E8F5E8',
+                        color: '#2E7D32',
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: 1,
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        letterSpacing: 0.3,
+                        textTransform: 'uppercase',
+                        border: '1px solid #C8E6C9',
+                        zIndex: 2
+                    }}
+                >
+                    Joined
+                </Box>
+            )}
+
             {/* Clickable content area */}
             <Link 
                 href={`/matchmaking/${props.entry.id}`} 
@@ -37,7 +106,7 @@ export default function MatchItem(props) {
                     flexDirection: "column"
                 }}
             >
-                <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', pt: isMemberOfLobby ? 4.5 : 3 }}>
                     {/* Header with title and sport chip */}
                     <Box sx={{ mb: 3 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
@@ -49,7 +118,8 @@ export default function MatchItem(props) {
                                     fontWeight: 600,
                                     lineHeight: 1.3,
                                     flex: 1,
-                                    mr: 1
+                                    mr: 1,
+                                    pr: 0 // Remove extra padding
                                 }}
                             >
                                 {props.entry.name}
@@ -157,7 +227,8 @@ export default function MatchItem(props) {
             <Box sx={{ px: 3, pb: 3, borderTop: '1px solid #F5F5F5', pt: 2 }}>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Box sx={{ flex: 1 }}>
-                        <JoinLobbyButton id={props.entry.id} isDetailedView={false}/>
+                        {!isMemberOfLobby && <JoinLobbyButton id={props.entry.id} isDetailedView={false} isMemberOfLobby={isMemberOfLobby}/>}
+                        {isMemberOfLobby && <ViewLobbyButton id={props.entry.id} isDetailedView={false} isMemberOfLobby={isMemberOfLobby}/>}
                     </Box>
                     <Box sx={{ flex: 1 }}>
                         <LeaveLobbyButton id={props.entry.id} />

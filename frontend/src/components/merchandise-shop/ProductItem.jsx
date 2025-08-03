@@ -141,7 +141,6 @@ export default function ProductItem(props) {
     };
     
     return (
-        <Link href={`/merchandise-shop/${props.entry.id}`}>
             <StyledCard>
                 <Box sx={{ position: 'relative' }}>
                     <StyledCardMedia
@@ -203,7 +202,9 @@ export default function ProductItem(props) {
                             disabled={!entry.available}
                             sx={{ flex: 1 }}
                         >
-                            Add to Cart
+                            <Link href={props.entry.buy_link}>
+                                Purchase Now
+                            </Link>
                         </StyledButton>
                         
                         <StyledButton
@@ -211,11 +212,12 @@ export default function ProductItem(props) {
                             startIcon={<Visibility />}
                             sx={{ minWidth: 'auto', px: 2 }}
                         >
-                            View
+                            <Link href={`/merchandise-shop/${props.entry.id}`}>
+                                View
+                            </Link>
                         </StyledButton>
                     </Box>
                 </CardActions>
             </StyledCard>
-        </Link>
     )
 }
