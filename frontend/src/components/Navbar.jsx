@@ -102,18 +102,6 @@ export default function Navbar() {
         return wsUrl;
     };
 
-    // Function to test if WebSocket endpoint exists
-    const testWebSocketEndpoint = async (url) => {
-        try {
-            const httpUrl = url.replace('ws://', 'http://').replace('wss://', 'https://');
-            const response = await fetch(httpUrl, { method: 'HEAD' });
-            return response.status !== 404;
-        } catch (error) {
-            console.warn('Could not test WebSocket endpoint:', error);
-            return true; // Assume it exists if we can't test
-        }
-    };
-
     // Initialize WebSocket connection
     useEffect(() => {
         const email = localStorage.getItem("email");
@@ -142,12 +130,6 @@ export default function Navbar() {
             if (!wsUrl) {
                 console.error('Cannot establish WebSocket connection: Invalid URL');
                 return;
-            }
-
-            // Test if the endpoint exists (optional)
-            const endpointExists = await testWebSocketEndpoint(wsUrl);
-            if (!endpointExists) {
-                console.warn('WebSocket endpoint may not exist. Continuing anyway...');
             }
 
             try {
