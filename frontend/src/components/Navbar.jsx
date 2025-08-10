@@ -99,6 +99,8 @@ export default function Navbar() {
         wsUrl += '/ws/notifications/';
         
         console.log('WebSocket URL:', wsUrl);
+        console.log('Original API_BASE_URL:', API_BASE_URL);
+        
         return wsUrl;
     };
 
@@ -134,6 +136,8 @@ export default function Navbar() {
 
             try {
                 console.log(`Attempting WebSocket connection (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+                console.log('Connecting to WebSocket URL:', wsUrl);
+                
                 wsRef.current = new WebSocket(wsUrl);
                 
                 // Set a connection timeout
@@ -195,31 +199,8 @@ export default function Navbar() {
                     console.log(`WebSocket disconnected: Code ${event.code}, Reason: ${event.reason || 'No reason provided'}`);
                     setWsConnected(false);
                     
-                    // Handle different close codes
-                    let shouldReconnect = false;
-                    switch (event.code) {
-                        case 1000: // Normal closure
-                            console.log('WebSocket closed normally');
-                            break;
-                        case 1001: // Going away
-                        case 1006: // Abnormal closure (connection lost)
-                            shouldReconnect = reconnectAttempts < maxReconnectAttempts;
-                            break;
-                        case 1002: // Protocol error
-                        case 1003: // Unsupported data
-                        case 1007: // Invalid data
-                        case 1008: // Policy violation
-                        case 1009: // Message too big
-                        case 1010: // Missing extension
-                        case 1011: // Internal error
-                            console.error(`WebSocket closed due to error: ${event.code}`);
-                            shouldReconnect = false;
-                            break;
-                        default:
-                            shouldReconnect = reconnectAttempts < maxReconnectAttempts;
-                    }
-                    
-                    if (shouldReconnect) {
+                    // Only reconnect on abnormal closures and if we haven't exceeded max attempts
+                    if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
                         const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
                         console.log(`Reconnecting in ${delay}ms...`);
                         
@@ -229,13 +210,13 @@ export default function Navbar() {
                         }, delay);
                     } else if (reconnectAttempts >= maxReconnectAttempts) {
                         console.error('Max reconnection attempts reached. WebSocket notifications are disabled.');
-                        // You could show a user notification here if needed
                     }
                 };
 
                 wsRef.current.onerror = (error) => {
                     clearTimeout(connectionTimeout);
                     console.error('WebSocket error:', error);
+                    console.error('WebSocket readyState:', wsRef.current?.readyState);
                     setWsConnected(false);
                 };
 
