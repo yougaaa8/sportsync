@@ -44,9 +44,9 @@ export default function TournamentSportsTeamItem(props: {
                 <Link href={`${pathname}/${props.team.id}`} className="block">
                     <Box className="p-6 hover:bg-gray-50 transition-colors duration-200">
                         <Box className="flex items-center space-x-4">
-                            {props.team.logo ? (
+                            {props.team.logo_url ? (
                                 <Avatar
-                                    src={props.team.logo}
+                                    src={props.team.logo_url}
                                     alt={props.team.name + " logo"}
                                     sx={{ width: 56, height: 56 }}
                                     className="border-2 border-gray-100"

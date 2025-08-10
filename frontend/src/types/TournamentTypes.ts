@@ -34,11 +34,12 @@ export interface TournamentSportTeamMember {
     jersey_number: number,
     role: string,
     photo: string,
+    photo_url: string
 }
 
 export interface TournamentSportMatch {
     id: number
-    tournament_sport: number
+    tournament_sport: TournamentSport
     team1: TournamentSportTeam
     team2: TournamentSportTeam
     round: number
