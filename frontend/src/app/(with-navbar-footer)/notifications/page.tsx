@@ -1,3 +1,4 @@
+// Updated Notifications Component (Main page)
 "use client"
 import { useState, useEffect } from "react"
 import pullNotifications from "../../../api-calls/notifications/pullNotifications"
@@ -30,15 +31,43 @@ export default function Notifications() {
       fetchNotificationCount()
     }, [])
 
+    // Function to handle marking individual notification as read
+    const handleMarkAsRead = (notificationId: number) => {
+        setNotifications(prevNotifications => 
+            prevNotifications?.map(notification => 
+                notification.id === notificationId 
+                    ? { ...notification, is_read: true }
+                    : notification
+            ) || null
+        )
+        
+        // Update the unread count
+        setNotificationCount(prevCount => Math.max(0, prevCount - 1))
+    }
+
     // Map the notifications to NotificationItems
     const notificationList = notifications?.map((notification, index) => (
-        <NotificationItem key={index} notification={notification}/>
+        <NotificationItem 
+            key={index} 
+            notification={notification}
+            onMarkAsRead={handleMarkAsRead}
+        />
     ))
 
-    // Turn the notification preferences into a React component
-
-    function markReadClick() {
-        markAllAsRead()
+    // Function to mark all notifications as read
+    async function markReadClick() {
+        await markAllAsRead()
+        
+        // Update all notifications to read state
+        setNotifications(prevNotifications => 
+            prevNotifications?.map(notification => ({ 
+                ...notification, 
+                is_read: true 
+            })) || null
+        )
+        
+        // Reset unread count
+        setNotificationCount(0)
     }
 
     return (

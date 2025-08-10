@@ -2,11 +2,14 @@ import { Notification } from "../../types/NotificationTypes"
 import { Paper, Button, Typography, Chip } from "@mui/material"
 import markAsRead from "../../api-calls/notifications/markAsRead"
 
-export default function NotificationItem({ notification }: { notification: Notification }) {
+export default function NotificationItem({ notification, onMarkAsRead }: { notification: Notification,
+    onMarkAsRead: (notificationId: number) => void
+ }) {
 
     // Define functions
-    function markAsReadClick() {
-        markAsRead(notification.id)
+    async function markAsReadClick() {
+        await markAsRead(notification.id)
+        onMarkAsRead(notification.id)
     }
 
     // Format the created date
