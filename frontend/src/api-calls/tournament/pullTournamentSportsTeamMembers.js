@@ -24,7 +24,7 @@ export default async function pullTournamentSportsTeamMembers(
         response
       );
     } else {
-      const data = response.json();
+      const data = await response.json();
       console.log(
         "Successfully retrieved tournament sports team members: ",
         data

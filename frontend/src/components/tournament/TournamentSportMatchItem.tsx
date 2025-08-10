@@ -11,8 +11,29 @@ export default function TournamentSportMatchItem(props: {
     const [isShowForm, setIsShowForm] = useState(false)
 
     // Set functions
-    function manageTournamentClick(formData: FormData) {
-        editTournamentSportMatch(props.tournamentId, props.match.tournament_sport, props.match.id, formData)
+    async function manageTournamentClick(formData: FormData) {
+        await editTournamentSportMatch(props.tournamentId, props.match.tournament_sport.id, props.match.id, formData)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
+
+    function formatDateForInput(dateString: string) {
+        if (!dateString) return '';
+        
+        const date = new Date(dateString);
+        
+        // Check if the date is valid
+        if (isNaN(date.getTime())) return '';
+        
+        // Format to YYYY-MM-DDTHH:mm (required format for datetime-local)
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
     // Determine the name of the winning team
@@ -21,6 +42,8 @@ export default function TournamentSportMatchItem(props: {
     : props.match.team2.name
 
     console.log("match: ", props.match)
+
+    console.log("Date: ", props.match.date)
     
     return (
         <Paper 
@@ -215,7 +238,7 @@ export default function TournamentSportMatchItem(props: {
                                 id="team1"
                                 label="Team 1"
                                 variant="outlined"
-                                defaultValue={props.match.team1}
+                                defaultValue={props.match.team1.name}
                                 sx={{ minWidth: { xs: '100%', sm: '300px' } }}
                             />
                             <TextField
@@ -223,7 +246,7 @@ export default function TournamentSportMatchItem(props: {
                                 id="team2"
                                 label="Team 2"
                                 variant="outlined"
-                                defaultValue={props.match.team2}
+                                defaultValue={props.match.team2.name}
                                 sx={{ minWidth: { xs: '100%', sm: '300px' } }}
                             />
                         </Box>
@@ -243,7 +266,7 @@ export default function TournamentSportMatchItem(props: {
                                 label="Date"
                                 variant="outlined"
                                 type="datetime-local"
-                                defaultValue={props.match.date}
+                                defaultValue={formatDateForInput(props.match.date)}
                                 InputLabelProps={{ shrink: true }}
                                 sx={{ minWidth: { xs: '100%', sm: '250px' } }}
                             />

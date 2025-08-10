@@ -44,9 +44,9 @@ export default function TeamMemberItem(props: {
             <Box className="p-6">
                 <Box className="flex items-start justify-between mb-4">
                     <Box className="flex items-center space-x-4">
-                        {props.member.photo ? (
+                        {props.member.photo_url ? (
                             <Avatar
-                                src={props.member.photo}
+                                src={props.member.photo_url}
                                 alt={props.member.jersey_name + " photo"}
                                 sx={{ 
                                     width: 64, 
