@@ -2,18 +2,16 @@
 "use client"
 import { useState, useEffect } from "react"
 import pullNotifications from "../../../api-calls/notifications/pullNotifications"
-import pullNotificationPreferences from "../../../api-calls/notifications/pullNotificationPreferences"
 import NotificationItem from "@/components/notifications/NotificationItem"
-import { Button, Container, Typography, Box, FormControl, InputLabel, Select, MenuItem, Chip } from "@mui/material"
+import { Button, Container, Typography, Box, Chip } from "@mui/material"
 import markAllAsRead from "../../../api-calls/notifications/markAllAsRead"
-import { Notification, NotificationPreference } from "../../../types/NotificationTypes"
+import { Notification } from "../../../types/NotificationTypes"
 import pullNotificationCount from "../../../api-calls/notifications/pullNotificationCount"
 
 export default function Notifications() {
     // Set states
     const [notifications, setNotifications] = useState<Notification[] | null>(null)
     const [notificationCount, setNotificationCount] = useState(0)
-    const [isShowForm, setIsShowForm] = useState(false)
 
     // Get the notifications from the API
     useEffect(() => {
