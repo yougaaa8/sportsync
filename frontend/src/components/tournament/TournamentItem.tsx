@@ -27,15 +27,15 @@ export default function TournamentItem(props: {
     const role = localStorage.getItem("role")
 
     // Define functions
-    function manageTournamentClick(formData: FormData) {
-        editTournament(props.entry.id, formData)
+    async function manageTournamentClick(formData: FormData) {
+        await editTournament(props.entry.id, formData)
         setTimeout(() => {
             window.location.reload()
         }, 1000)
     }
 
-    function deleteTournamentClick() {
-        deleteTournament(props.entry.id)
+    async function deleteTournamentClick() {
+        await deleteTournament(props.entry.id)
         setTimeout(() => {
             window.location.reload()
         }, 1000)
@@ -98,24 +98,21 @@ export default function TournamentItem(props: {
                     >
                         <CardContent sx={{ p: 4 }}>
                             <Box sx={{ textAlign: 'center' }}>
-                                {/* Logo placeholder */}
-                                {props.entry.logo && (
+                                {/* Logo with subtle styling */}
+                                {props.entry.logo_url && (
                                     <Box sx={{ mb: 3 }}>
-                                        <Box
-                                            sx={{
-                                                width: 80,
-                                                height: 80,
-                                                mx: 'auto',
-                                                borderRadius: 3,
-                                                backgroundColor: '#f8fafc',
-                                                border: '2px solid #e2e8f0',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
+                                        <img 
+                                            src={props.entry.logo_url} 
+                                            alt="tournament logo"
+                                            style={{
+                                                width: '80px',
+                                                height: '80px',
+                                                objectFit: 'contain',
+                                                borderRadius: '8px',
+                                                display: 'block',
+                                                margin: '0 auto'
                                             }}
-                                        >
-                                            {/* Logo would go here */}
-                                        </Box>
+                                        />
                                     </Box>
                                 )}
 
@@ -431,6 +428,53 @@ export default function TournamentItem(props: {
                                         }
                                     }}
                                 />
+
+                                <Box>
+                                    <Typography 
+                                        variant="body2" 
+                                        sx={{ 
+                                            mb: 1,
+                                            fontWeight: 600,
+                                            color: '#374151'
+                                        }}
+                                    >
+                                        Tournament Logo
+                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            border: '2px dashed #d1d5db',
+                                            borderRadius: 2,
+                                            p: 3,
+                                            backgroundColor: '#fafafa',
+                                            '&:hover': {
+                                                borderColor: '#9ca3af',
+                                                backgroundColor: '#f5f5f5'
+                                            }
+                                        }}
+                                    >
+                                        <input
+                                            type="file"
+                                            name="logo"
+                                            accept="image/*"
+                                            style={{
+                                                width: '100%',
+                                                padding: '8px',
+                                                fontSize: '14px',
+                                                color: '#6b7280'
+                                            }}
+                                        />
+                                        <Typography 
+                                            variant="caption" 
+                                            sx={{ 
+                                                color: '#9ca3af',
+                                                display: 'block',
+                                                mt: 1
+                                            }}
+                                        >
+                                            Choose an image file for the tournament logo
+                                        </Typography>
+                                    </Box>
+                                </Box>
 
                                 <Button
                                     type="submit"
