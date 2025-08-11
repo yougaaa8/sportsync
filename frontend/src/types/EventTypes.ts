@@ -14,3 +14,11 @@ export interface Event {
   registration_deadline: string,
   registration_fee: string
 }
+
+export interface EventParticipant {
+  event: number,
+  id: number,
+  registered_at: string,
+  status: string,
+  user: number
+}

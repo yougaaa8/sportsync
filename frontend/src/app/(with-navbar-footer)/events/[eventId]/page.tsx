@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import pullEventDetails from "../../../../api-calls/events/pullEventDetails"
-import { Event } from "../../../../types/EventTypes"
+import pullEventParticipants from  "../../../../api-calls/events/pullEventParticipants"
+import { Event, EventParticipant } from "../../../../types/EventTypes"
 import EventRegistrationButton from "../../../../components/events/EventRegistrationButton.jsx"
 import EventLeaveButton from "../../../../components/events/EventLeaveButton.jsx"
+import EventParticipantTable from "../../../../components/events/EventParticipantTable.jsx"
 
 export default function EventDetailPage({params}: {
     params: Promise<{
@@ -13,6 +15,8 @@ export default function EventDetailPage({params}: {
 }) {
     // Set state(s)
     const [eventDetails, setEventDetails] = useState<Event | null>(null);
+    const [eventParticipants, setEventParticipants] = useState<EventParticipant | null>(null);
+    const [userRole, setUserRole] = useState("")
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
@@ -36,15 +40,29 @@ export default function EventDetailPage({params}: {
             const resolvedParams = await params
             const eventId = parseInt(resolvedParams.eventId)
             setEventDetails(await pullEventDetails(eventId))
+            setEventParticipants(await pullEventParticipants(eventId))
         }
         resolveParams()
     }, [params])
+
+    // Extract the user's role from local storage
+    useEffect(() => {
+        const fetchRole = async () => {
+            if (typeof window !== "undefined") {
+                const role = localStorage.getItem("role")
+                if (role) {
+                    setUserRole(role)
+                }
+            }
+        }
+        fetchRole()
+    }, [])
 
     return (
         <div className="min-h-screen bg-gray-50 py-12">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    {/* Header Section - More Professional */}
+                    {/* Header Section */}
                     <div className="bg-gradient-to-r from-orange-600 to-orange-700 text-white px-8 py-12">
                         <div className="text-center">
                             <h1 className="text-3xl font-semibold mb-3">
@@ -193,6 +211,10 @@ export default function EventDetailPage({params}: {
                             </EventLeaveButton>
                         </div>
                     </div>
+
+                    {userRole === "staff" &&
+                    <EventParticipantTable participants={eventParticipants}/>}
+
                 </div>
             </div>
         </div>
