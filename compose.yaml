@@ -64,13 +64,11 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:8000/api
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
       - /app/node_modules
-      - /app/.next
     
   celery-worker:
     build:
