@@ -14,7 +14,8 @@ import {
   InputAdornment,
   IconButton,
   Divider,
-  Link as MuiLink
+  Link as MuiLink,
+  Snackbar
 } from '@mui/material'
 import {
   Visibility,
@@ -26,6 +27,7 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link.js'
 import register from "../../../api-calls/register/register.js"
+import MuiAlert from '@mui/material/Alert';
 
 export default function Register() {
     // Create state for form fields
@@ -39,6 +41,8 @@ export default function Register() {
     const [success, setSuccess] = useState("")
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [showEmailSnackbar, setShowEmailSnackbar] = useState(false);
+    const [emailValid, setEmailValid] = useState(true);
 
     // Grab the router function
     const router = useRouter();
@@ -47,12 +51,31 @@ export default function Register() {
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
+    // Email validation handler
+    const handleEmailChange = (e) => {
+        const value = e.target.value;
+        setEmail(value);
+        const valid = value.endsWith("@u.nus.edu");
+        setEmailValid(valid || value === "");
+        if (value && !valid) {
+            setShowEmailSnackbar(true);
+        }
+    };
+
     // Create a function that will run when form is submitted
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
         setError("");
         setSuccess("");
+
+        // Email domain validation
+        if (!email.endsWith("@u.nus.edu")) {
+            setError("Please use your NUS email ending with @u.nus.edu");
+            setIsLoading(false);
+            setShowEmailSnackbar(true);
+            return;
+        }
 
         // Check if passwords match
         if (password !== confirmPassword) {
@@ -66,30 +89,19 @@ export default function Register() {
 
             if (data) {
                 // Registration successful
-                console.log("Registration successful:", data);
-                console.log("The account is created for: ", data.user.first_name);
                 setSuccess("Account created successfully! You can now log in.");
-                
                 localStorage.setItem("email", data.user.email);
-                
-                // Redirect to login page after successful registration
                 router.push("/login");
-                
-                // Clear form
                 setPassword("");
                 setConfirmPassword("");
-                
             } else {
                 // Registration failed — log the full validation payload
-                console.warn("Registration validation errors:", data);
-                // Turn those field errors into a single string to show the user
                 const msg = Object.entries(data)
                     .map(([field, errs]) => `${field}: ${errs.join(" ")}`)
                     .join("\n");
                 setError(msg || "Registration failed. Please try again.");
             }
         } catch (err) {
-            console.error('Registration error:', err);
             setError('Network error. Please try again.');
         } finally {
             setIsLoading(false);
@@ -217,8 +229,10 @@ export default function Register() {
                                     label="Email Address"
                                     type="email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={handleEmailChange}
                                     required
+                                    error={!emailValid && email !== ""}
+                                    helperText={!emailValid && email !== "" ? "Email must end with @u.nus.edu" : ""}
                                     variant="outlined"
                                     InputProps={{
                                         startAdornment: (
@@ -300,7 +314,7 @@ export default function Register() {
                                     fullWidth
                                     variant="contained"
                                     size="large"
-                                    disabled={isLoading}
+                                    disabled={isLoading || (!email.endsWith("@u.nus.edu"))}
                                     sx={{
                                         py: 1.5,
                                         fontSize: '1.1rem',
@@ -339,6 +353,32 @@ export default function Register() {
                     </Box>
                 </Paper>
             </Container>
+            {/* Snackbar for invalid email */}
+            <Snackbar
+                open={showEmailSnackbar}
+                autoHideDuration={4000}
+                onClose={() => setShowEmailSnackbar(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Move to top center
+            >
+                <MuiAlert
+                    elevation={6}
+                    variant="filled"
+                    severity="error"
+                    sx={{
+                        backgroundColor: '#FF6B35', // Use your theme's primary.main for a branded red-orange
+                        color: '#fff',
+                        fontWeight: 600,
+                        fontSize: '1.1rem',
+                        boxShadow: 4,
+                        borderRadius: 2,
+                        px: 3,
+                        py: 2,
+                        letterSpacing: 0.5,
+                    }}
+                >
+                    Please use your NUS email ending with @u.nus.edu
+                </MuiAlert>
+            </Snackbar>
         </Box>
     )
 }

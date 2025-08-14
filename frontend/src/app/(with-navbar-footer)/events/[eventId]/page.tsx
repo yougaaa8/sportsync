@@ -13,17 +13,20 @@ import {
     IconButton,
     Divider,
     Card,
-    CardContent
+    CardContent,
+    Snackbar
 } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon, CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import pullEventDetails from "../../../../api-calls/events/pullEventDetails"
 import pullEventParticipants from  "../../../../api-calls/events/pullEventParticipants"
 import pullUserProfileFromEmail from "@/api-calls/profile/pullUserProfileFromEmail";
 import editEventDetails from "../../../../api-calls/events/editEventDetails"
+import notifyEventParticipants from "../../../../api-calls/events/notifyEventParticipants"
 import { Event, EventParticipant } from "../../../../types/EventTypes"
 import EventRegistrationButton from "../../../../components/events/EventRegistrationButton.jsx"
 import EventLeaveButton from "../../../../components/events/EventLeaveButton.jsx"
 import EventParticipantTable from "../../../../components/events/EventParticipantTable.jsx"
+import Alert from '@mui/material/Alert';
 
 export default function EventDetailPage({params}: {
     params: Promise<{
@@ -37,6 +40,7 @@ export default function EventDetailPage({params}: {
     const [isShowEventForm, setIsShowEventForm] = useState(false)
     const [adminEmailFields, setAdminEmailFields] = useState<number[]>([0])
     const [selectedFileName, setSelectedFileName] = useState<string>("")
+    const [notifySuccess, setNotifySuccess] = useState(false);
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
@@ -161,6 +165,11 @@ export default function EventDetailPage({params}: {
             )}
         </Box>
     ))
+
+    async function handleNotifyParticipants(formData: FormData) {
+        await notifyEventParticipants(formData, eventDetails?.id);
+        setNotifySuccess(true);
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 py-12">
@@ -633,6 +642,83 @@ export default function EventDetailPage({params}: {
                             </Card>
                         )}
                     </Box>
+
+                    {/* Notify Participants Form */}
+                    <Box sx={{ px: 4, pb: 4, mt: 4 }}>
+                        <Card sx={{ 
+                            boxShadow: 1, 
+                            borderRadius: 3,
+                            border: '1px solid',
+                            borderColor: 'grey.200',
+                            maxWidth: 500,
+                            mx: 'auto',
+                            mb: 4,
+                            bgcolor: 'grey.50'
+                        }}>
+                            <CardContent>
+                                <Typography variant="h6" sx={{ 
+                                    mb: 2, 
+                                    fontWeight: 600,
+                                    color: 'primary.main',
+                                    textAlign: 'center'
+                                }}>
+                                    Notify Event Participants
+                                </Typography>
+                                <Box
+                                    component="form"
+                                    action={handleNotifyParticipants}
+                                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                                >
+                                    <TextField
+                                        name="title"
+                                        label="Notification Title"
+                                        variant="outlined"
+                                        fullWidth
+                                        placeholder={`Update for ${eventDetails?.name}`}
+                                    />
+                                    <TextField
+                                        name="message"
+                                        label="Message"
+                                        variant="outlined"
+                                        fullWidth
+                                        required
+                                        multiline
+                                        rows={3}
+                                        placeholder="Enter your message to all participants"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        size="large"
+                                        sx={{
+                                            mt: 1,
+                                            px: 4,
+                                            py: 1.5,
+                                            borderRadius: 2,
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            fontSize: '1rem',
+                                            alignSelf: 'center'
+                                        }}
+                                    >
+                                        Notify Event Participants
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Box>
+
+                    {/* Success Snackbar */}
+                    <Snackbar
+                        open={notifySuccess}
+                        autoHideDuration={4000}
+                        onClose={() => setNotifySuccess(false)}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    >
+                        <Alert onClose={() => setNotifySuccess(false)} severity="success" sx={{ width: '100%' }}>
+                            Notification sent to all participants!
+                        </Alert>
+                    </Snackbar>
                 </div>
             </div>
         </div>
