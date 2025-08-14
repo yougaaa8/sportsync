@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { useRouter } from "next/navigation"
 import pullProductData from "../../../../api-calls/merchandise-shop/pullProductData"
+import editMerchandiseDetails from "../../../../api-calls/merchandise-shop/editMerchandiseDetails"
+import pullUserCCAObjects from "../../../../api-calls/cca/pullUserCCAObjects"
+import { CCADetail } from "../../../../types/CCATypes"
 import { ProductDetail } from "../../../../types/MerchandiseShopTypes"
 import { 
     Typography, 
@@ -18,7 +21,15 @@ import {
     Fade,
     styled,
     Breadcrumbs,
-    Link
+    Link,
+    TextField,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Divider,
+    Alert,
+    Stack
 } from "@mui/material"
 import { 
     ArrowBack, 
@@ -28,7 +39,10 @@ import {
     Cancel,
     Home,
     NavigateNext,
-    ChevronRight
+    ChevronRight,
+    Edit,
+    Save,
+    CloudUpload
 } from "@mui/icons-material"
 import Image from "next/image"
 
@@ -145,6 +159,115 @@ const InfoCard = styled(Card)(({  }) => ({
     backgroundColor: '#FAFAFA',
 }))
 
+const FormCard = styled(Paper)(({ theme }) => ({
+    borderRadius: '16px',
+    padding: theme.spacing(4),
+    marginTop: theme.spacing(4),
+    border: '1px solid #E0E0E0',
+    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
+    backgroundColor: '#FFFFFF',
+}))
+
+const FormSection = styled(Box)(({ theme }) => ({
+    marginBottom: theme.spacing(3),
+}))
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+    '& .MuiOutlinedInput-root': {
+        borderRadius: '12px',
+        backgroundColor: '#FAFAFA',
+        '&:hover': {
+            backgroundColor: '#F5F5F5',
+        },
+        '&.Mui-focused': {
+            backgroundColor: '#FFFFFF',
+        },
+        '& fieldset': {
+            borderColor: '#E0E0E0',
+        },
+        '&:hover fieldset': {
+            borderColor: theme.palette.primary.main,
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+            borderWidth: '2px',
+        },
+    },
+    '& .MuiInputLabel-root': {
+        color: '#757575',
+        fontWeight: 500,
+        '&.Mui-focused': {
+            color: theme.palette.primary.main,
+        },
+    },
+}))
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+    '& .MuiOutlinedInput-root': {
+        borderRadius: '12px',
+        backgroundColor: '#FAFAFA',
+        '&:hover': {
+            backgroundColor: '#F5F5F5',
+        },
+        '&.Mui-focused': {
+            backgroundColor: '#FFFFFF',
+        },
+        '& fieldset': {
+            borderColor: '#E0E0E0',
+        },
+        '&:hover fieldset': {
+            borderColor: theme.palette.primary.main,
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+            borderWidth: '2px',
+        },
+    },
+    '& .MuiInputLabel-root': {
+        color: '#757575',
+        fontWeight: 500,
+        '&.Mui-focused': {
+            color: theme.palette.primary.main,
+        },
+    },
+}))
+
+const FileUploadBox = styled(Box)(({ theme }) => ({
+    border: '2px dashed #E0E0E0',
+    borderRadius: '12px',
+    padding: theme.spacing(3),
+    textAlign: 'center',
+    backgroundColor: '#FAFAFA',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    '&:hover': {
+        borderColor: theme.palette.primary.main,
+        backgroundColor: '#F5F5F5',
+    },
+    '& input[type="file"]': {
+        display: 'none',
+    },
+}))
+
+const ManageButton = styled(Button)(({ theme }) => ({
+    borderRadius: '12px',
+    padding: theme.spacing(1.5, 3),
+    fontWeight: 600,
+    textTransform: 'none',
+    fontSize: '0.875rem',
+    minHeight: '44px',
+    marginTop: theme.spacing(3),
+    backgroundColor: 'transparent',
+    color: theme.palette.secondary.main,
+    border: `2px solid ${theme.palette.secondary.main}`,
+    '&:hover': {
+        backgroundColor: theme.palette.secondary.main,
+        color: 'white',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(26, 35, 126, 0.3)',
+    },
+}))
+
 interface StatusChipProps {
     available: boolean
 }
@@ -188,9 +311,13 @@ const LoadingSkeleton = () => (
 )
 
 export default function ProductDetailLayout() {
+    // Set states
     const [productData, setProductData] = useState<ProductDetail | null>(null)
     const [loading, setLoading] = useState(true)
     const [imageIndex, setImageIndex] = useState(0)
+    const [isShowMerchandiseForm, setIsShowMerchandiseForm] = useState(false)
+    const [userCCAs, setUserCCAs] = useState<null | CCADetail[]>(null)
+
     const params = useParams()
     const router = useRouter()
     const productId = params.productId
@@ -211,6 +338,14 @@ export default function ProductDetailLayout() {
         fetchProductData()
     }, [productId])
 
+    // Get the user CCAs into the userCCAs state
+    useEffect(() => {
+        const fetchCCAs = async () => {
+            setUserCCAs(await pullUserCCAObjects())
+        }
+        fetchCCAs()
+    }, [])
+
     const handlePurchase = () => {
         if (productData?.buy_link) {
             window.open(productData.buy_link, '_blank', 'noopener,noreferrer')
@@ -224,6 +359,13 @@ export default function ProductDetailLayout() {
     function nextImageClick() {
         console.log("setting next image")
         setImageIndex(prev => ((prev + 1) % ((productData?.images?.length ?? 1))))
+    }
+
+    async function handleMerchandiseDetailsUpdate(formData: FormData) {
+        await editMerchandiseDetails(formData, productData?.id)
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     }
 
     if (loading) {
@@ -252,7 +394,13 @@ export default function ProductDetailLayout() {
         )
     }
 
+    // Transform the CCA objects into CCA options for the form
+    const ccaOptions = userCCAs?.map(cca => (
+        <option key={cca.id} value={cca.id}>{cca.name}</option>
+    ))
+
     console.log("The current image index: ", imageIndex)
+    console.log("These are the userCCAS: ", userCCAs)
 
     return (
         <StyledContainer>
@@ -395,6 +543,187 @@ export default function ProductDetailLayout() {
                             </Box>
                         </Box>
                     </ProductCard>
+
+                    {/* Manage Merchandise Button */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <ManageButton 
+                            onClick={() => setIsShowMerchandiseForm(prev => !prev)}
+                            startIcon={<Edit />}
+                        >
+                            {isShowMerchandiseForm ? 'Hide Form' : 'Manage Merchandise Details'}
+                        </ManageButton>
+                    </Box>
+
+                    {/* Merchandise Edit Form */}
+                    {isShowMerchandiseForm && (
+                        <FormCard>
+                            <Box sx={{ mb: 3 }}>
+                                <Typography variant="h5" sx={{ fontWeight: 600, color: '#212121', mb: 1 }}>
+                                    Edit Merchandise Details
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#757575' }}>
+                                    Update your product information and settings below
+                                </Typography>
+                            </Box>
+                            
+                            <Divider sx={{ mb: 4 }} />
+                            
+                            <form action={handleMerchandiseDetailsUpdate} encType="multipart/form-data">
+                                <Stack spacing={4}>
+                                    {/* Basic Information Section */}
+                                    <FormSection>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#212121', mb: 3 }}>
+                                            Basic Information
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                            <StyledTextField
+                                                fullWidth
+                                                label="Product Name"
+                                                name="name"
+                                                defaultValue={productData?.name}
+                                                variant="outlined"
+                                            />
+                                            <StyledFormControl fullWidth>
+                                                <InputLabel>CCA</InputLabel>
+                                                <Select
+                                                    name="cca"
+                                                    defaultValue={productData?.cca_name || ''}
+                                                    label="CCA"
+                                                    required
+                                                    native
+                                                >
+                                                    {ccaOptions}
+                                                </Select>
+                                            </StyledFormControl>
+                                            <StyledTextField
+                                                fullWidth
+                                                label="Product Description"
+                                                name="description"
+                                                defaultValue={productData?.description}
+                                                multiline
+                                                rows={4}
+                                                variant="outlined"
+                                            />
+                                        </Box>
+                                    </FormSection>
+
+                                    {/* Pricing and Availability Section */}
+                                    <FormSection>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#212121', mb: 3 }}>
+                                            Pricing & Availability
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <StyledTextField
+                                                label="Price ($)"
+                                                name="price"
+                                                type="number"
+                                                inputProps={{ step: "0.01", min: "0" }}
+                                                defaultValue={productData?.price}
+                                                variant="outlined"
+                                                sx={{ flex: 1 }}
+                                            />
+                                            <StyledFormControl sx={{ flex: 1 }}>
+                                                <InputLabel>Availability</InputLabel>
+                                                <Select
+                                                    name="available"
+                                                    defaultValue={productData?.available ? "true" : "false"}
+                                                    label="Availability"
+                                                >
+                                                    <MenuItem value="true">Available</MenuItem>
+                                                    <MenuItem value="false">Unavailable</MenuItem>
+                                                </Select>
+                                            </StyledFormControl>
+                                        </Box>
+                                    </FormSection>
+
+                                    {/* Purchase Link Section */}
+                                    <FormSection>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#212121', mb: 3 }}>
+                                            Purchase Information
+                                        </Typography>
+                                        <StyledTextField
+                                            fullWidth
+                                            label="Purchase Link"
+                                            name="buy_link"
+                                            type="url"
+                                            defaultValue={productData?.buy_link}
+                                            variant="outlined"
+                                            placeholder="https://example.com/purchase-link"
+                                        />
+                                    </FormSection>
+
+                                    {/* Images Section */}
+                                    <FormSection>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#212121', mb: 3 }}>
+                                            Product Images* (required)
+                                        </Typography>
+                                        <label>
+                                            <FileUploadBox>
+                                                <input 
+                                                    name="uploaded_images" 
+                                                    type="file" 
+                                                    multiple 
+                                                    accept="image/*"
+                                                    required
+                                                />
+                                                <CloudUpload sx={{ fontSize: 48, color: '#BDBDBD', mb: 2 }} />
+                                                <Typography variant="body1" sx={{ fontWeight: 500, color: '#757575', mb: 1 }}>
+                                                    Upload new images
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#9E9E9E' }}>
+                                                    Click to select multiple image files
+                                                </Typography>
+                                            </FileUploadBox>
+                                        </label>
+                                        <Alert severity="info" sx={{ mt: 2 }}>
+                                            Upload new images to replace existing ones. Supported formats: JPG, PNG, WebP
+                                        </Alert>
+                                    </FormSection>
+
+                                    {/* Action Buttons */}
+                                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', pt: 2 }}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => setIsShowMerchandiseForm(false)}
+                                            sx={{ 
+                                                borderRadius: '12px',
+                                                px: 4,
+                                                py: 1.5,
+                                                fontWeight: 600,
+                                                textTransform: 'none',
+                                                borderColor: '#E0E0E0',
+                                                color: '#757575',
+                                                '&:hover': {
+                                                    borderColor: '#BDBDBD',
+                                                    backgroundColor: '#FAFAFA'
+                                                }
+                                            }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            startIcon={<Save />}
+                                            sx={{ 
+                                                borderRadius: '12px',
+                                                px: 4,
+                                                py: 1.5,
+                                                fontWeight: 600,
+                                                textTransform: 'none',
+                                                backgroundColor: '#FF6B35',
+                                                '&:hover': {
+                                                    backgroundColor: '#E65100'
+                                                }
+                                            }}
+                                        >
+                                            Update Merchandise Details
+                                        </Button>
+                                    </Box>
+                                </Stack>
+                            </form>
+                        </FormCard>
+                    )}
                 </Box>
             </Fade>
         </StyledContainer>
