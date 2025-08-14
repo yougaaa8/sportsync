@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import pullProductData from "../../../../api-calls/merchandise-shop/pullProductData"
 import editMerchandiseDetails from "../../../../api-calls/merchandise-shop/editMerchandiseDetails"
 import pullUserCCAObjects from "../../../../api-calls/cca/pullUserCCAObjects"
+import notifyWishlistedUsers from "../../../../api-calls/merchandise-shop/notifyWishlistedUsers"
 import { CCADetail } from "../../../../types/CCATypes"
 import { ProductDetail } from "../../../../types/MerchandiseShopTypes"
 import { 
@@ -29,7 +30,8 @@ import {
     InputLabel,
     Divider,
     Alert,
-    Stack
+    Stack,
+    Snackbar
 } from "@mui/material"
 import { 
     ArrowBack, 
@@ -45,6 +47,7 @@ import {
     CloudUpload
 } from "@mui/icons-material"
 import Image from "next/image"
+import React, { useRef } from "react"
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     paddingTop: theme.spacing(3),
@@ -317,6 +320,10 @@ export default function ProductDetailLayout() {
     const [imageIndex, setImageIndex] = useState(0)
     const [isShowMerchandiseForm, setIsShowMerchandiseForm] = useState(false)
     const [userCCAs, setUserCCAs] = useState<null | CCADetail[]>(null)
+    const [notifySuccess, setNotifySuccess] = useState(false);
+
+    // Add a ref for the file input
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const params = useParams()
     const router = useRouter()
@@ -362,10 +369,22 @@ export default function ProductDetailLayout() {
     }
 
     async function handleMerchandiseDetailsUpdate(formData: FormData) {
+        if (
+            !fileInputRef.current ||
+            !fileInputRef.current.files ||
+            fileInputRef.current.files.length === 0
+        ) {
+            formData.delete("uploaded_images");
+        }
         await editMerchandiseDetails(formData, productData?.id)
         setTimeout(() => {
             window.location.reload()
         }, 1000)
+    }
+
+    async function handleNotifyWishlistedUsers(formData: FormData) {
+        await notifyWishlistedUsers(formData, productData?.id)
+        setNotifySuccess(true);
     }
 
     if (loading) {
@@ -664,7 +683,8 @@ export default function ProductDetailLayout() {
                                                     type="file" 
                                                     multiple 
                                                     accept="image/*"
-                                                    required
+                                                    ref={fileInputRef}
+                                                    // Do NOT add required here!
                                                 />
                                                 <CloudUpload sx={{ fontSize: 48, color: '#BDBDBD', mb: 2 }} />
                                                 <Typography variant="body1" sx={{ fontWeight: 500, color: '#757575', mb: 1 }}>
@@ -724,8 +744,78 @@ export default function ProductDetailLayout() {
                             </form>
                         </FormCard>
                     )}
+
+                    {/* Notify Wishlisted Users Form */}
+                    <Box sx={{ px: 4, pb: 4, mt: 6, maxWidth: 500, mx: "auto" }}>
+                        <FormCard>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    mb: 2,
+                                    fontWeight: 600,
+                                    color: "primary.main",
+                                    textAlign: "center",
+                                }}
+                            >
+                                Notify Wishlisted Users
+                            </Typography>
+                            <Box
+                                component="form"
+                                action={handleNotifyWishlistedUsers}
+                                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                            >
+                                <StyledTextField
+                                    name="message"
+                                    label="Message"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                    multiline
+                                    rows={3}
+                                    placeholder="Enter your message to wishlisted users"
+                                />
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    size="large"
+                                    sx={{
+                                        mt: 1,
+                                        px: 4,
+                                        py: 1.5,
+                                        borderRadius: 2,
+                                        textTransform: "none",
+                                        fontWeight: 600,
+                                        fontSize: "1rem",
+                                        alignSelf: "center",
+                                        backgroundColor: "primary.main",
+                                        "&:hover": {
+                                            backgroundColor: "primary.dark",
+                                        },
+                                    }}
+                                >
+                                    Notify Wishlisted Users
+                                </Button>
+                            </Box>
+                        </FormCard>
+                    </Box>
+
+                    {/* Success Snackbar */}
+                    <Snackbar
+                        open={notifySuccess}
+                        autoHideDuration={4000}
+                        onClose={() => setNotifySuccess(false)}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    >
+                        <Alert
+                            onClose={() => setNotifySuccess(false)}
+                            severity="success"
+                            sx={{ width: "100%" }}
+                        >
+                            Notification sent to all wishlisted users!
+                        </Alert>
+                    </Snackbar>
                 </Box>
             </Fade>
         </StyledContainer>
-    )
+    );
 }
