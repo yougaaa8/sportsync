@@ -16,10 +16,8 @@ export default function EventForm() {
     const router = useRouter()
 
     const handleCreateEvent = async (formData: FormData) => {
-        const result = await createEvent(formData)
-        if (result.success) {
-            router.push('/events') // Use router.push instead of navigate
-        }
+        await createEvent(formData)
+        router.push('/events') // Use router.push instead of navigate
     }   
 
     return (
@@ -142,7 +140,6 @@ export default function EventForm() {
 
                         <Box sx={{ pt: 2 }}>
                             <Button
-                                href="/events"
                                 type="submit"
                                 variant="contained"
                                 color="primary"

@@ -1,8 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { 
+    Box, 
+    Button, 
+    TextField, 
+    Typography, 
+    Select, 
+    MenuItem, 
+    FormControl, 
+    InputLabel, 
+    IconButton,
+    Divider,
+    Card,
+    CardContent
+} from '@mui/material';
+import { Add as AddIcon, Remove as RemoveIcon, CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import pullEventDetails from "../../../../api-calls/events/pullEventDetails"
 import pullEventParticipants from  "../../../../api-calls/events/pullEventParticipants"
+import pullUserProfileFromEmail from "@/api-calls/profile/pullUserProfileFromEmail";
+import editEventDetails from "../../../../api-calls/events/editEventDetails"
 import { Event, EventParticipant } from "../../../../types/EventTypes"
 import EventRegistrationButton from "../../../../components/events/EventRegistrationButton.jsx"
 import EventLeaveButton from "../../../../components/events/EventLeaveButton.jsx"
@@ -17,6 +34,9 @@ export default function EventDetailPage({params}: {
     const [eventDetails, setEventDetails] = useState<Event | null>(null);
     const [eventParticipants, setEventParticipants] = useState<EventParticipant | null>(null);
     const [userRole, setUserRole] = useState("")
+    const [isShowEventForm, setIsShowEventForm] = useState(false)
+    const [adminEmailFields, setAdminEmailFields] = useState<number[]>([0])
+    const [selectedFileName, setSelectedFileName] = useState<string>("")
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
@@ -32,6 +52,12 @@ export default function EventDetailPage({params}: {
         } catch {
             return dateString;
         }
+    };
+
+    // Handle file selection
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        setSelectedFileName(file ? file.name : "");
     };
 
     // Resolve params and extract event details
@@ -58,6 +84,84 @@ export default function EventDetailPage({params}: {
         fetchRole()
     }, [])
 
+    function addAdminEmailField() {
+        setAdminEmailFields(prev => [...prev, Date.now()])
+    }
+
+    function removeAdminEmailField(idx: number) {
+        setAdminEmailFields(prev => prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev)
+    }
+
+    async function handleEventManagement(formData: FormData) {
+        // Turn the array of admin fields into an array of user ids
+        const adminEmails = formData.getAll("admins[]").filter(email => !!email && String(email).trim() !== "");
+        const adminIds = (
+          await Promise.all(
+            adminEmails.map(async email => {
+              const user = await pullUserProfileFromEmail(email);
+              return user?.user_id;
+            })
+          )
+        ).filter(id => id !== undefined && id !== null && id !== "");
+
+        formData.delete("admins[]");
+        adminIds.forEach((id: number | string) => {
+          formData.append("admins", String(id));
+        });
+
+        // Pass the form data to the edit event API
+        await editEventDetails(formData, eventDetails?.id)
+
+        // Reload after editing the event detail backend
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
+
+    // Create the admin email input
+    const adminEmailInputList = adminEmailFields.map((field, idx) => (
+        <Box key={field} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <TextField
+                name="admins[]"
+                variant="outlined"
+                size="small"
+                placeholder="Enter admin email"
+                fullWidth
+                sx={{ flex: 1 }}
+            />
+            {adminEmailFields.length > 1 && (
+                <IconButton 
+                    onClick={() => removeAdminEmailField(idx)}
+                    size="small"
+                    color="error"
+                    sx={{ 
+                        bgcolor: 'error.50', 
+                        '&:hover': { bgcolor: 'error.100' },
+                        minWidth: 36,
+                        height: 36
+                    }}
+                >
+                    <RemoveIcon fontSize="small" />
+                </IconButton>
+            )}
+            {idx === adminEmailFields.length - 1 && (
+                <IconButton 
+                    onClick={addAdminEmailField}
+                    size="small"
+                    color="primary"
+                    sx={{ 
+                        bgcolor: 'primary.50', 
+                        '&:hover': { bgcolor: 'primary.100' },
+                        minWidth: 36,
+                        height: 36
+                    }}
+                >
+                    <AddIcon fontSize="small" />
+                </IconButton>
+            )}
+        </Box>
+    ))
+
     return (
         <div className="min-h-screen bg-gray-50 py-12">
             <div className="max-w-4xl mx-auto px-6">
@@ -81,6 +185,16 @@ export default function EventDetailPage({params}: {
 
                     {/* Content Section */}
                     <div className="px-8 py-8">
+                        {/* Event Poster */}
+                        {eventDetails?.poster_url && (
+                            <div className="flex justify-center mb-8">
+                                <img 
+                                    src={eventDetails.poster_url}
+                                    alt={`${eventDetails.name} poster`}
+                                    className="max-w-full h-auto rounded-xl shadow-lg border border-gray-200 max-h-96 object-cover"
+                                />
+                            </div>
+                        )}
                         {/* Event Description */}
                         {eventDetails?.description && (
                             <div className="text-center mb-10">
@@ -215,6 +329,310 @@ export default function EventDetailPage({params}: {
                     {userRole === "staff" &&
                     <EventParticipantTable participants={eventParticipants}/>}
 
+                    {/* Management Section */}
+                    <Box sx={{ px: 4, pb: 4 }}>
+                        <Divider sx={{ my: 3 }} />
+                        
+                        <Button 
+                            onClick={() => setIsShowEventForm(prev => !prev)}
+                            variant="outlined"
+                            size="large"
+                            sx={{ 
+                                mb: 3,
+                                borderRadius: 2,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                px: 4,
+                                py: 1.5
+                            }}
+                        >
+                            {isShowEventForm ? 'Hide Event Management' : 'Manage Event Details'}
+                        </Button>
+
+                        {isShowEventForm && (
+                            <Card sx={{ 
+                                boxShadow: 2, 
+                                borderRadius: 3,
+                                border: '1px solid',
+                                borderColor: 'grey.200'
+                            }}>
+                                <CardContent sx={{ p: 4 }}>
+                                    <Typography variant="h5" sx={{ 
+                                        mb: 3, 
+                                        fontWeight: 600,
+                                        color: 'text.primary',
+                                        textAlign: 'center'
+                                    }}>
+                                        Event Management
+                                    </Typography>
+                                    
+                                    <Box component="form" action={handleEventManagement}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                            {/* Basic Information Section */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ 
+                                                    mb: 2, 
+                                                    color: 'primary.main',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.1rem'
+                                                }}>
+                                                    Basic Information
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                                                    <TextField
+                                                        name="name"
+                                                        label="Event Name"
+                                                        defaultValue={eventDetails?.name}
+                                                        variant="outlined"
+                                                        fullWidth
+                                                    />
+
+                                                    <TextField
+                                                        name="description"
+                                                        label="Event Description"
+                                                        defaultValue={eventDetails?.description}
+                                                        multiline
+                                                        rows={3}
+                                                        variant="outlined"
+                                                        fullWidth
+                                                    />
+
+                                                    <TextField
+                                                        name="location"
+                                                        defaultValue={eventDetails?.location}
+                                                        label="Location"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                    />
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            {/* Date and Time Section */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ 
+                                                    mb: 2, 
+                                                    color: 'primary.main',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.1rem'
+                                                }}>
+                                                    Date & Time
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                                    <TextField
+                                                        name="date"
+                                                        label="Event Date"
+                                                        type="date"
+                                                        defaultValue={eventDetails?.date}
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        required
+                                                        InputLabelProps={{ shrink: true }}
+                                                    />
+
+                                                    <TextField
+                                                        name="registration_deadline"
+                                                        label="Registration Deadline"
+                                                        type="date"
+                                                        defaultValue={eventDetails?.registration_deadline}
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        required
+                                                        InputLabelProps={{ shrink: true }}
+                                                    />
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            {/* Administrative Section */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ 
+                                                    mb: 2, 
+                                                    color: 'primary.main',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.1rem'
+                                                }}>
+                                                    Administrative Settings
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                                                    <TextField
+                                                        name="cca"
+                                                        label="CCA ID (Optional)"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        helperText="Leave empty if not associated with a CCA"
+                                                    />
+
+                                                    <Box>
+                                                        <Typography variant="body2" sx={{ 
+                                                            mb: 1.5, 
+                                                            fontWeight: 600,
+                                                            color: 'text.primary'
+                                                        }}>
+                                                            Admin Emails (Optional)
+                                                        </Typography>
+                                                        {adminEmailInputList}
+                                                        <Typography variant="caption" sx={{ 
+                                                            color: 'text.secondary',
+                                                            mt: 0.5,
+                                                            display: 'block'
+                                                        }}>
+                                                            Add email addresses of users who should have admin access to this event
+                                                        </Typography>
+                                                    </Box>
+
+                                                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                                        <FormControl fullWidth>
+                                                            <InputLabel>Visibility</InputLabel>
+                                                            <Select
+                                                                name="public"
+                                                                defaultValue="true"
+                                                                label="Visibility"
+                                                            >
+                                                                <MenuItem value="true">Public</MenuItem>
+                                                                <MenuItem value="false">Private</MenuItem>
+                                                            </Select>
+                                                        </FormControl>
+
+                                                        <TextField
+                                                            name="max_participants"
+                                                            label="Max Participants"
+                                                            type="number"
+                                                            variant="outlined"
+                                                            fullWidth
+                                                            helperText="Leave empty for unlimited"
+                                                        />
+                                                    </Box>
+
+                                                    <TextField
+                                                        name="contact_point"
+                                                        label="Contact Information"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        helperText="Email or phone number for event inquiries"
+                                                    />
+                                                </Box>
+                                            </Box>
+
+                                            {/* Event Poster Upload Section */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ 
+                                                    mb: 2, 
+                                                    color: 'primary.main',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.1rem'
+                                                }}>
+                                                    Event Poster
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        border: '2px dashed',
+                                                        borderColor: 'grey.300',
+                                                        borderRadius: 2,
+                                                        p: 3,
+                                                        textAlign: 'center',
+                                                        transition: 'all 0.2s ease-in-out',
+                                                        cursor: 'pointer',
+                                                        bgcolor: 'grey.50',
+                                                        '&:hover': {
+                                                            borderColor: 'primary.main',
+                                                            bgcolor: 'primary.50',
+                                                        },
+                                                        '&:has(input:focus)': {
+                                                            borderColor: 'primary.main',
+                                                            bgcolor: 'primary.50',
+                                                        }
+                                                    }}
+                                                    component="label"
+                                                >
+                                                    <input
+                                                        name="poster"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleFileChange}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            opacity: 0,
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    />
+                                                    <Box sx={{ 
+                                                        display: 'flex', 
+                                                        flexDirection: 'column', 
+                                                        alignItems: 'center',
+                                                        gap: 1
+                                                    }}>
+                                                        <CloudUploadIcon 
+                                                            sx={{ 
+                                                                fontSize: 48, 
+                                                                color: selectedFileName ? 'primary.main' : 'grey.400',
+                                                                transition: 'color 0.2s'
+                                                            }} 
+                                                        />
+                                                        <Typography 
+                                                            variant="body1" 
+                                                            sx={{ 
+                                                                fontWeight: 600,
+                                                                color: selectedFileName ? 'primary.main' : 'text.primary'
+                                                            }}
+                                                        >
+                                                            {selectedFileName || 'Click to upload event poster'}
+                                                        </Typography>
+                                                        <Typography 
+                                                            variant="caption" 
+                                                            sx={{ color: 'text.secondary' }}
+                                                        >
+                                                            Supports JPG, PNG, GIF up to 10MB
+                                                        </Typography>
+                                                        {selectedFileName && (
+                                                            <Typography 
+                                                                variant="body2" 
+                                                                sx={{ 
+                                                                    color: 'success.main',
+                                                                    mt: 1,
+                                                                    fontWeight: 500
+                                                                }}
+                                                            >
+                                                                ✓ File selected: {selectedFileName}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            {/* Submit Button */}
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+                                                <Button 
+                                                    type="submit"
+                                                    variant="contained"
+                                                    size="large"
+                                                    sx={{ 
+                                                        px: 6,
+                                                        py: 1.5,
+                                                        borderRadius: 2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 600,
+                                                        fontSize: '1rem'
+                                                    }}
+                                                >
+                                                    Update Event Details
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </Box>
                 </div>
             </div>
         </div>
